@@ -8,6 +8,53 @@ import {
   ThermometerSnowflake, ThermometerSun, Shirt, Sun, Banana, Fingerprint
 } from './icons.js';
 
+// --- VERB SUFFIX RULES ---
+// Explanation strings for transitive/intransitive patterns (dual-language)
+export const VERB_SUFFIX_RULES = {
+  su: {
+    pattern: 'suffix-su',
+    explanationJa: '…す ⟹ 外向的 (≈ する)',
+    explanationEn: 'Outward-Directed (≈ "To do")',
+    type: 'Transitive'
+  },
+  aru: {
+    pattern: 'suffix-aru', 
+    explanationJa: '…あ + る ⟹ 内向的 (≈ ある)',
+    explanationEn: 'Inward-Directed (≈ "To be")',
+    type: 'Intransitive'
+  }
+};
+
+// "A" column hiragana characters that precede る in the aru pattern
+const A_COLUMN_HIRAGANA = ['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら', 'わ', 'が', 'ざ', 'だ', 'ば', 'ぱ'];
+
+/**
+ * Determines the suffix type of a verb based on its dictionaryRuby
+ * @param {Array} dictionaryRuby - Array of {text, rt} objects representing the dictionary form
+ * @returns {string|null} - 'suffix-su', 'suffix-aru', or null if no pattern matches
+ */
+export function getVerbSuffixType(dictionaryRuby) {
+  if (!dictionaryRuby || dictionaryRuby.length === 0) return null;
+  
+  // Get the reading of the verb (combine all rt values, falling back to text for kana)
+  const reading = dictionaryRuby.map(r => r.rt || r.text).join('');
+  
+  // Check for suffix -su: ends in す
+  if (reading.endsWith('す')) {
+    return 'suffix-su';
+  }
+  
+  // Check for suffix -aru: ends in [a-column hiragana] + る
+  if (reading.endsWith('る') && reading.length >= 2) {
+    const secondToLast = reading[reading.length - 2];
+    if (A_COLUMN_HIRAGANA.includes(secondToLast)) {
+      return 'suffix-aru';
+    }
+  }
+  
+  return null;
+}
+
 // --- DATA: Extracted & Cleaned from PDF with Furigana & Dictionary Forms ---
 export const VERB_DATA = [
   // --- LEVEL 1 (IDs 1-20) ---

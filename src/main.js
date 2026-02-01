@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Settings, CheckCheck, CheckCircle, XCircle, RefreshCw } from './icons.js';
 
 import { romajiToHiragana, toHiragana } from "./hiraganaUtils.js";
-import { VERB_DATA } from "./sentenceData.js";
+import { VERB_DATA, VERB_SUFFIX_RULES, getVerbSuffixType } from "./sentenceData.js";
 
 // Helper Component: RubyText with tap-to-toggle furigana
 const RubyText = ({ data, showFurigana }) => {
@@ -58,6 +58,8 @@ export default function App() {
   const [showFurigana, setShowFurigana] = useState(false); 
   const [showDictionary, setShowDictionary] = useState(false);
   const [showPairs, setShowPairs] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0); // Track correctly answered questions
+  const [totalQuestions, setTotalQuestions] = useState(0); // Original total for display
   
   // Levels and Types
   const [selectedLevels, setSelectedLevels] = useState([1, 2]); 
@@ -66,6 +68,7 @@ export default function App() {
 
   const [shuffledData, setShuffledData] = useState([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isInvalidInput, setIsInvalidInput] = useState(false); // Track invalid (non-hiragana) input
   const settingsRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -103,8 +106,11 @@ export default function App() {
       setFeedback(null);
       setUserInput('');
       setShowAnswer(false);
+      setCorrectCount(0); // Reset correct count
+      setTotalQuestions(finalPool.length); // Store original total
     } else {
       setShuffledData([]);
+      setTotalQuestions(0);
     }
   }, [selectedLevels, selectedTypes, isEasyMode]); // Dependency added
 
@@ -115,11 +121,27 @@ export default function App() {
 
   const currentQuestion = shuffledData[currentIndex];
 
+  // Auto-focus and select input when new question renders
+  useEffect(() => {
+    if (currentQuestion && !feedback && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [currentQuestion, feedback]);
+
+  // Check if string contains only Hiragana characters (strict: no spaces, punctuation, or symbols)
+  const isHiraganaOnly = (str) => {
+    // Hiragana range: \u3041-\u3096 (excludes small kana iteration marks)
+    return /^[\u3041-\u3096]+$/.test(str);
+  };
+
   const handleInputChange = (e) => {
     // Convert to Hiragana on the fly
     const rawValue = e.target.value;
     const hiraganaValue = romajiToHiragana(rawValue);
     setUserInput(hiraganaValue);
+    // Clear invalid state when user types
+    if (isInvalidInput) setIsInvalidInput(false);
   };
 
   const handleCheck = (e) => {
@@ -127,11 +149,20 @@ export default function App() {
     
     // Accessibility: If already showing feedback (incorrect/correct), Enter should go to next
     if (feedback === 'incorrect' || showAnswer) {
-      handleNext();
+      handleNext(false); // Pass false for incorrect/skipped
       return;
     }
 
     if (!currentQuestion) return;
+
+    // Validate input is hiragana only
+    const trimmedInput = userInput.trim();
+    if (trimmedInput.length > 0 && !isHiraganaOnly(trimmedInput)) {
+      setIsInvalidInput(true);
+      // Reset animation after it completes
+      setTimeout(() => setIsInvalidInput(false), 500);
+      return; // Don't process the input
+    }
 
     // Normalization logic: Convert everything to Hiragana for comparison
     // This handles Katakana words (like ドア) by converting user's hiragana input (どあ) matches
@@ -143,7 +174,7 @@ export default function App() {
       setFeedback('correct');
       // Auto advance after short delay (Latency Reduction: 1500ms -> 800ms)
       setTimeout(() => {
-        handleNext();
+        handleNext(true); // Pass true for correct answer
       }, 800);
     } else {
       setFeedback('incorrect');
@@ -151,15 +182,73 @@ export default function App() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = (wasCorrect = false) => {
+    if (wasCorrect) {
+      // Correct answer: increment count and remove question from pool
+      setCorrectCount(prev => prev + 1);
+      setShuffledData(prev => {
+        const newData = [...prev];
+        newData.splice(currentIndex, 1);
+        return newData;
+      });
+      // Adjust currentIndex if needed (stay at same index since we removed current)
+      setCurrentIndex(prev => prev >= shuffledData.length - 1 ? 0 : prev);
+    } else {
+      // Incorrect answer: move question to end of pool
+      setShuffledData(prev => {
+        const newData = [...prev];
+        const [currentQ] = newData.splice(currentIndex, 1);
+        newData.push(currentQ); // Re-insert at end
+        return newData;
+      });
+      // Stay at same index (next question slides into this position)
+    }
     setFeedback(null);
     setUserInput('');
     setShowAnswer(false);
-    setCurrentIndex((prev) => (prev + 1) % shuffledData.length);
     if(inputRef.current) inputRef.current.focus();
   };
 
+  // Global keyboard listener for Enter when feedback is showing
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if (e.key === 'Enter' && (feedback === 'incorrect' || feedback === 'correct')) {
+        e.preventDefault();
+        // Create inline logic to avoid stale closure
+        if (feedback === 'correct') {
+          setCorrectCount(prev => prev + 1);
+          setShuffledData(prev => {
+            const newData = [...prev];
+            newData.splice(currentIndex, 1);
+            return newData;
+          });
+          setCurrentIndex(prev => prev >= shuffledData.length - 1 ? 0 : prev);
+        } else {
+          setShuffledData(prev => {
+            const newData = [...prev];
+            const [currentQ] = newData.splice(currentIndex, 1);
+            newData.push(currentQ);
+            return newData;
+          });
+        }
+        setFeedback(null);
+        setUserInput('');
+        setShowAnswer(false);
+        if(inputRef.current) inputRef.current.focus();
+      }
+    };
+    
+    if (feedback) {
+      window.addEventListener('keydown', handleGlobalKeyDown);
+    }
+    
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, [feedback, currentIndex, shuffledData.length]);
+
   const handleGiveUp = () => {
+    // Show the answer first, then user presses Next to trigger re-insertion
     setFeedback('incorrect');
     setShowAnswer(true);
     // Focus remains on input implicitly or explicitly
@@ -170,6 +259,32 @@ export default function App() {
     setFeedback(null);
     setUserInput('');
     setShowAnswer(false);
+    if(inputRef.current) inputRef.current.focus();
+  };
+
+  const handleRestart = () => {
+    // Re-initialize the quiz with current settings
+    const filtered = VERB_DATA.filter(item => 
+      selectedLevels.includes(item.level) && 
+      selectedTypes.includes(item.type)
+    );
+    
+    if (filtered.length > 0) {
+      let finalPool;
+      if (isEasyMode) {
+        finalPool = [...filtered].sort((a, b) => a.id - b.id);
+      } else {
+        finalPool = [...filtered].sort(() => Math.random() - 0.5);
+      }
+      
+      setShuffledData(finalPool);
+      setCurrentIndex(0);
+      setFeedback(null);
+      setUserInput('');
+      setShowAnswer(false);
+      setCorrectCount(0);
+      setTotalQuestions(finalPool.length);
+    }
     if(inputRef.current) inputRef.current.focus();
   };
 
@@ -369,7 +484,7 @@ export default function App() {
       <div className="w-full absolute top-0 h-1 bg-gray-800">
         <div 
           className="h-full bg-red-500 transition-all duration-300"
-          style={{ width: `${shuffledData.length > 0 ? ((currentIndex + 1) / shuffledData.length) * 100 : 0}%` }}
+          style={{ width: `${totalQuestions > 0 ? (correctCount / totalQuestions) * 100 : 0}%` }}
         />
       </div>
       
@@ -383,9 +498,20 @@ export default function App() {
       {/* Main Content Area - positioned within top 50% */}
       <div className="flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1">
         
-        {shuffledData.length === 0 ? (
+        {shuffledData.length === 0 && totalQuestions === 0 ? (
           <div className="text-center text-gray-400 text-sm">
             Select at least one level and type to start.
+          </div>
+        ) : shuffledData.length === 0 && totalQuestions > 0 ? (
+          <div className="text-center text-green-400 text-xl font-bold space-y-4">
+            <p>🎉 おめでとうございます！</p>
+            <p className="text-base text-gray-300 font-normal">All {totalQuestions} questions answered correctly!</p>
+            <button
+              onClick={handleRestart}
+              className="bg-green-800 hover:bg-green-700 text-white font-bold py-2.5 px-8 rounded-full transition-colors text-sm mt-4"
+            >
+              Restart
+            </button>
           </div>
         ) : !currentQuestion ? (
           <div className="flex items-center justify-center text-white text-sm">Loading...</div>
@@ -423,15 +549,25 @@ export default function App() {
               </div>
 
               {/* 3. Type Indicator */}
-              <div className={`text-lg tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-blue-400'}`}>
-                <span className="font-bold">{currentQuestion.type === 'Transitive' ? '他動詞' : '自動詞'}</span> <span className="text-xs text-gray-300 font-normal">({currentQuestion.type})</span>
+              <div className={`text-xl tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-blue-400'}`}>
+                <span className="font-bold">{currentQuestion.type === 'Transitive' ? '他動詞' : '自動詞'}</span> <span className="text-xs text-gray-300 font-normal">{currentQuestion.type}</span>
               </div>
 
             </div>
 
             {/* Input Area - Compact */}
             <div className="w-full max-w-sm space-y-2 mt-4">
-              <form onSubmit={handleCheck} className="relative w-full">
+              <form 
+                onSubmit={handleCheck} 
+                className="relative w-full"
+                onKeyDown={(e) => {
+                  // Allow Enter to proceed to next even when input is disabled
+                  if (e.key === 'Enter' && (feedback === 'incorrect' || feedback === 'correct')) {
+                    e.preventDefault();
+                    handleNext(feedback === 'correct');
+                  }
+                }}
+              >
                 <input
                   ref={inputRef}
                   type="text"
@@ -440,10 +576,12 @@ export default function App() {
                   placeholder="Type sentence..."
                   className={`w-full bg-white text-black text-center text-base py-1.5 px-4 rounded-full focus:outline-none focus:ring-2 transition-all shadow-lg
                     ${feedback === 'correct' ? 'ring-green-500 bg-green-50' : ''}
-                    ${feedback === 'incorrect' ? 'ring-red-500 bg-red-50' : 'ring-transparent focus:ring-blue-400'}
+                    ${feedback === 'incorrect' ? 'ring-red-500 bg-red-50' : ''}
+                    ${isInvalidInput ? 'ring-red-500 ring-2 bg-red-50 animate-shake' : ''}
+                    ${!feedback && !isInvalidInput ? 'ring-transparent focus:ring-blue-400' : ''}
                   `}
                   autoFocus
-                  disabled={feedback === 'correct'}
+                  disabled={feedback === 'correct' || feedback === 'incorrect'}
                 />
                 
                 {/* Status Icons */}
@@ -459,19 +597,50 @@ export default function App() {
                   <div className="text-center animate-in fade-in slide-in-from-bottom-2 space-y-1.5">
                     <p className="text-red-400 text-xs font-bold mb-2">正しい回答</p>
                     <div className="flex items-center justify-center gap-2">
-                      <p className="text-lg font-bold">{currentQuestion.sentence}</p>
-                      <p className="text-xs text-gray-300 italic">{currentQuestion.english}</p>
+                      <p className="text-xl font-bold">{currentQuestion.sentence}</p>
+                      <p className="text-sm text-gray-300 italic">{currentQuestion.english}</p>
                     </div>
-                    <p className="text-sm text-gray-300 mt-1">({currentQuestion.kana})</p>
+                    <p className="text-base text-gray-300 mt-1">({currentQuestion.kana})</p>
                     {showPairs && (() => {
                       const pairId = currentQuestion.id % 2 === 1 ? currentQuestion.id + 1 : currentQuestion.id - 1;
                       const pairVerb = VERB_DATA.find(v => v.id === pairId);
-                      const pairColor = pairId % 2 === 1 ? 'text-blue-400' : 'text-yellow-400';
                       if (pairVerb) {
+                        // Determine which is intransitive (blue) and transitive (yellow)
+                        const isCurrentIntransitive = currentQuestion.type === 'Intransitive';
+                        const intransitiveVerb = isCurrentIntransitive ? currentQuestion : pairVerb;
+                        const transitiveVerb = isCurrentIntransitive ? pairVerb : currentQuestion;
+                        
+                        // Get suffix types for both verbs
+                        const intransitiveSuffix = getVerbSuffixType(intransitiveVerb.dictionaryRuby);
+                        const transitiveSuffix = getVerbSuffixType(transitiveVerb.dictionaryRuby);
+                        
                         return (
-                          <p className={`text-sm ${pairColor} mt-2`}>
-                            ペア: {pairVerb.dictionaryRuby.map(r => r.text).join('')}
-                          </p>
+                          <div className="flex flex-col items-center gap-2 mt-2">
+                            <div className="flex items-center justify-center gap-3">
+                              <span className="text-base text-blue-400">
+                                {intransitiveVerb.dictionaryRuby.map(r => r.text).join('')}
+                              </span>
+                              <span className="text-gray-500">/</span>
+                              <span className="text-base text-yellow-400">
+                                {transitiveVerb.dictionaryRuby.map(r => r.text).join('')}
+                              </span>
+                            </div>
+                            {/* Rule explanations */}
+                            <div className="flex flex-col items-center gap-1 text-sm mt-1">
+                              {intransitiveSuffix === 'suffix-aru' && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-blue-400">{VERB_SUFFIX_RULES.aru.explanationJa}</span>
+                                  <span className="text-xs text-gray-300 italic">{VERB_SUFFIX_RULES.aru.explanationEn}</span>
+                                </div>
+                              )}
+                              {transitiveSuffix === 'suffix-su' && (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-yellow-400">{VERB_SUFFIX_RULES.su.explanationJa}</span>
+                                  <span className="text-xs text-gray-300 italic">{VERB_SUFFIX_RULES.su.explanationEn}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         );
                       }
                       return null;
@@ -481,36 +650,23 @@ export default function App() {
                  {feedback === 'correct' && (
                   <div className="text-center text-green-400 font-bold text-sm animate-in zoom-in space-y-1">
                     <p>Great Job!</p>
-                    {showPairs && (() => {
-                      const pairId = currentQuestion.id % 2 === 1 ? currentQuestion.id + 1 : currentQuestion.id - 1;
-                      const pairVerb = VERB_DATA.find(v => v.id === pairId);
-                      const pairColor = pairId % 2 === 1 ? 'text-blue-400' : 'text-yellow-400';
-                      if (pairVerb) {
-                        return (
-                          <p className={`text-sm ${pairColor} mt-2 font-normal`}>
-                            ペア: {pairVerb.dictionaryRuby.map(r => r.text).join('')}
-                          </p>
-                        );
-                      }
-                      return null;
-                    })()}
                   </div>
                 )}
               </div>
               
               {/* Controls */}
-              <div className="flex gap-2 justify-center mt-8">
+              <div className="flex gap-3 justify-center mt-12 mb-4">
                 {(feedback === 'incorrect' || showAnswer) && (
                   <>
                     <button 
                       onClick={handleRetry}
-                      className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-1.5 px-6 rounded-full flex items-center gap-1.5 transition-colors text-sm"
+                      className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2.5 px-8 rounded-full flex items-center gap-1.5 transition-colors text-sm"
                     >
                       もう一度
                     </button>
                     <button 
-                      onClick={handleNext}
-                      className={`${feedback === 'correct' ? 'bg-green-700 hover:bg-green-600' : 'bg-red-700 hover:bg-red-600'} text-white font-bold py-1.5 px-6 rounded-full transition-colors text-sm`}
+                      onClick={() => handleNext(feedback === 'correct')}
+                      className={`${feedback === 'correct' ? 'bg-green-700 hover:bg-green-600' : 'bg-red-700 hover:bg-red-600'} text-white font-bold py-2.5 px-8 rounded-full transition-colors text-sm`}
                     >
                       次へ
                     </button>
@@ -523,7 +679,7 @@ export default function App() {
                  <div className="flex justify-center">
                    <button 
                    onClick={handleGiveUp}
-                   className="text-gray-300 hover:text-gray-100 text-xs font-medium py-0.5 px-3 transition-colors"
+                   className="text-gray-300 hover:text-gray-100 text-sm font-medium py-1 px-4 transition-colors"
                  >
                    わからない
                  </button>
@@ -536,9 +692,11 @@ export default function App() {
       </div>
       
       {/* Question Counter - at bottom of top half */}
-      <div className="text-center text-gray-400 text-[10px] pb-1">
-        第{currentIndex + 1}問 / 全{shuffledData.length}問
-      </div>
+      {shuffledData.length > 0 && (
+        <div className="text-center text-gray-400 text-base pb-1">
+          第{correctCount + 1}問 / 全{totalQuestions}問
+        </div>
+      )}
       
       </div>
       

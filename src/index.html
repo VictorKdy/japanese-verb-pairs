@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Japanese Verb Master</title>
+  <title>Doushinotsui</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* Prevent iOS bounce/zoom issues */
@@ -15,6 +15,15 @@
     #root {
       height: 100%;
       overflow: hidden;
+    }
+    /* Shake animation for invalid input */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+      20%, 40%, 60%, 80% { transform: translateX(4px); }
+    }
+    .animate-shake {
+      animation: shake 0.5s ease-in-out;
     }
   </style>
 </head>
