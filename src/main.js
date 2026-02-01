@@ -4,22 +4,48 @@ import { Settings, CheckCheck, CheckCircle, XCircle, RefreshCw } from './icons.j
 import { romajiToHiragana, toHiragana } from "./hiraganaUtils.js";
 import { VERB_DATA } from "./sentenceData.js";
 
-// Helper Component: RubyText
+// Helper Component: RubyText with tap-to-toggle furigana
 const RubyText = ({ data, showFurigana }) => {
+  // Track if the entire compound word's furigana is toggled
+  const [isToggled, setIsToggled] = useState(false);
+
+  // Reset toggle when data changes (new question)
+  useEffect(() => {
+    setIsToggled(false);
+  }, [data]);
+
+  // Check if this compound has any furigana
+  const hasFurigana = data.some(item => item.rt);
+
+  const handleTap = () => {
+    if (!hasFurigana) return; // Only toggle if there's furigana
+    setIsToggled(prev => !prev);
+  };
+
+  // Determine if furigana should show: global setting XOR toggle
+  const shouldShowFurigana = showFurigana ? !isToggled : isToggled;
+
   return (
-    <div className="flex items-end">
-      {data.map((item, idx) => (
-        <React.Fragment key={idx}>
-          {showFurigana && item.rt ? (
-            <ruby className="flex flex-col-reverse items-center">
+    <div 
+      className={`flex items-end ${hasFurigana ? 'cursor-pointer select-none hover:opacity-80 transition-opacity' : ''}`}
+      onClick={handleTap}
+    >
+      {data.map((item, idx) => {
+        return (
+          <React.Fragment key={idx}>
+            {item.rt ? (
+              <ruby className="flex flex-col-reverse items-center">
+                <span className="text-3xl font-medium tracking-wide">{item.text}</span>
+                {shouldShowFurigana && (
+                  <rt className="text-xs text-gray-300 font-normal mb-0.5">{item.rt}</rt>
+                )}
+              </ruby>
+            ) : (
               <span className="text-3xl font-medium tracking-wide">{item.text}</span>
-              <rt className="text-xs text-gray-300 font-normal mb-0.5">{item.rt}</rt>
-            </ruby>
-          ) : (
-            <span className="text-3xl font-medium tracking-wide">{item.text}</span>
-          )}
-        </React.Fragment>
-      ))}
+            )}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };
@@ -293,7 +319,7 @@ export default function App() {
                </label>
 
                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showPairs ? 'bg-purple-500 border-purple-500' : 'border-gray-500'}`}>
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showPairs ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {showPairs && <CheckCheck size={12} className="text-white" />}
                   </div>
                   <input 
@@ -511,7 +537,7 @@ export default function App() {
       
       {/* Question Counter - at bottom of top half */}
       <div className="text-center text-gray-400 text-[10px] pb-1">
-        Question {currentIndex + 1} of {shuffledData.length}
+        第{currentIndex + 1}問 / 全{shuffledData.length}問
       </div>
       
       </div>
