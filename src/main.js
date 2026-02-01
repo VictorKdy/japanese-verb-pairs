@@ -202,7 +202,7 @@ export default function App() {
                       checked={selectedLevels.includes(level)}
                       onChange={() => toggleLevel(level)}
                     />
-                    <span className={`text-base ${selectedLevels.includes(level) ? 'text-white font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-base ${selectedLevels.includes(level) ? 'text-white font-bold' : 'text-gray-400'}`}>
                       レベル {level}
                     </span>
                  </label>
@@ -225,10 +225,10 @@ export default function App() {
                     onChange={() => toggleType('Intransitive')}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${selectedTypes.includes('Intransitive') ? 'text-blue-400 font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-base ${selectedTypes.includes('Intransitive') ? 'text-blue-400 font-bold' : 'text-gray-400'}`}>
                       自動詞
                     </span>
-                    <span className="text-[10px] text-gray-500">Intransitive</span>
+                    <span className={`text-[10px] ${selectedTypes.includes('Intransitive') ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Intransitive</span>
                   </div>
                </label>
 
@@ -243,10 +243,10 @@ export default function App() {
                     onChange={() => toggleType('Transitive')}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${selectedTypes.includes('Transitive') ? 'text-yellow-400 font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-base ${selectedTypes.includes('Transitive') ? 'text-yellow-400 font-bold' : 'text-gray-400'}`}>
                       他動詞
                     </span>
-                    <span className="text-[10px] text-gray-500">Transitive</span>
+                    <span className={`text-[10px] ${selectedTypes.includes('Transitive') ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Transitive</span>
                   </div>
                </label>
              </div>
@@ -267,10 +267,10 @@ export default function App() {
                     onChange={() => setShowFurigana(!showFurigana)}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${showFurigana ? 'text-white font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-base ${showFurigana ? 'text-white font-bold' : 'text-gray-400'}`}>
                       振仮名
                     </span>
-                    <span className="text-[10px] text-gray-500">Furigana</span>
+                    <span className={`text-[10px] ${showFurigana ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Furigana</span>
                   </div>
                </label>
 
@@ -285,10 +285,10 @@ export default function App() {
                     onChange={() => setShowDictionary(!showDictionary)}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${showDictionary ? 'text-white font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-base ${showDictionary ? 'text-white font-bold' : 'text-gray-400'}`}>
                       辞書形
                     </span>
-                    <span className="text-[10px] text-gray-500">Dictionary Form</span>
+                    <span className={`text-[10px] ${showDictionary ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Dictionary Form</span>
                   </div>
                </label>
 
@@ -303,10 +303,10 @@ export default function App() {
                     onChange={() => setShowPairs(!showPairs)}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${showPairs ? 'text-white font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-base ${showPairs ? 'text-white font-bold' : 'text-gray-400'}`}>
                       ペア表示
                     </span>
-                    <span className="text-[10px] text-gray-500">Show Pairs</span>
+                    <span className={`text-[10px] ${showPairs ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Show Pairs</span>
                   </div>
                </label>
              </div>
@@ -327,10 +327,10 @@ export default function App() {
                     onChange={() => setIsEasyMode(!isEasyMode)}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${isEasyMode ? 'text-white font-medium' : 'text-gray-500'}`}>
+                    <span className={`text-base ${isEasyMode ? 'text-white font-bold' : 'text-gray-400'}`}>
                       イージーモード
                     </span>
-                    <span className="text-[10px] text-gray-500">Easy Mode</span>
+                    <span className={`text-[10px] ${isEasyMode ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Easy Mode</span>
                   </div>
                </label>
              </div>
@@ -397,8 +397,8 @@ export default function App() {
               </div>
 
               {/* 3. Type Indicator */}
-              <div className={`text-lg tracking-wide font-light ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-blue-400'}`}>
-                {currentQuestion.type === 'Transitive' ? '他動詞' : '自動詞'} <span className="text-xs text-gray-500">({currentQuestion.type})</span>
+              <div className={`text-lg tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-blue-400'}`}>
+                <span className="font-bold">{currentQuestion.type === 'Transitive' ? '他動詞' : '自動詞'}</span> <span className="text-xs text-gray-300 font-normal">({currentQuestion.type})</span>
               </div>
 
             </div>
@@ -434,9 +434,9 @@ export default function App() {
                     <p className="text-red-400 text-xs font-bold mb-2">正しい回答</p>
                     <div className="flex items-center justify-center gap-2">
                       <p className="text-lg font-bold">{currentQuestion.sentence}</p>
-                      <p className="text-xs text-gray-500 italic">{currentQuestion.english}</p>
+                      <p className="text-xs text-gray-300 italic">{currentQuestion.english}</p>
                     </div>
-                    <p className="text-sm text-gray-400 mt-1">({currentQuestion.kana})</p>
+                    <p className="text-sm text-gray-300 mt-1">({currentQuestion.kana})</p>
                     {showPairs && (() => {
                       const pairId = currentQuestion.id % 2 === 1 ? currentQuestion.id + 1 : currentQuestion.id - 1;
                       const pairVerb = VERB_DATA.find(v => v.id === pairId);
@@ -497,7 +497,7 @@ export default function App() {
                  <div className="flex justify-center">
                    <button 
                    onClick={handleGiveUp}
-                   className="text-gray-500 hover:text-gray-300 text-xs font-medium py-0.5 px-3 transition-colors"
+                   className="text-gray-300 hover:text-gray-100 text-xs font-medium py-0.5 px-3 transition-colors"
                  >
                    わからない
                  </button>
@@ -510,7 +510,7 @@ export default function App() {
       </div>
       
       {/* Question Counter - at bottom of top half */}
-      <div className="text-center text-gray-600 text-[10px] pb-1">
+      <div className="text-center text-gray-400 text-[10px] pb-1">
         Question {currentIndex + 1} of {shuffledData.length}
       </div>
       
