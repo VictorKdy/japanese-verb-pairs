@@ -4,6 +4,69 @@ import { Settings, CheckCheck, CheckCircle, XCircle, RefreshCw } from './icons.j
 import { romajiToHiragana, toHiragana } from "./hiraganaUtils.js";
 import { VERB_DATA, VERB_SUFFIX_RULES, getVerbSuffixType } from "./sentenceData.js";
 
+// Helper function to build ruby data for a sentence
+// Returns array of { text, rt } objects where rt is only set for kanji/katakana
+const buildSentenceRuby = (question, isPolite) => {
+  const result = [];
+  
+  // Add noun parts (already has proper rt for kanji/katakana)
+  result.push(...question.nounRuby);
+  
+  // Determine particle from sentence (character after noun)
+  const sentence = isPolite ? question.politeSentence : question.plainSentence;
+  const nounText = question.nounRuby.map(r => r.text).join('');
+  const nounIndex = sentence.indexOf(nounText);
+  const particle = sentence.charAt(nounIndex + nounText.length);
+  result.push({ text: particle, rt: "" });
+  
+  if (isPolite) {
+    // For polite form, get verb part from sentence
+    const verbStart = nounIndex + nounText.length + 1; // +1 for particle
+    const verbPart = sentence.substring(verbStart);
+    
+    // The verbRuby has the kanji stem, rest is hiragana suffix
+    const verbKanji = question.verbRuby.map(r => r.text).join('');
+    
+    if (verbPart.startsWith(verbKanji)) {
+      // Add verb kanji with furigana
+      result.push(...question.verbRuby);
+      // Add remaining hiragana suffix (きます, けます, etc.)
+      const suffix = verbPart.substring(verbKanji.length);
+      if (suffix) {
+        result.push({ text: suffix, rt: "" });
+      }
+    } else {
+      // Fallback: add the whole verb part without ruby
+      result.push({ text: verbPart, rt: "" });
+    }
+  } else {
+    // For plain form, use dictionaryRuby directly
+    result.push(...question.dictionaryRuby);
+  }
+  
+  return result;
+};
+
+// Helper Component: AnswerRubyText - displays sentence with furigana above kanji only
+const AnswerRubyText = ({ data, colorClass, textSize = "text-xl", showFurigana = true }) => {
+  return (
+    <div className={`flex items-end justify-center ${colorClass}`}>
+      {data.map((item, idx) => (
+        <React.Fragment key={idx}>
+          {item.rt && showFurigana ? (
+            <ruby className="flex flex-col-reverse items-center">
+              <span className={`${textSize} font-bold`}>{item.text}</span>
+              <rt className="text-[10px] text-gray-400 font-normal">{item.rt}</rt>
+            </ruby>
+          ) : (
+            <span className={`${textSize} font-bold`}>{item.text}</span>
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
 // Helper Component: RubyText with tap-to-toggle furigana
 const RubyText = ({ data, showFurigana }) => {
   // Track if the entire compound word's furigana is toggled
@@ -64,6 +127,7 @@ export default function App() {
   // Levels and Types
   const [selectedLevels, setSelectedLevels] = useState([1, 2]); 
   const [selectedTypes, setSelectedTypes] = useState(['Intransitive', 'Transitive']); 
+  const [selectedForms, setSelectedForms] = useState(['Polite', 'Plain']); // Polite (丁寧形) and Plain (普通形) forms
   const [isEasyMode, setIsEasyMode] = useState(false); // NEW: Easy Mode state
 
   const [shuffledData, setShuffledData] = useState([]);
@@ -136,10 +200,31 @@ export default function App() {
   };
 
   const handleInputChange = (e) => {
-    // Convert to Hiragana on the fly
-    const rawValue = e.target.value;
+    const input = e.target;
+    const rawValue = input.value;
+    const selectionStart = input.selectionStart;
+    const selectionEnd = input.selectionEnd;
+    
+    // Get the portion before cursor to calculate length difference
+    const beforeCursor = rawValue.slice(0, selectionStart);
+    const convertedBeforeCursor = romajiToHiragana(beforeCursor);
+    
+    // Convert full value to Hiragana
     const hiraganaValue = romajiToHiragana(rawValue);
+    
+    // Calculate new cursor position based on converted text before cursor
+    const newCursorPos = convertedBeforeCursor.length;
+    
     setUserInput(hiraganaValue);
+    
+    // Restore cursor position after React re-renders
+    requestAnimationFrame(() => {
+      if (inputRef.current) {
+        inputRef.current.selectionStart = newCursorPos;
+        inputRef.current.selectionEnd = newCursorPos + (selectionEnd - selectionStart);
+      }
+    });
+    
     // Clear invalid state when user types
     if (isInvalidInput) setIsInvalidInput(false);
   };
@@ -155,9 +240,9 @@ export default function App() {
 
     if (!currentQuestion) return;
 
-    // Validate input is hiragana only
+    // Validate input is hiragana only and not empty
     const trimmedInput = userInput.trim();
-    if (trimmedInput.length > 0 && !isHiraganaOnly(trimmedInput)) {
+    if (trimmedInput.length === 0 || !isHiraganaOnly(trimmedInput)) {
       setIsInvalidInput(true);
       // Reset animation after it completes
       setTimeout(() => setIsInvalidInput(false), 500);
@@ -167,15 +252,21 @@ export default function App() {
     // Normalization logic: Convert everything to Hiragana for comparison
     // This handles Katakana words (like ドア) by converting user's hiragana input (どあ) matches
     const inputHira = toHiragana(userInput.trim().replace(/\s+/g, ''));
-    const targetKanjiHira = toHiragana(currentQuestion.sentence);
-    const targetKanaHira = toHiragana(currentQuestion.kana.replace(/\s+/g, ''));
+    
+    // Build array of valid answers based on selected forms
+    const validAnswers = [];
+    if (selectedForms.includes('Polite')) {
+      validAnswers.push(toHiragana(currentQuestion.politeSentence));
+      validAnswers.push(toHiragana(currentQuestion.politeKana.replace(/\s+/g, '')));
+    }
+    if (selectedForms.includes('Plain')) {
+      validAnswers.push(toHiragana(currentQuestion.plainSentence));
+      validAnswers.push(toHiragana(currentQuestion.plainKana.replace(/\s+/g, '')));
+    }
 
-    if (inputHira === targetKanjiHira || inputHira === targetKanaHira) {
-      setFeedback('correct');
-      // Auto advance after short delay (Latency Reduction: 1500ms -> 800ms)
-      setTimeout(() => {
-        handleNext(true); // Pass true for correct answer
-      }, 800);
+    if (validAnswers.includes(inputHira)) {
+      // Correct answer: advance to next immediately without showing feedback
+      handleNext(true);
     } else {
       setFeedback('incorrect');
       // Do NOT lose focus here, so user can press Enter to skip
@@ -310,6 +401,17 @@ export default function App() {
     });
   };
 
+  const toggleForm = (form) => {
+    setSelectedForms(prev => {
+      if (prev.includes(form)) {
+        if (prev.length === 1) return prev; // At least one must remain
+        return prev.filter(f => f !== form);
+      } else {
+        return [...prev, form];
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#1a1a1a] text-white flex flex-col font-sans relative">
       {/* Top 60% container - all interactive UI lives here */}
@@ -328,12 +430,12 @@ export default function App() {
           <div className="absolute top-full left-0 mt-1 bg-[#2a2a2a] p-2 rounded-lg border border-[#333] shadow-xl w-48 animate-in fade-in slide-in-from-top-2 z-50 max-h-[100vh] overflow-y-auto">
              
              {/* LEVEL SECTION */}
-             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 border-b border-gray-600 pb-1">
+             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Select Levels
              </div>
-             <div className="flex flex-col gap-0 mb-3">
+             <div className="flex flex-col gap-0 mb-2">
                {[1, 2, 3, 4, 5, 6].map(level => (
-                 <label key={level} className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
+                 <label key={level} className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                     <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedLevels.includes(level) ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                       {selectedLevels.includes(level) && <CheckCheck size={12} className="text-white" />}
                     </div>
@@ -351,12 +453,12 @@ export default function App() {
              </div>
 
              {/* TRANSITIVITY SECTION */}
-             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 border-b border-gray-600 pb-1">
+             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Verb Type
              </div>
-             <div className="flex flex-col gap-0 mb-3">
-               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedTypes.includes('Intransitive') ? 'bg-blue-500 border-blue-500' : 'border-gray-500'}`}>
+             <div className="flex flex-col gap-0 mb-2">
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedTypes.includes('Intransitive') ? 'bg-purple-500 border-purple-500' : 'border-gray-500'}`}>
                     {selectedTypes.includes('Intransitive') && <CheckCheck size={12} className="text-white" />}
                   </div>
                   <input 
@@ -366,14 +468,14 @@ export default function App() {
                     onChange={() => toggleType('Intransitive')}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${selectedTypes.includes('Intransitive') ? 'text-blue-400 font-bold' : 'text-gray-400'}`}>
+                    <span className={`text-base ${selectedTypes.includes('Intransitive') ? 'text-purple-400 font-bold' : 'text-gray-400'}`}>
                       自動詞
                     </span>
                     <span className={`text-[10px] ${selectedTypes.includes('Intransitive') ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Intransitive</span>
                   </div>
                </label>
 
-               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedTypes.includes('Transitive') ? 'bg-yellow-500 border-yellow-500' : 'border-gray-500'}`}>
                     {selectedTypes.includes('Transitive') && <CheckCheck size={12} className="text-white" />}
                   </div>
@@ -392,12 +494,54 @@ export default function App() {
                </label>
              </div>
 
+             {/* VERB FORM SECTION */}
+             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
+               Verb Form
+             </div>
+             <div className="flex flex-col gap-0 mb-2">
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedForms.includes('Polite') ? 'bg-[#5F9EA0] border-[#5F9EA0]' : 'border-gray-500'}`}>
+                    {selectedForms.includes('Polite') && <CheckCheck size={12} className="text-white" />}
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    className="hidden"
+                    checked={selectedForms.includes('Polite')}
+                    onChange={() => toggleForm('Polite')}
+                  />
+                  <div className="flex flex-col">
+                    <span className={`text-base ${selectedForms.includes('Polite') ? 'text-[#5F9EA0] font-bold' : 'text-gray-400'}`}>
+                      丁寧形
+                    </span>
+                    <span className={`text-[10px] ${selectedForms.includes('Polite') ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Polite Form</span>
+                  </div>
+               </label>
+
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedForms.includes('Plain') ? 'bg-[#D1AD8C] border-[#D1AD8C]' : 'border-gray-500'}`}>
+                    {selectedForms.includes('Plain') && <CheckCheck size={12} className="text-white" />}
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    className="hidden"
+                    checked={selectedForms.includes('Plain')}
+                    onChange={() => toggleForm('Plain')}
+                  />
+                  <div className="flex flex-col">
+                    <span className={`text-base ${selectedForms.includes('Plain') ? 'text-[#D1AD8C] font-bold' : 'text-gray-400'}`}>
+                      普通形
+                    </span>
+                    <span className={`text-[10px] ${selectedForms.includes('Plain') ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Plain Form</span>
+                  </div>
+               </label>
+             </div>
+
              {/* DISPLAY OPTIONS SECTION (Moved from Top Right) */}
-             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 border-b border-gray-600 pb-1">
+             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Display Options
              </div>
-             <div className="flex flex-col gap-0 mb-3">
-               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
+             <div className="flex flex-col gap-0 mb-2">
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showFurigana ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {showFurigana && <CheckCheck size={12} className="text-white" />}
                   </div>
@@ -415,7 +559,7 @@ export default function App() {
                   </div>
                </label>
 
-               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showDictionary ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {showDictionary && <CheckCheck size={12} className="text-white" />}
                   </div>
@@ -433,7 +577,7 @@ export default function App() {
                   </div>
                </label>
 
-               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showPairs ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {showPairs && <CheckCheck size={12} className="text-white" />}
                   </div>
@@ -453,11 +597,11 @@ export default function App() {
              </div>
 
              {/* EASY MODE SECTION */}
-             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 border-b border-gray-600 pb-1">
+             <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Quiz Mode
              </div>
              <div className="flex flex-col gap-0">
-               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-1 px-2 rounded transition-colors">
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${isEasyMode ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {isEasyMode && <CheckCheck size={12} className="text-white" />}
                   </div>
@@ -488,12 +632,26 @@ export default function App() {
         />
       </div>
       
-      {/* Icon - Top Right Corner */}
-      {currentQuestion && currentQuestion.icon && (
-        <div className="absolute top-4 right-3 z-40 px-3 py-2 bg-[#2a2a2a] rounded-lg shadow-inner border border-[#333] flex items-center justify-center">
-          <currentQuestion.icon size={18} className={`${currentQuestion.color} opacity-90`} strokeWidth={1.5} />
-        </div>
-      )}
+      {/* Top Right Controls */}
+      <div className="absolute top-4 right-3 z-40 flex items-center gap-2">
+        {/* Reset Quiz Button */}
+        {currentQuestion && (
+          <button
+            onClick={handleRestart}
+            className="px-3 py-2 bg-[#2a2a2a] rounded-lg shadow-inner border border-[#333] flex items-center justify-center hover:bg-[#333] transition-colors"
+            title="リセット (Reset Quiz)"
+          >
+            <RefreshCw size={18} className="text-gray-300 opacity-90" strokeWidth={1.5} />
+          </button>
+        )}
+        
+        {/* Icon */}
+        {currentQuestion && currentQuestion.icon && (
+          <div className="px-3 py-2 bg-[#2a2a2a] rounded-lg shadow-inner border border-[#333] flex items-center justify-center">
+            <currentQuestion.icon size={18} className={`${currentQuestion.color} opacity-90`} strokeWidth={1.5} />
+          </div>
+        )}
+      </div>
       
       {/* Main Content Area - positioned within top 50% */}
       <div className="flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1">
@@ -529,7 +687,7 @@ export default function App() {
                   </div>
                   <div className="flex flex-col items-center w-full">
                     <div className="h-[2px] w-10 bg-red-600 mb-0.5"></div>
-                    <span className="text-[10px] text-gray-300 uppercase tracking-wider font-semibold">noun</span>
+                    <span className="text-[10px] text-gray-300 tracking-wider font-semibold">名詞</span>
                   </div>
                 </div>
 
@@ -543,13 +701,13 @@ export default function App() {
                   </div>
                   <div className="flex flex-col items-center w-full">
                     <div className="h-[2px] w-10 bg-red-600 mb-0.5"></div>
-                    <span className="text-[10px] text-gray-300 uppercase tracking-wider font-semibold">Verb</span>
+                    <span className="text-[10px] text-gray-300 tracking-wider font-semibold">動詞</span>
                   </div>
                 </div>
               </div>
 
               {/* 3. Type Indicator */}
-              <div className={`text-xl tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-blue-400'}`}>
+              <div className={`text-xl tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-purple-400'}`}>
                 <span className="font-bold">{currentQuestion.type === 'Transitive' ? '他動詞' : '自動詞'}</span> <span className="text-xs text-gray-300 font-normal">{currentQuestion.type}</span>
               </div>
 
@@ -573,8 +731,8 @@ export default function App() {
                   type="text"
                   value={userInput}
                   onChange={handleInputChange}
-                  placeholder="Type sentence..."
-                  className={`w-full bg-white text-black text-center text-base py-1.5 px-4 rounded-full focus:outline-none focus:ring-2 transition-all shadow-lg
+                  placeholder="文を入力..."
+                  className={`w-full bg-white text-black text-center text-lg py-2.5 px-4 rounded-full focus:outline-none focus:ring-2 transition-all shadow-lg
                     ${feedback === 'correct' ? 'ring-green-500 bg-green-50' : ''}
                     ${feedback === 'incorrect' ? 'ring-red-500 bg-red-50' : ''}
                     ${isInvalidInput ? 'ring-red-500 ring-2 bg-red-50 animate-shake' : ''}
@@ -595,12 +753,32 @@ export default function App() {
               <div className="min-h-[90px] flex items-start justify-center pt-3">
                 {feedback === 'incorrect' && (
                   <div className="text-center animate-in fade-in slide-in-from-bottom-2 space-y-1.5">
-                    <p className="text-red-400 text-xs font-bold mb-2">正しい回答</p>
-                    <div className="flex items-center justify-center gap-2">
-                      <p className="text-xl font-bold">{currentQuestion.sentence}</p>
-                      <p className="text-sm text-gray-300 italic">{currentQuestion.english}</p>
-                    </div>
-                    <p className="text-base text-gray-300 mt-1">({currentQuestion.kana})</p>
+                    <p className="text-green-700 text-xs font-bold mb-2">正しい回答</p>
+                    
+                    {/* Show Polite Form if selected */}
+                    {selectedForms.includes('Polite') && (
+                      <div className="mb-2">
+                        <AnswerRubyText 
+                          data={buildSentenceRuby(currentQuestion, true)} 
+                          colorClass="text-[#5F9EA0]" 
+                          showFurigana={showFurigana}
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Show Plain Form if selected */}
+                    {selectedForms.includes('Plain') && (
+                      <div className="mb-2">
+                        <AnswerRubyText 
+                          data={buildSentenceRuby(currentQuestion, false)} 
+                          colorClass="text-[#D1AD8C]" 
+                          showFurigana={showFurigana}
+                        />
+                      </div>
+                    )}
+                    
+                    <p className="text-sm text-gray-300 italic">{currentQuestion.english}</p>
+                    
                     {showPairs && (() => {
                       const pairId = currentQuestion.id % 2 === 1 ? currentQuestion.id + 1 : currentQuestion.id - 1;
                       const pairVerb = VERB_DATA.find(v => v.id === pairId);
@@ -617,26 +795,32 @@ export default function App() {
                         return (
                           <div className="flex flex-col items-center gap-2 mt-2">
                             <div className="flex items-center justify-center gap-3">
-                              <span className="text-base text-blue-400">
-                                {intransitiveVerb.dictionaryRuby.map(r => r.text).join('')}
-                              </span>
+                              <AnswerRubyText 
+                                data={intransitiveVerb.dictionaryRuby} 
+                                colorClass="text-purple-400" 
+                                textSize="text-lg"
+                                showFurigana={showFurigana}
+                              />
                               <span className="text-gray-500">/</span>
-                              <span className="text-base text-yellow-400">
-                                {transitiveVerb.dictionaryRuby.map(r => r.text).join('')}
-                              </span>
+                              <AnswerRubyText 
+                                data={transitiveVerb.dictionaryRuby} 
+                                colorClass="text-yellow-400" 
+                                textSize="text-lg"
+                                showFurigana={showFurigana}
+                              />
                             </div>
                             {/* Rule explanations */}
-                            <div className="flex flex-col items-center gap-1 text-sm mt-1">
+                            <div className="flex flex-col items-center gap-1 text-base mt-1">
                               {intransitiveSuffix === 'suffix-aru' && (
                                 <div className="flex items-center gap-2">
-                                  <span className="text-blue-400">{VERB_SUFFIX_RULES.aru.explanationJa}</span>
-                                  <span className="text-xs text-gray-300 italic">{VERB_SUFFIX_RULES.aru.explanationEn}</span>
+                                  <span className="text-purple-400">{VERB_SUFFIX_RULES.aru.explanationJa}</span>
+                                  <span className="text-sm text-gray-300 italic">{VERB_SUFFIX_RULES.aru.explanationEn}</span>
                                 </div>
                               )}
                               {transitiveSuffix === 'suffix-su' && (
                                 <div className="flex items-center gap-2">
                                   <span className="text-yellow-400">{VERB_SUFFIX_RULES.su.explanationJa}</span>
-                                  <span className="text-xs text-gray-300 italic">{VERB_SUFFIX_RULES.su.explanationEn}</span>
+                                  <span className="text-sm text-gray-300 italic">{VERB_SUFFIX_RULES.su.explanationEn}</span>
                                 </div>
                               )}
                             </div>
