@@ -25002,6 +25002,8 @@ var _iconsJs = require("./icons.js");
 var _hiraganaUtilsJs = require("./hiraganaUtils.js");
 var _sentenceDataJs = require("./sentenceData.js");
 var _s = $RefreshSig$(), _s1 = $RefreshSig$();
+// Helper function to check if a string contains Katakana
+const containsKatakana = (str)=>/[\u30a1-\u30f6]/.test(str);
 // Helper function to build ruby data for a sentence
 // Returns array of { text, rt } objects where rt is only set for kanji/katakana
 const buildSentenceRuby = (question, isPolite)=>{
@@ -25041,12 +25043,15 @@ const buildSentenceRuby = (question, isPolite)=>{
     result.push(...question.dictionaryRuby);
     return result;
 };
-// Helper Component: AnswerRubyText - displays sentence with furigana above kanji only
+// Helper Component: AnswerRubyText - displays sentence with furigana above kanji and katakana
 const AnswerRubyText = ({ data, colorClass, textSize = "text-xl", showFurigana = true })=>{
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: `flex items-end justify-center ${colorClass}`,
-        children: data.map((item, idx)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactDefault.default).Fragment, {
-                children: item.rt && showFurigana ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ruby", {
+        children: data.map((item, idx)=>{
+            // Determine furigana: use rt if available, or generate from Katakana
+            const furigana = item.rt || (containsKatakana(item.text) ? (0, _hiraganaUtilsJs.toHiragana)(item.text) : "");
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactDefault.default).Fragment, {
+                children: furigana && showFurigana ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ruby", {
                     className: "flex flex-col-reverse items-center",
                     children: [
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25054,38 +25059,39 @@ const AnswerRubyText = ({ data, colorClass, textSize = "text-xl", showFurigana =
                             children: item.text
                         }, void 0, false, {
                             fileName: "src/main.js",
-                            lineNumber: 58,
-                            columnNumber: 15
+                            lineNumber: 65,
+                            columnNumber: 17
                         }, undefined),
                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("rt", {
                             className: "text-[10px] text-gray-400 font-normal",
-                            children: item.rt
+                            children: furigana
                         }, void 0, false, {
                             fileName: "src/main.js",
-                            lineNumber: 59,
-                            columnNumber: 15
+                            lineNumber: 66,
+                            columnNumber: 17
                         }, undefined)
                     ]
                 }, void 0, true, {
                     fileName: "src/main.js",
-                    lineNumber: 57,
-                    columnNumber: 13
+                    lineNumber: 64,
+                    columnNumber: 15
                 }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                     className: `${textSize} font-bold`,
                     children: item.text
                 }, void 0, false, {
                     fileName: "src/main.js",
-                    lineNumber: 62,
-                    columnNumber: 13
+                    lineNumber: 69,
+                    columnNumber: 15
                 }, undefined)
             }, idx, false, {
                 fileName: "src/main.js",
-                lineNumber: 55,
-                columnNumber: 9
-            }, undefined))
+                lineNumber: 62,
+                columnNumber: 11
+            }, undefined);
+        })
     }, void 0, false, {
         fileName: "src/main.js",
-        lineNumber: 53,
+        lineNumber: 56,
         columnNumber: 5
     }, undefined);
 };
@@ -25109,8 +25115,14 @@ const RubyText = ({ data, showFurigana })=>{
     };
     // Determine if furigana should show: global setting XOR toggle
     const shouldShowFurigana = showFurigana ? !isToggled : isToggled;
+    // Prevent mousedown/touchstart from stealing focus from input (keeps virtual keyboard open)
+    const preventBlur = (e)=>{
+        e.preventDefault();
+    };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: `flex items-end ${hasFurigana ? 'cursor-pointer select-none hover:opacity-80 transition-opacity' : ''}`,
+        onMouseDown: hasFurigana ? preventBlur : undefined,
+        onTouchStart: hasFurigana ? preventBlur : undefined,
         onClick: handleTap,
         children: data.map((item, idx)=>{
             return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactDefault.default).Fragment, {
@@ -25122,7 +25134,7 @@ const RubyText = ({ data, showFurigana })=>{
                             children: item.text
                         }, void 0, false, {
                             fileName: "src/main.js",
-                            lineNumber: 101,
+                            lineNumber: 116,
                             columnNumber: 17
                         }, undefined),
                         shouldShowFurigana && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("rt", {
@@ -25130,31 +25142,31 @@ const RubyText = ({ data, showFurigana })=>{
                             children: item.rt
                         }, void 0, false, {
                             fileName: "src/main.js",
-                            lineNumber: 103,
+                            lineNumber: 118,
                             columnNumber: 19
                         }, undefined)
                     ]
                 }, void 0, true, {
                     fileName: "src/main.js",
-                    lineNumber: 100,
+                    lineNumber: 115,
                     columnNumber: 15
                 }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                     className: "text-3xl font-medium tracking-wide",
                     children: item.text
                 }, void 0, false, {
                     fileName: "src/main.js",
-                    lineNumber: 107,
+                    lineNumber: 122,
                     columnNumber: 15
                 }, undefined)
             }, idx, false, {
                 fileName: "src/main.js",
-                lineNumber: 98,
+                lineNumber: 113,
                 columnNumber: 11
             }, undefined);
         })
     }, void 0, false, {
         fileName: "src/main.js",
-        lineNumber: 92,
+        lineNumber: 105,
         columnNumber: 5
     }, undefined);
 };
@@ -25169,6 +25181,7 @@ function App() {
     const [showFurigana, setShowFurigana] = (0, _react.useState)(false);
     const [showDictionary, setShowDictionary] = (0, _react.useState)(false);
     const [showPairs, setShowPairs] = (0, _react.useState)(false);
+    const [showEnglish, setShowEnglish] = (0, _react.useState)(false); // Toggle for English labels display
     const [correctCount, setCorrectCount] = (0, _react.useState)(0); // Track correctly answered questions
     const [totalQuestions, setTotalQuestions] = (0, _react.useState)(0); // Original total for display
     // Levels and Types
@@ -25184,7 +25197,7 @@ function App() {
         'Polite',
         'Plain'
     ]); // Polite (丁寧形) and Plain (普通形) forms
-    const [isEasyMode, setIsEasyMode] = (0, _react.useState)(false); // NEW: Easy Mode state
+    const [isFixedOrder, setIsFixedOrder] = (0, _react.useState)(false); // Fixed Sequence mode: questions in ID order instead of shuffled
     const [shuffledData, setShuffledData] = (0, _react.useState)([]);
     const [isSettingsOpen, setIsSettingsOpen] = (0, _react.useState)(false);
     const [isInvalidInput, setIsInvalidInput] = (0, _react.useState)(false); // Track invalid (non-hiragana) input
@@ -25205,8 +25218,8 @@ function App() {
         const filtered = (0, _sentenceDataJs.VERB_DATA).filter((item)=>selectedLevels.includes(item.level) && selectedTypes.includes(item.type));
         if (filtered.length > 0) {
             let finalPool;
-            // 2. Sort or Shuffle based on Easy Mode
-            if (isEasyMode) finalPool = [
+            // 2. Sort or Shuffle based on Fixed Sequence mode
+            if (isFixedOrder) finalPool = [
                 ...filtered
             ].sort((a, b)=>a.id - b.id);
             else finalPool = [
@@ -25226,7 +25239,7 @@ function App() {
     }, [
         selectedLevels,
         selectedTypes,
-        isEasyMode
+        isFixedOrder
     ]); // Dependency added
     // Force focus on mount
     (0, _react.useEffect)(()=>{
@@ -25388,7 +25401,8 @@ function App() {
         const filtered = (0, _sentenceDataJs.VERB_DATA).filter((item)=>selectedLevels.includes(item.level) && selectedTypes.includes(item.type));
         if (filtered.length > 0) {
             let finalPool;
-            if (isEasyMode) finalPool = [
+            // Sort by ID for Fixed Sequence, otherwise shuffle randomly
+            if (isFixedOrder) finalPool = [
                 ...filtered
             ].sort((a, b)=>a.id - b.id);
             else finalPool = [
@@ -25456,7 +25470,7 @@ function App() {
                                         className: "text-gray-300"
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 425,
+                                        lineNumber: 442,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25464,13 +25478,13 @@ function App() {
                                         children: "\u8A2D\u5B9A"
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 426,
+                                        lineNumber: 443,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/main.js",
-                                lineNumber: 421,
+                                lineNumber: 438,
                                 columnNumber: 11
                             }, this),
                             isSettingsOpen && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25481,7 +25495,7 @@ function App() {
                                         children: "Select Levels"
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 433,
+                                        lineNumber: 450,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25503,12 +25517,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 440,
+                                                            lineNumber: 457,
                                                             columnNumber: 58
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 439,
+                                                        lineNumber: 456,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25518,7 +25532,7 @@ function App() {
                                                         onChange: ()=>toggleLevel(level)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 442,
+                                                        lineNumber: 459,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25529,18 +25543,18 @@ function App() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 448,
+                                                        lineNumber: 465,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, level, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 438,
+                                                lineNumber: 455,
                                                 columnNumber: 18
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 436,
+                                        lineNumber: 453,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25548,7 +25562,7 @@ function App() {
                                         children: "Verb Type"
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 456,
+                                        lineNumber: 473,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25564,12 +25578,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 462,
+                                                            lineNumber: 479,
                                                             columnNumber: 64
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 461,
+                                                        lineNumber: 478,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25579,7 +25593,7 @@ function App() {
                                                         onChange: ()=>toggleType('Intransitive')
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 464,
+                                                        lineNumber: 481,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25590,7 +25604,7 @@ function App() {
                                                                 children: "\u81EA\u52D5\u8A5E"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 471,
+                                                                lineNumber: 488,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25598,19 +25612,19 @@ function App() {
                                                                 children: "Intransitive"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 474,
+                                                                lineNumber: 491,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 470,
+                                                        lineNumber: 487,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 460,
+                                                lineNumber: 477,
                                                 columnNumber: 16
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
@@ -25623,12 +25637,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 480,
+                                                            lineNumber: 497,
                                                             columnNumber: 62
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 479,
+                                                        lineNumber: 496,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25638,7 +25652,7 @@ function App() {
                                                         onChange: ()=>toggleType('Transitive')
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 482,
+                                                        lineNumber: 499,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25649,7 +25663,7 @@ function App() {
                                                                 children: "\u4ED6\u52D5\u8A5E"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 489,
+                                                                lineNumber: 506,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25657,25 +25671,25 @@ function App() {
                                                                 children: "Transitive"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 492,
+                                                                lineNumber: 509,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 488,
+                                                        lineNumber: 505,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 478,
+                                                lineNumber: 495,
                                                 columnNumber: 16
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/main.js",
-                                        lineNumber: 459,
+                                        lineNumber: 476,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25683,7 +25697,7 @@ function App() {
                                         children: "Verb Form"
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 498,
+                                        lineNumber: 515,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25699,12 +25713,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 504,
+                                                            lineNumber: 521,
                                                             columnNumber: 58
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 503,
+                                                        lineNumber: 520,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25714,7 +25728,7 @@ function App() {
                                                         onChange: ()=>toggleForm('Polite')
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 506,
+                                                        lineNumber: 523,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25725,7 +25739,7 @@ function App() {
                                                                 children: "\u4E01\u5BE7\u5F62"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 513,
+                                                                lineNumber: 530,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25733,19 +25747,19 @@ function App() {
                                                                 children: "Polite Form"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 516,
+                                                                lineNumber: 533,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 512,
+                                                        lineNumber: 529,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 502,
+                                                lineNumber: 519,
                                                 columnNumber: 16
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
@@ -25758,12 +25772,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 522,
+                                                            lineNumber: 539,
                                                             columnNumber: 57
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 521,
+                                                        lineNumber: 538,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25773,7 +25787,7 @@ function App() {
                                                         onChange: ()=>toggleForm('Plain')
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 524,
+                                                        lineNumber: 541,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25784,7 +25798,7 @@ function App() {
                                                                 children: "\u666E\u901A\u5F62"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 531,
+                                                                lineNumber: 548,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25792,25 +25806,25 @@ function App() {
                                                                 children: "Plain Form"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 534,
+                                                                lineNumber: 551,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 530,
+                                                        lineNumber: 547,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 520,
+                                                lineNumber: 537,
                                                 columnNumber: 16
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/main.js",
-                                        lineNumber: 501,
+                                        lineNumber: 518,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25818,12 +25832,71 @@ function App() {
                                         children: "Display Options"
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 540,
+                                        lineNumber: 557,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                         className: "flex flex-col gap-0 mb-2",
                                         children: [
+                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
+                                                children: [
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${showEnglish ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
+                                                        children: showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
+                                                            size: 12,
+                                                            className: "text-white"
+                                                        }, void 0, false, {
+                                                            fileName: "src/main.js",
+                                                            lineNumber: 563,
+                                                            columnNumber: 37
+                                                        }, this)
+                                                    }, void 0, false, {
+                                                        fileName: "src/main.js",
+                                                        lineNumber: 562,
+                                                        columnNumber: 19
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                                                        type: "checkbox",
+                                                        className: "hidden",
+                                                        checked: showEnglish,
+                                                        onChange: ()=>setShowEnglish(!showEnglish)
+                                                    }, void 0, false, {
+                                                        fileName: "src/main.js",
+                                                        lineNumber: 565,
+                                                        columnNumber: 19
+                                                    }, this),
+                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                                        className: "flex flex-col",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: `text-base ${showEnglish ? 'text-white font-bold' : 'text-gray-400'}`,
+                                                                children: "\u82F1\u8A9E\u8868\u8A18"
+                                                            }, void 0, false, {
+                                                                fileName: "src/main.js",
+                                                                lineNumber: 572,
+                                                                columnNumber: 21
+                                                            }, this),
+                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                className: `text-[10px] ${showEnglish ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
+                                                                children: "English Labels"
+                                                            }, void 0, false, {
+                                                                fileName: "src/main.js",
+                                                                lineNumber: 575,
+                                                                columnNumber: 21
+                                                            }, this)
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "src/main.js",
+                                                        lineNumber: 571,
+                                                        columnNumber: 19
+                                                    }, this)
+                                                ]
+                                            }, void 0, true, {
+                                                fileName: "src/main.js",
+                                                lineNumber: 561,
+                                                columnNumber: 16
+                                            }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                                                 className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
                                                 children: [
@@ -25834,12 +25907,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 546,
+                                                            lineNumber: 581,
                                                             columnNumber: 38
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 545,
+                                                        lineNumber: 580,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25849,7 +25922,7 @@ function App() {
                                                         onChange: ()=>setShowFurigana(!showFurigana)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 548,
+                                                        lineNumber: 583,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25860,7 +25933,7 @@ function App() {
                                                                 children: "\u632F\u4EEE\u540D"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 555,
+                                                                lineNumber: 590,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25868,19 +25941,19 @@ function App() {
                                                                 children: "Furigana"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 558,
+                                                                lineNumber: 593,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 554,
+                                                        lineNumber: 589,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 544,
+                                                lineNumber: 579,
                                                 columnNumber: 16
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
@@ -25893,12 +25966,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 564,
+                                                            lineNumber: 599,
                                                             columnNumber: 40
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 563,
+                                                        lineNumber: 598,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25908,7 +25981,7 @@ function App() {
                                                         onChange: ()=>setShowDictionary(!showDictionary)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 566,
+                                                        lineNumber: 601,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25919,7 +25992,7 @@ function App() {
                                                                 children: "\u8F9E\u66F8\u5F62"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 573,
+                                                                lineNumber: 608,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25927,19 +26000,19 @@ function App() {
                                                                 children: "Dictionary Form"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 576,
+                                                                lineNumber: 611,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 572,
+                                                        lineNumber: 607,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 562,
+                                                lineNumber: 597,
                                                 columnNumber: 16
                                             }, this),
                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
@@ -25952,12 +26025,12 @@ function App() {
                                                             className: "text-white"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 582,
+                                                            lineNumber: 617,
                                                             columnNumber: 35
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 581,
+                                                        lineNumber: 616,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -25967,7 +26040,7 @@ function App() {
                                                         onChange: ()=>setShowPairs(!showPairs)
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 584,
+                                                        lineNumber: 619,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -25978,7 +26051,7 @@ function App() {
                                                                 children: "\u30DA\u30A2\u8868\u793A"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 591,
+                                                                lineNumber: 626,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -25986,25 +26059,25 @@ function App() {
                                                                 children: "Show Pairs"
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 594,
+                                                                lineNumber: 629,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 590,
+                                                        lineNumber: 625,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 580,
+                                                lineNumber: 615,
                                                 columnNumber: 16
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "src/main.js",
-                                        lineNumber: 543,
+                                        lineNumber: 560,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26012,7 +26085,7 @@ function App() {
                                         children: "Quiz Mode"
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 600,
+                                        lineNumber: 635,
                                         columnNumber: 14
                                     }, this),
                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26021,76 +26094,76 @@ function App() {
                                             className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
                                             children: [
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${isEasyMode ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
-                                                    children: isEasyMode && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
+                                                    className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${isFixedOrder ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
+                                                    children: isFixedOrder && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
                                                         size: 12,
                                                         className: "text-white"
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 606,
-                                                        columnNumber: 36
+                                                        lineNumber: 641,
+                                                        columnNumber: 38
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 605,
+                                                    lineNumber: 640,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
                                                     type: "checkbox",
                                                     className: "hidden",
-                                                    checked: isEasyMode,
-                                                    onChange: ()=>setIsEasyMode(!isEasyMode)
+                                                    checked: isFixedOrder,
+                                                    onChange: ()=>setIsFixedOrder(!isFixedOrder)
                                                 }, void 0, false, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 608,
+                                                    lineNumber: 643,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                                                     className: "flex flex-col",
                                                     children: [
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: `text-base ${isEasyMode ? 'text-white font-bold' : 'text-gray-400'}`,
-                                                            children: "\u30A4\u30FC\u30B8\u30FC\u30E2\u30FC\u30C9"
+                                                            className: `text-base ${isFixedOrder ? 'text-white font-bold' : 'text-gray-400'}`,
+                                                            children: "\u56FA\u5B9A\u9806"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 615,
+                                                            lineNumber: 650,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: `text-[10px] ${isEasyMode ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                            children: "Easy Mode"
+                                                            className: `text-[10px] ${isFixedOrder ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
+                                                            children: "Fixed Sequence"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 618,
+                                                            lineNumber: 653,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 614,
+                                                    lineNumber: 649,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/main.js",
-                                            lineNumber: 604,
+                                            lineNumber: 639,
                                             columnNumber: 16
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "src/main.js",
-                                        lineNumber: 603,
+                                        lineNumber: 638,
                                         columnNumber: 14
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "src/main.js",
-                                lineNumber: 430,
+                                lineNumber: 447,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/main.js",
-                        lineNumber: 420,
+                        lineNumber: 437,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26102,12 +26175,12 @@ function App() {
                             }
                         }, void 0, false, {
                             fileName: "src/main.js",
-                            lineNumber: 629,
+                            lineNumber: 664,
                             columnNumber: 9
                         }, this)
                     }, void 0, false, {
                         fileName: "src/main.js",
-                        lineNumber: 628,
+                        lineNumber: 663,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26123,12 +26196,12 @@ function App() {
                                     strokeWidth: 1.5
                                 }, void 0, false, {
                                     fileName: "src/main.js",
-                                    lineNumber: 644,
+                                    lineNumber: 679,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/main.js",
-                                lineNumber: 639,
+                                lineNumber: 674,
                                 columnNumber: 11
                             }, this),
                             currentQuestion && currentQuestion.icon && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26139,18 +26212,18 @@ function App() {
                                     strokeWidth: 1.5
                                 }, void 0, false, {
                                     fileName: "src/main.js",
-                                    lineNumber: 651,
+                                    lineNumber: 686,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "src/main.js",
-                                lineNumber: 650,
+                                lineNumber: 685,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/main.js",
-                        lineNumber: 636,
+                        lineNumber: 671,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26160,7 +26233,7 @@ function App() {
                             children: "Select at least one level and type to start."
                         }, void 0, false, {
                             fileName: "src/main.js",
-                            lineNumber: 660,
+                            lineNumber: 695,
                             columnNumber: 11
                         }, this) : shuffledData.length === 0 && totalQuestions > 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                             className: "text-center text-green-400 text-xl font-bold space-y-4",
@@ -26169,7 +26242,7 @@ function App() {
                                     children: "\uD83C\uDF89 \u304A\u3081\u3067\u3068\u3046\u3054\u3056\u3044\u307E\u3059\uFF01"
                                 }, void 0, false, {
                                     fileName: "src/main.js",
-                                    lineNumber: 665,
+                                    lineNumber: 700,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -26181,7 +26254,7 @@ function App() {
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/main.js",
-                                    lineNumber: 666,
+                                    lineNumber: 701,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -26190,20 +26263,20 @@ function App() {
                                     children: "Restart"
                                 }, void 0, false, {
                                     fileName: "src/main.js",
-                                    lineNumber: 667,
+                                    lineNumber: 702,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "src/main.js",
-                            lineNumber: 664,
+                            lineNumber: 699,
                             columnNumber: 11
                         }, this) : !currentQuestion ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                             className: "flex items-center justify-center text-white text-sm",
                             children: "Loading..."
                         }, void 0, false, {
                             fileName: "src/main.js",
-                            lineNumber: 675,
+                            lineNumber: 710,
                             columnNumber: 11
                         }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
                             children: [
@@ -26223,12 +26296,12 @@ function App() {
                                                                 showFurigana: showFurigana
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 686,
+                                                                lineNumber: 721,
                                                                 columnNumber: 21
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 685,
+                                                            lineNumber: 720,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26238,7 +26311,7 @@ function App() {
                                                                     className: "h-[2px] w-10 bg-red-600 mb-0.5"
                                                                 }, void 0, false, {
                                                                     fileName: "src/main.js",
-                                                                    lineNumber: 689,
+                                                                    lineNumber: 724,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -26246,19 +26319,19 @@ function App() {
                                                                     children: "\u540D\u8A5E"
                                                                 }, void 0, false, {
                                                                     fileName: "src/main.js",
-                                                                    lineNumber: 690,
+                                                                    lineNumber: 725,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 688,
+                                                            lineNumber: 723,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 684,
+                                                    lineNumber: 719,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26271,12 +26344,12 @@ function App() {
                                                                 showFurigana: showFurigana
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 697,
+                                                                lineNumber: 732,
                                                                 columnNumber: 22
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 696,
+                                                            lineNumber: 731,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26286,7 +26359,7 @@ function App() {
                                                                     className: "h-[2px] w-10 bg-red-600 mb-0.5"
                                                                 }, void 0, false, {
                                                                     fileName: "src/main.js",
-                                                                    lineNumber: 703,
+                                                                    lineNumber: 738,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -26294,25 +26367,25 @@ function App() {
                                                                     children: "\u52D5\u8A5E"
                                                                 }, void 0, false, {
                                                                     fileName: "src/main.js",
-                                                                    lineNumber: 704,
+                                                                    lineNumber: 739,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 702,
+                                                            lineNumber: 737,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 695,
+                                                    lineNumber: 730,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/main.js",
-                                            lineNumber: 682,
+                                            lineNumber: 717,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26323,28 +26396,30 @@ function App() {
                                                     children: currentQuestion.type === 'Transitive' ? "\u4ED6\u52D5\u8A5E" : "\u81EA\u52D5\u8A5E"
                                                 }, void 0, false, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 711,
+                                                    lineNumber: 746,
                                                     columnNumber: 17
                                                 }, this),
-                                                " ",
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                                                     className: "text-xs text-gray-300 font-normal",
-                                                    children: currentQuestion.type
-                                                }, void 0, false, {
+                                                    children: [
+                                                        " ",
+                                                        currentQuestion.type
+                                                    ]
+                                                }, void 0, true, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 711,
-                                                    columnNumber: 108
+                                                    lineNumber: 746,
+                                                    columnNumber: 123
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/main.js",
-                                            lineNumber: 710,
+                                            lineNumber: 745,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/main.js",
-                                    lineNumber: 679,
+                                    lineNumber: 714,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26377,7 +26452,7 @@ function App() {
                                                     disabled: feedback === 'correct' || feedback === 'incorrect'
                                                 }, void 0, false, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 729,
+                                                    lineNumber: 764,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26388,7 +26463,7 @@ function App() {
                                                             className: "text-green-600 animate-bounce"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 747,
+                                                            lineNumber: 782,
                                                             columnNumber: 47
                                                         }, this),
                                                         feedback === 'incorrect' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.XCircle), {
@@ -26396,19 +26471,19 @@ function App() {
                                                             className: "text-red-600 animate-pulse"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 748,
+                                                            lineNumber: 783,
                                                             columnNumber: 49
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 746,
+                                                    lineNumber: 781,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/main.js",
-                                            lineNumber: 718,
+                                            lineNumber: 753,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26422,7 +26497,7 @@ function App() {
                                                             children: "\u6B63\u3057\u3044\u56DE\u7B54"
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 756,
+                                                            lineNumber: 791,
                                                             columnNumber: 21
                                                         }, this),
                                                         selectedForms.includes('Polite') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26433,12 +26508,12 @@ function App() {
                                                                 showFurigana: showFurigana
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 761,
+                                                                lineNumber: 796,
                                                                 columnNumber: 25
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 760,
+                                                            lineNumber: 795,
                                                             columnNumber: 23
                                                         }, this),
                                                         selectedForms.includes('Plain') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26449,21 +26524,21 @@ function App() {
                                                                 showFurigana: showFurigana
                                                             }, void 0, false, {
                                                                 fileName: "src/main.js",
-                                                                lineNumber: 772,
+                                                                lineNumber: 807,
                                                                 columnNumber: 25
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 771,
+                                                            lineNumber: 806,
                                                             columnNumber: 23
                                                         }, this),
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                                                        showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
                                                             className: "text-sm text-gray-300 italic",
                                                             children: currentQuestion.english
                                                         }, void 0, false, {
                                                             fileName: "src/main.js",
-                                                            lineNumber: 780,
-                                                            columnNumber: 21
+                                                            lineNumber: 816,
+                                                            columnNumber: 23
                                                         }, this),
                                                         showPairs && (()=>{
                                                             const pairId = currentQuestion.id % 2 === 1 ? currentQuestion.id + 1 : currentQuestion.id - 1;
@@ -26489,7 +26564,7 @@ function App() {
                                                                                     showFurigana: showFurigana
                                                                                 }, void 0, false, {
                                                                                     fileName: "src/main.js",
-                                                                                    lineNumber: 798,
+                                                                                    lineNumber: 835,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -26497,7 +26572,7 @@ function App() {
                                                                                     children: "/"
                                                                                 }, void 0, false, {
                                                                                     fileName: "src/main.js",
-                                                                                    lineNumber: 804,
+                                                                                    lineNumber: 841,
                                                                                     columnNumber: 31
                                                                                 }, this),
                                                                                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(AnswerRubyText, {
@@ -26507,13 +26582,13 @@ function App() {
                                                                                     showFurigana: showFurigana
                                                                                 }, void 0, false, {
                                                                                     fileName: "src/main.js",
-                                                                                    lineNumber: 805,
+                                                                                    lineNumber: 842,
                                                                                     columnNumber: 31
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "src/main.js",
-                                                                            lineNumber: 797,
+                                                                            lineNumber: 834,
                                                                             columnNumber: 29
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26527,21 +26602,21 @@ function App() {
                                                                                             children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationJa
                                                                                         }, void 0, false, {
                                                                                             fileName: "src/main.js",
-                                                                                            lineNumber: 816,
+                                                                                            lineNumber: 853,
                                                                                             columnNumber: 35
                                                                                         }, this),
-                                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                                        showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                                                                                             className: "text-sm text-gray-300 italic",
                                                                                             children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationEn
                                                                                         }, void 0, false, {
                                                                                             fileName: "src/main.js",
-                                                                                            lineNumber: 817,
-                                                                                            columnNumber: 35
+                                                                                            lineNumber: 854,
+                                                                                            columnNumber: 51
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "src/main.js",
-                                                                                    lineNumber: 815,
+                                                                                    lineNumber: 852,
                                                                                     columnNumber: 33
                                                                                 }, this),
                                                                                 transitiveSuffix === 'suffix-su' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26552,33 +26627,33 @@ function App() {
                                                                                             children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationJa
                                                                                         }, void 0, false, {
                                                                                             fileName: "src/main.js",
-                                                                                            lineNumber: 822,
+                                                                                            lineNumber: 859,
                                                                                             columnNumber: 35
                                                                                         }, this),
-                                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                                                                        showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
                                                                                             className: "text-sm text-gray-300 italic",
                                                                                             children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationEn
                                                                                         }, void 0, false, {
                                                                                             fileName: "src/main.js",
-                                                                                            lineNumber: 823,
-                                                                                            columnNumber: 35
+                                                                                            lineNumber: 860,
+                                                                                            columnNumber: 51
                                                                                         }, this)
                                                                                     ]
                                                                                 }, void 0, true, {
                                                                                     fileName: "src/main.js",
-                                                                                    lineNumber: 821,
+                                                                                    lineNumber: 858,
                                                                                     columnNumber: 33
                                                                                 }, this)
                                                                             ]
                                                                         }, void 0, true, {
                                                                             fileName: "src/main.js",
-                                                                            lineNumber: 813,
+                                                                            lineNumber: 850,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "src/main.js",
-                                                                    lineNumber: 796,
+                                                                    lineNumber: 833,
                                                                     columnNumber: 27
                                                                 }, this);
                                                             }
@@ -26587,7 +26662,7 @@ function App() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 755,
+                                                    lineNumber: 790,
                                                     columnNumber: 19
                                                 }, this),
                                                 feedback === 'correct' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26596,18 +26671,18 @@ function App() {
                                                         children: "Great Job!"
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 836,
+                                                        lineNumber: 873,
                                                         columnNumber: 21
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "src/main.js",
-                                                    lineNumber: 835,
+                                                    lineNumber: 872,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "src/main.js",
-                                            lineNumber: 753,
+                                            lineNumber: 788,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26620,7 +26695,7 @@ function App() {
                                                         children: "\u3082\u3046\u4E00\u5EA6"
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 845,
+                                                        lineNumber: 882,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
@@ -26629,14 +26704,14 @@ function App() {
                                                         children: "\u6B21\u3078"
                                                     }, void 0, false, {
                                                         fileName: "src/main.js",
-                                                        lineNumber: 851,
+                                                        lineNumber: 888,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true)
                                         }, void 0, false, {
                                             fileName: "src/main.js",
-                                            lineNumber: 842,
+                                            lineNumber: 879,
                                             columnNumber: 15
                                         }, this),
                                         feedback === null && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26647,25 +26722,25 @@ function App() {
                                                 children: "\u308F\u304B\u3089\u306A\u3044"
                                             }, void 0, false, {
                                                 fileName: "src/main.js",
-                                                lineNumber: 864,
+                                                lineNumber: 901,
                                                 columnNumber: 20
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "src/main.js",
-                                            lineNumber: 863,
+                                            lineNumber: 900,
                                             columnNumber: 18
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "src/main.js",
-                                    lineNumber: 717,
+                                    lineNumber: 752,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true)
                     }, void 0, false, {
                         fileName: "src/main.js",
-                        lineNumber: 657,
+                        lineNumber: 692,
                         columnNumber: 7
                     }, this),
                     shuffledData.length > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -26679,30 +26754,30 @@ function App() {
                         ]
                     }, void 0, true, {
                         fileName: "src/main.js",
-                        lineNumber: 880,
+                        lineNumber: 917,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/main.js",
-                lineNumber: 418,
+                lineNumber: 435,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "h-[40vh] bg-[#1a1a1a]"
             }, void 0, false, {
                 fileName: "src/main.js",
-                lineNumber: 888,
+                lineNumber: 925,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/main.js",
-        lineNumber: 416,
+        lineNumber: 433,
         columnNumber: 5
     }, this);
 }
-_s1(App, "0BZ655EBACR1pc6fvMW1zN+z+Yk=");
+_s1(App, "CdA05+/hjxdtzYww5eH/Wt3Tacg=");
 _c2 = App;
 var _c, _c1, _c2;
 $RefreshReg$(_c, "AnswerRubyText");
@@ -38374,12 +38449,11 @@ const romajiToHiragana = (text)=>{
     // 1. Handle Sokuon (Double Consonants): 'tt' -> 'っt', 'kk' -> 'っk'
     // Excluding 'n' because 'nn' is 'ん'
     converted = converted.replace(/([bcdfghjklmpqrstvwxyz])\1/g, "\u3063$1");
-    // 2. Handle 'n' followed by a consonant (except y) -> 'ん' + consonant
+    // 2. Handle 'nn' -> 'ん' (must come BEFORE n+consonant rule)
+    converted = converted.replace(/nn/g, "\u3093");
+    // 3. Handle 'n' followed by a consonant (except y) -> 'ん' + consonant
     // e.g., 'kanta' -> 'ka' 'n' 'ta' -> 'ka' 'ん' 'ta'
     converted = converted.replace(/n(?=[^aeiouy])/g, "\u3093");
-    // 3. Handle 'nn' at the end or explicitly -> 'ん'
-    // (Included in regex map but specific replacement for clarity)
-    converted = converted.replace(/nn/g, "\u3093");
     // 4. Main Mapping Replacement
     converted = converted.replace(MAP_REGEX, (match)=>(0, _hiraganaDataJs.HIRAGANA_MAP)[match]);
     return converted;
