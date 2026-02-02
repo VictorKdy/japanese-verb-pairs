@@ -18,13 +18,12 @@ export const romajiToHiragana = (text) => {
   // Excluding 'n' because 'nn' is 'ん'
   converted = converted.replace(/([bcdfghjklmpqrstvwxyz])\1/g, 'っ$1');
 
-  // 2. Handle 'n' followed by a consonant (except y) -> 'ん' + consonant
+  // 2. Handle 'nn' -> 'ん' (must come BEFORE n+consonant rule)
+  converted = converted.replace(/nn/g, 'ん');
+
+  // 3. Handle 'n' followed by a consonant (except y) -> 'ん' + consonant
   // e.g., 'kanta' -> 'ka' 'n' 'ta' -> 'ka' 'ん' 'ta'
   converted = converted.replace(/n(?=[^aeiouy])/g, 'ん');
-  
-  // 3. Handle 'nn' at the end or explicitly -> 'ん'
-  // (Included in regex map but specific replacement for clarity)
-  converted = converted.replace(/nn/g, 'ん');
 
   // 4. Main Mapping Replacement
   converted = converted.replace(MAP_REGEX, (match) => HIRAGANA_MAP[match]);

@@ -4,6 +4,9 @@ import { Settings, CheckCheck, CheckCircle, XCircle, RefreshCw } from './icons.j
 import { romajiToHiragana, toHiragana } from "./hiraganaUtils.js";
 import { VERB_DATA, VERB_SUFFIX_RULES, getVerbSuffixType } from "./sentenceData.js";
 
+// Helper function to check if a string contains Katakana
+const containsKatakana = (str) => /[\u30a1-\u30f6]/.test(str);
+
 // Helper function to build ruby data for a sentence
 // Returns array of { text, rt } objects where rt is only set for kanji/katakana
 const buildSentenceRuby = (question, isPolite) => {
@@ -47,22 +50,27 @@ const buildSentenceRuby = (question, isPolite) => {
   return result;
 };
 
-// Helper Component: AnswerRubyText - displays sentence with furigana above kanji only
+// Helper Component: AnswerRubyText - displays sentence with furigana above kanji and katakana
 const AnswerRubyText = ({ data, colorClass, textSize = "text-xl", showFurigana = true }) => {
   return (
     <div className={`flex items-end justify-center ${colorClass}`}>
-      {data.map((item, idx) => (
-        <React.Fragment key={idx}>
-          {item.rt && showFurigana ? (
-            <ruby className="flex flex-col-reverse items-center">
+      {data.map((item, idx) => {
+        // Determine furigana: use rt if available, or generate from Katakana
+        const furigana = item.rt || (containsKatakana(item.text) ? toHiragana(item.text) : "");
+        
+        return (
+          <React.Fragment key={idx}>
+            {furigana && showFurigana ? (
+              <ruby className="flex flex-col-reverse items-center">
+                <span className={`${textSize} font-bold`}>{item.text}</span>
+                <rt className="text-[10px] text-gray-400 font-normal">{furigana}</rt>
+              </ruby>
+            ) : (
               <span className={`${textSize} font-bold`}>{item.text}</span>
-              <rt className="text-[10px] text-gray-400 font-normal">{item.rt}</rt>
-            </ruby>
-          ) : (
-            <span className={`${textSize} font-bold`}>{item.text}</span>
-          )}
-        </React.Fragment>
-      ))}
+            )}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 };
@@ -88,9 +96,16 @@ const RubyText = ({ data, showFurigana }) => {
   // Determine if furigana should show: global setting XOR toggle
   const shouldShowFurigana = showFurigana ? !isToggled : isToggled;
 
+  // Prevent mousedown/touchstart from stealing focus from input (keeps virtual keyboard open)
+  const preventBlur = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div 
       className={`flex items-end ${hasFurigana ? 'cursor-pointer select-none hover:opacity-80 transition-opacity' : ''}`}
+      onMouseDown={hasFurigana ? preventBlur : undefined}
+      onTouchStart={hasFurigana ? preventBlur : undefined}
       onClick={handleTap}
     >
       {data.map((item, idx) => {
@@ -121,6 +136,7 @@ export default function App() {
   const [showFurigana, setShowFurigana] = useState(false); 
   const [showDictionary, setShowDictionary] = useState(false);
   const [showPairs, setShowPairs] = useState(false);
+  const [showEnglish, setShowEnglish] = useState(false); // Toggle for English labels display
   const [correctCount, setCorrectCount] = useState(0); // Track correctly answered questions
   const [totalQuestions, setTotalQuestions] = useState(0); // Original total for display
   
@@ -128,7 +144,7 @@ export default function App() {
   const [selectedLevels, setSelectedLevels] = useState([1, 2]); 
   const [selectedTypes, setSelectedTypes] = useState(['Intransitive', 'Transitive']); 
   const [selectedForms, setSelectedForms] = useState(['Polite', 'Plain']); // Polite (丁寧形) and Plain (普通形) forms
-  const [isEasyMode, setIsEasyMode] = useState(false); // NEW: Easy Mode state
+  const [isFixedOrder, setIsFixedOrder] = useState(false); // Fixed Sequence mode: questions in ID order instead of shuffled
 
   const [shuffledData, setShuffledData] = useState([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -158,8 +174,8 @@ export default function App() {
     
     if (filtered.length > 0) {
       let finalPool;
-      // 2. Sort or Shuffle based on Easy Mode
-      if (isEasyMode) {
+      // 2. Sort or Shuffle based on Fixed Sequence mode
+      if (isFixedOrder) {
         finalPool = [...filtered].sort((a, b) => a.id - b.id);
       } else {
         finalPool = [...filtered].sort(() => Math.random() - 0.5);
@@ -176,7 +192,7 @@ export default function App() {
       setShuffledData([]);
       setTotalQuestions(0);
     }
-  }, [selectedLevels, selectedTypes, isEasyMode]); // Dependency added
+  }, [selectedLevels, selectedTypes, isFixedOrder]); // Dependency added
 
   // Force focus on mount
   useEffect(() => {
@@ -362,7 +378,8 @@ export default function App() {
     
     if (filtered.length > 0) {
       let finalPool;
-      if (isEasyMode) {
+      // Sort by ID for Fixed Sequence, otherwise shuffle randomly
+      if (isFixedOrder) {
         finalPool = [...filtered].sort((a, b) => a.id - b.id);
       } else {
         finalPool = [...filtered].sort(() => Math.random() - 0.5);
@@ -542,6 +559,24 @@ export default function App() {
              </div>
              <div className="flex flex-col gap-0 mb-2">
                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showEnglish ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
+                    {showEnglish && <CheckCheck size={12} className="text-white" />}
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    className="hidden"
+                    checked={showEnglish}
+                    onChange={() => setShowEnglish(!showEnglish)}
+                  />
+                  <div className="flex flex-col">
+                    <span className={`text-base ${showEnglish ? 'text-white font-bold' : 'text-gray-400'}`}>
+                      英語表記
+                    </span>
+                    <span className={`text-[10px] ${showEnglish ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>English Labels</span>
+                  </div>
+               </label>
+
+               <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showFurigana ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {showFurigana && <CheckCheck size={12} className="text-white" />}
                   </div>
@@ -596,26 +631,26 @@ export default function App() {
                </label>
              </div>
 
-             {/* EASY MODE SECTION */}
+             {/* FIXED SEQUENCE SECTION */}
              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Quiz Mode
              </div>
              <div className="flex flex-col gap-0">
                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
-                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${isEasyMode ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
-                    {isEasyMode && <CheckCheck size={12} className="text-white" />}
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${isFixedOrder ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
+                    {isFixedOrder && <CheckCheck size={12} className="text-white" />}
                   </div>
                   <input 
                     type="checkbox" 
                     className="hidden"
-                    checked={isEasyMode}
-                    onChange={() => setIsEasyMode(!isEasyMode)}
+                    checked={isFixedOrder}
+                    onChange={() => setIsFixedOrder(!isFixedOrder)}
                   />
                   <div className="flex flex-col">
-                    <span className={`text-base ${isEasyMode ? 'text-white font-bold' : 'text-gray-400'}`}>
-                      イージーモード
+                    <span className={`text-base ${isFixedOrder ? 'text-white font-bold' : 'text-gray-400'}`}>
+                      固定順
                     </span>
-                    <span className={`text-[10px] ${isEasyMode ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Easy Mode</span>
+                    <span className={`text-[10px] ${isFixedOrder ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Fixed Sequence</span>
                   </div>
                </label>
              </div>
@@ -708,7 +743,7 @@ export default function App() {
 
               {/* 3. Type Indicator */}
               <div className={`text-xl tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-purple-400'}`}>
-                <span className="font-bold">{currentQuestion.type === 'Transitive' ? '他動詞' : '自動詞'}</span> <span className="text-xs text-gray-300 font-normal">{currentQuestion.type}</span>
+                <span className="font-bold">{currentQuestion.type === 'Transitive' ? '他動詞' : '自動詞'}</span>{showEnglish && <span className="text-xs text-gray-300 font-normal"> {currentQuestion.type}</span>}
               </div>
 
             </div>
@@ -777,7 +812,9 @@ export default function App() {
                       </div>
                     )}
                     
-                    <p className="text-sm text-gray-300 italic">{currentQuestion.english}</p>
+                    {showEnglish && (
+                      <p className="text-sm text-gray-300 italic">{currentQuestion.english}</p>
+                    )}
                     
                     {showPairs && (() => {
                       const pairId = currentQuestion.id % 2 === 1 ? currentQuestion.id + 1 : currentQuestion.id - 1;
@@ -814,13 +851,13 @@ export default function App() {
                               {intransitiveSuffix === 'suffix-aru' && (
                                 <div className="flex items-center gap-2">
                                   <span className="text-purple-400">{VERB_SUFFIX_RULES.aru.explanationJa}</span>
-                                  <span className="text-sm text-gray-300 italic">{VERB_SUFFIX_RULES.aru.explanationEn}</span>
+                                  {showEnglish && <span className="text-sm text-gray-300 italic">{VERB_SUFFIX_RULES.aru.explanationEn}</span>}
                                 </div>
                               )}
                               {transitiveSuffix === 'suffix-su' && (
                                 <div className="flex items-center gap-2">
                                   <span className="text-yellow-400">{VERB_SUFFIX_RULES.su.explanationJa}</span>
-                                  <span className="text-sm text-gray-300 italic">{VERB_SUFFIX_RULES.su.explanationEn}</span>
+                                  {showEnglish && <span className="text-sm text-gray-300 italic">{VERB_SUFFIX_RULES.su.explanationEn}</span>}
                                 </div>
                               )}
                             </div>
