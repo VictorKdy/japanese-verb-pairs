@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>自他マスター</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>html, body {
+  touch-action: manipulation;
+  height: 100%;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-4px);
+  }
+
+  20%, 40%, 60%, 80% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-shake {
+  animation: .5s ease-in-out shake;
+}
+</style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/root.ad93b51f.js"></script>
+
+
+</body></html>
