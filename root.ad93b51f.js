@@ -726,11 +726,11 @@ var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _client = require("react-dom/client");
-var _mainJs = require("./main.js");
-var _mainJsDefault = parcelHelpers.interopDefault(_mainJs);
+var _appJsx = require("./App.jsx");
+var _appJsxDefault = parcelHelpers.interopDefault(_appJsx);
 const container = document.getElementById('root');
 const root = (0, _client.createRoot)(container);
-root.render(/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _mainJsDefault.default), {}, void 0, false, {
+root.render(/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _appJsxDefault.default), {}, void 0, false, {
     fileName: "src/index.jsx",
     lineNumber: 7,
     columnNumber: 13
@@ -741,7 +741,7 @@ root.render(/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _mainJsDefault.default)
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","react-dom/client":"hrvwu","./main.js":"fILKw","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"dVPUn":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","react-dom/client":"hrvwu","./App.jsx":"f8V2Q","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"dVPUn":[function(require,module,exports,__globalThis) {
 'use strict';
 module.exports = require("ee51401569654d91");
 
@@ -24984,1812 +24984,7938 @@ module.exports = require("ef03b89c8fe2794e");
     /* global __REACT_DEVTOOLS_GLOBAL_HOOK__ */ if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== 'undefined' && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop === 'function') __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(new Error());
 })();
 
-},{}],"fILKw":[function(require,module,exports,__globalThis) {
-var $parcel$ReactRefreshHelpers$9dcd = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-$parcel$ReactRefreshHelpers$9dcd.init();
+},{}],"f8V2Q":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$be2d = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$be2d.init();
 var prevRefreshReg = globalThis.$RefreshReg$;
 var prevRefreshSig = globalThis.$RefreshSig$;
-$parcel$ReactRefreshHelpers$9dcd.prelude(module);
+$parcel$ReactRefreshHelpers$be2d.prelude(module);
 
 try {
+// App.jsx - Main App component (slim orchestrator)
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "default", ()=>App);
 var _jsxDevRuntime = require("react/jsx-dev-runtime");
 var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
-var _iconsJs = require("./icons.js");
-var _hiraganaUtilsJs = require("./hiraganaUtils.js");
-var _sentenceDataJs = require("./sentenceData.js");
+var _indexJs = require("./context/index.js");
+var _indexJs1 = require("./components/settings/index.js");
+var _indexJs2 = require("./components/quiz/index.js");
+var _indexJs3 = require("./components/ui/index.js");
+var _indexJs4 = require("./hooks/index.js");
 var _s = $RefreshSig$(), _s1 = $RefreshSig$();
-// Helper function to check if a string contains Katakana
-const containsKatakana = (str)=>/[\u30a1-\u30f6]/.test(str);
-// Helper function to build ruby data for a sentence
-// Returns array of { text, rt } objects where rt is only set for kanji/katakana
-const buildSentenceRuby = (question, isPolite)=>{
-    const result = [];
-    // Add noun parts (already has proper rt for kanji/katakana)
-    result.push(...question.nounRuby);
-    // Determine particle from sentence (character after noun)
-    const sentence = isPolite ? question.politeSentence : question.plainSentence;
-    const nounText = question.nounRuby.map((r)=>r.text).join('');
-    const nounIndex = sentence.indexOf(nounText);
-    const particle = sentence.charAt(nounIndex + nounText.length);
-    result.push({
-        text: particle,
-        rt: ""
-    });
-    if (isPolite) {
-        // For polite form, get verb part from sentence
-        const verbStart = nounIndex + nounText.length + 1; // +1 for particle
-        const verbPart = sentence.substring(verbStart);
-        // The verbRuby has the kanji stem, rest is hiragana suffix
-        const verbKanji = question.verbRuby.map((r)=>r.text).join('');
-        if (verbPart.startsWith(verbKanji)) {
-            // Add verb kanji with furigana
-            result.push(...question.verbRuby);
-            // Add remaining hiragana suffix (きます, けます, etc.)
-            const suffix = verbPart.substring(verbKanji.length);
-            if (suffix) result.push({
-                text: suffix,
-                rt: ""
-            });
-        } else // Fallback: add the whole verb part without ruby
-        result.push({
-            text: verbPart,
-            rt: ""
-        });
-    } else // For plain form, use dictionaryRuby directly
-    result.push(...question.dictionaryRuby);
-    return result;
-};
-// Helper Component: AnswerRubyText - displays sentence with furigana above kanji and katakana
-const AnswerRubyText = ({ data, colorClass, textSize = "text-xl", showFurigana = true })=>{
+// Empty state component
+function EmptyState() {
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: `flex items-end justify-center ${colorClass}`,
-        children: data.map((item, idx)=>{
-            // Determine furigana: use rt if available, or generate from Katakana
-            const furigana = item.rt || (containsKatakana(item.text) ? (0, _hiraganaUtilsJs.toHiragana)(item.text) : "");
-            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactDefault.default).Fragment, {
-                children: furigana && showFurigana ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ruby", {
-                    className: "flex flex-col-reverse items-center",
-                    children: [
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                            className: `${textSize} font-bold`,
-                            children: item.text
-                        }, void 0, false, {
-                            fileName: "src/main.js",
-                            lineNumber: 65,
-                            columnNumber: 17
-                        }, undefined),
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("rt", {
-                            className: "text-[10px] text-gray-400 font-normal",
-                            children: furigana
-                        }, void 0, false, {
-                            fileName: "src/main.js",
-                            lineNumber: 66,
-                            columnNumber: 17
-                        }, undefined)
-                    ]
-                }, void 0, true, {
-                    fileName: "src/main.js",
-                    lineNumber: 64,
-                    columnNumber: 15
-                }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                    className: `${textSize} font-bold`,
-                    children: item.text
-                }, void 0, false, {
-                    fileName: "src/main.js",
-                    lineNumber: 69,
-                    columnNumber: 15
-                }, undefined)
-            }, idx, false, {
-                fileName: "src/main.js",
-                lineNumber: 62,
-                columnNumber: 11
-            }, undefined);
-        })
+        className: "flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "text-center text-gray-400 text-sm",
+            children: "\u958B\u59CB\u3059\u308B\u306B\u306F\u3001\u30EC\u30D9\u30EB\u3068\u30BF\u30A4\u30D7\u30921\u3064\u4EE5\u4E0A\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044\u3002"
+        }, void 0, false, {
+            fileName: "src/App.jsx",
+            lineNumber: 21,
+            columnNumber: 7
+        }, this)
     }, void 0, false, {
-        fileName: "src/main.js",
-        lineNumber: 56,
+        fileName: "src/App.jsx",
+        lineNumber: 20,
         columnNumber: 5
-    }, undefined);
-};
-_c = AnswerRubyText;
-// Helper Component: RubyText with tap-to-toggle furigana
-const RubyText = ({ data, showFurigana })=>{
+    }, this);
+}
+_c = EmptyState;
+// Loading state component
+function LoadingState() {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "flex items-center justify-center text-white text-sm",
+            children: "\u30ED\u30FC\u30C9\u4E2D..."
+        }, void 0, false, {
+            fileName: "src/App.jsx",
+            lineNumber: 32,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "src/App.jsx",
+        lineNumber: 31,
+        columnNumber: 5
+    }, this);
+}
+_c1 = LoadingState;
+// Main quiz content
+function QuizMain() {
     _s();
-    // Track if the entire compound word's furigana is toggled
-    const [isToggled, setIsToggled] = (0, _react.useState)(false);
-    // Reset toggle when data changes (new question)
-    (0, _react.useEffect)(()=>{
-        setIsToggled(false);
-    }, [
-        data
-    ]);
-    // Check if this compound has any furigana
-    const hasFurigana = data.some((item)=>item.rt);
-    const handleTap = ()=>{
-        if (!hasFurigana) return; // Only toggle if there's furigana
-        setIsToggled((prev)=>!prev);
-    };
-    // Determine if furigana should show: global setting XOR toggle
-    const shouldShowFurigana = showFurigana ? !isToggled : isToggled;
-    // Prevent mousedown/touchstart from stealing focus from input (keeps virtual keyboard open)
-    const preventBlur = (e)=>{
-        e.preventDefault();
-    };
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: `flex items-end ${hasFurigana ? 'cursor-pointer select-none hover:opacity-80 transition-opacity' : ''}`,
-        onMouseDown: hasFurigana ? preventBlur : undefined,
-        onTouchStart: hasFurigana ? preventBlur : undefined,
-        onClick: handleTap,
-        children: data.map((item, idx)=>{
-            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactDefault.default).Fragment, {
-                children: item.rt ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ruby", {
-                    className: "flex flex-col-reverse items-center",
-                    children: [
-                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                            className: "text-3xl font-medium tracking-wide",
-                            children: item.text
-                        }, void 0, false, {
-                            fileName: "src/main.js",
-                            lineNumber: 116,
-                            columnNumber: 17
-                        }, undefined),
-                        shouldShowFurigana && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("rt", {
-                            className: "text-xs text-gray-300 font-normal mb-0.5",
-                            children: item.rt
-                        }, void 0, false, {
-                            fileName: "src/main.js",
-                            lineNumber: 118,
-                            columnNumber: 19
-                        }, undefined)
-                    ]
-                }, void 0, true, {
-                    fileName: "src/main.js",
-                    lineNumber: 115,
-                    columnNumber: 15
-                }, undefined) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                    className: "text-3xl font-medium tracking-wide",
-                    children: item.text
-                }, void 0, false, {
-                    fileName: "src/main.js",
-                    lineNumber: 122,
-                    columnNumber: 15
-                }, undefined)
-            }, idx, false, {
-                fileName: "src/main.js",
-                lineNumber: 113,
-                columnNumber: 11
-            }, undefined);
-        })
-    }, void 0, false, {
-        fileName: "src/main.js",
-        lineNumber: 105,
-        columnNumber: 5
-    }, undefined);
-};
-_s(RubyText, "ufB/RmQyCCuAHLH+RN0PE1i6KAA=");
-_c1 = RubyText;
-function App() {
-    _s1();
-    const [currentIndex, setCurrentIndex] = (0, _react.useState)(0);
-    const [userInput, setUserInput] = (0, _react.useState)('');
-    const [feedback, setFeedback] = (0, _react.useState)(null);
-    const [showAnswer, setShowAnswer] = (0, _react.useState)(false);
-    const [showFurigana, setShowFurigana] = (0, _react.useState)(false);
-    const [showDictionary, setShowDictionary] = (0, _react.useState)(false);
-    const [showPairs, setShowPairs] = (0, _react.useState)(false);
-    const [showEnglish, setShowEnglish] = (0, _react.useState)(false); // Toggle for English labels display
-    const [correctCount, setCorrectCount] = (0, _react.useState)(0); // Track correctly answered questions
-    const [totalQuestions, setTotalQuestions] = (0, _react.useState)(0); // Original total for display
-    // Levels and Types
-    const [selectedLevels, setSelectedLevels] = (0, _react.useState)([
-        1,
-        2
-    ]);
-    const [selectedTypes, setSelectedTypes] = (0, _react.useState)([
-        'Intransitive',
-        'Transitive'
-    ]);
-    const [selectedForms, setSelectedForms] = (0, _react.useState)([
-        'Polite',
-        'Plain'
-    ]); // Polite (丁寧形) and Plain (普通形) forms
-    const [isFixedOrder, setIsFixedOrder] = (0, _react.useState)(false); // Fixed Sequence mode: questions in ID order instead of shuffled
-    const [shuffledData, setShuffledData] = (0, _react.useState)([]);
-    const [isSettingsOpen, setIsSettingsOpen] = (0, _react.useState)(false);
-    const [isInvalidInput, setIsInvalidInput] = (0, _react.useState)(false); // Track invalid (non-hiragana) input
-    const settingsRef = (0, _react.useRef)(null);
-    const inputRef = (0, _react.useRef)(null);
-    (0, _react.useEffect)(()=>{
-        function handleClickOutside(event) {
-            if (settingsRef.current && !settingsRef.current.contains(event.target)) setIsSettingsOpen(false);
-        }
-        document.addEventListener("mousedown", handleClickOutside);
-        return ()=>{
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-    // Updated Filter Logic: Check Level AND Type AND Mode
-    (0, _react.useEffect)(()=>{
-        // 1. Filter
-        const filtered = (0, _sentenceDataJs.VERB_DATA).filter((item)=>selectedLevels.includes(item.level) && selectedTypes.includes(item.type));
-        if (filtered.length > 0) {
-            let finalPool;
-            // 2. Sort or Shuffle based on Fixed Sequence mode
-            if (isFixedOrder) finalPool = [
-                ...filtered
-            ].sort((a, b)=>a.id - b.id);
-            else finalPool = [
-                ...filtered
-            ].sort(()=>Math.random() - 0.5);
-            setShuffledData(finalPool);
-            setCurrentIndex(0);
-            setFeedback(null);
-            setUserInput('');
-            setShowAnswer(false);
-            setCorrectCount(0); // Reset correct count
-            setTotalQuestions(finalPool.length); // Store original total
-        } else {
-            setShuffledData([]);
-            setTotalQuestions(0);
-        }
-    }, [
-        selectedLevels,
-        selectedTypes,
-        isFixedOrder
-    ]); // Dependency added
-    // Force focus on mount
-    (0, _react.useEffect)(()=>{
-        if (inputRef.current) inputRef.current.focus();
-    }, []);
-    const currentQuestion = shuffledData[currentIndex];
-    // Auto-focus and select input when new question renders
-    (0, _react.useEffect)(()=>{
-        if (currentQuestion && !feedback && inputRef.current) {
-            inputRef.current.focus();
-            inputRef.current.select();
-        }
-    }, [
-        currentQuestion,
-        feedback
-    ]);
-    // Check if string contains only Hiragana characters (strict: no spaces, punctuation, or symbols)
-    const isHiraganaOnly = (str)=>{
-        // Hiragana range: \u3041-\u3096 (excludes small kana iteration marks)
-        return /^[\u3041-\u3096]+$/.test(str);
-    };
-    const handleInputChange = (e)=>{
-        const input = e.target;
-        const rawValue = input.value;
-        const selectionStart = input.selectionStart;
-        const selectionEnd = input.selectionEnd;
-        // Get the portion before cursor to calculate length difference
-        const beforeCursor = rawValue.slice(0, selectionStart);
-        const convertedBeforeCursor = (0, _hiraganaUtilsJs.romajiToHiragana)(beforeCursor);
-        // Convert full value to Hiragana
-        const hiraganaValue = (0, _hiraganaUtilsJs.romajiToHiragana)(rawValue);
-        // Calculate new cursor position based on converted text before cursor
-        const newCursorPos = convertedBeforeCursor.length;
-        setUserInput(hiraganaValue);
-        // Restore cursor position after React re-renders
-        requestAnimationFrame(()=>{
-            if (inputRef.current) {
-                inputRef.current.selectionStart = newCursorPos;
-                inputRef.current.selectionEnd = newCursorPos + (selectionEnd - selectionStart);
-            }
-        });
-        // Clear invalid state when user types
-        if (isInvalidInput) setIsInvalidInput(false);
-    };
-    const handleCheck = (e)=>{
-        e.preventDefault();
-        // Accessibility: If already showing feedback (incorrect/correct), Enter should go to next
-        if (feedback === 'incorrect' || showAnswer) {
-            handleNext(false); // Pass false for incorrect/skipped
-            return;
-        }
-        if (!currentQuestion) return;
-        // Validate input is hiragana only and not empty
-        const trimmedInput = userInput.trim();
-        if (trimmedInput.length === 0 || !isHiraganaOnly(trimmedInput)) {
-            setIsInvalidInput(true);
-            // Reset animation after it completes
-            setTimeout(()=>setIsInvalidInput(false), 500);
-            return; // Don't process the input
-        }
-        // Normalization logic: Convert everything to Hiragana for comparison
-        // This handles Katakana words (like ドア) by converting user's hiragana input (どあ) matches
-        const inputHira = (0, _hiraganaUtilsJs.toHiragana)(userInput.trim().replace(/\s+/g, ''));
-        // Build array of valid answers based on selected forms
-        const validAnswers = [];
-        if (selectedForms.includes('Polite')) {
-            validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(currentQuestion.politeSentence));
-            validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(currentQuestion.politeKana.replace(/\s+/g, '')));
-        }
-        if (selectedForms.includes('Plain')) {
-            validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(currentQuestion.plainSentence));
-            validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(currentQuestion.plainKana.replace(/\s+/g, '')));
-        }
-        if (validAnswers.includes(inputHira)) // Correct answer: advance to next immediately without showing feedback
-        handleNext(true);
-        else setFeedback('incorrect');
-    };
-    const handleNext = (wasCorrect = false)=>{
-        if (wasCorrect) {
-            // Correct answer: increment count and remove question from pool
-            setCorrectCount((prev)=>prev + 1);
-            setShuffledData((prev)=>{
-                const newData = [
-                    ...prev
-                ];
-                newData.splice(currentIndex, 1);
-                return newData;
-            });
-            // Adjust currentIndex if needed (stay at same index since we removed current)
-            setCurrentIndex((prev)=>prev >= shuffledData.length - 1 ? 0 : prev);
-        } else // Incorrect answer: move question to end of pool
-        setShuffledData((prev)=>{
-            const newData = [
-                ...prev
-            ];
-            const [currentQ] = newData.splice(currentIndex, 1);
-            newData.push(currentQ); // Re-insert at end
-            return newData;
-        });
-        setFeedback(null);
-        setUserInput('');
-        setShowAnswer(false);
-        if (inputRef.current) inputRef.current.focus();
-    };
-    // Global keyboard listener for Enter when feedback is showing
-    (0, _react.useEffect)(()=>{
-        const handleGlobalKeyDown = (e)=>{
-            if (e.key === 'Enter' && (feedback === 'incorrect' || feedback === 'correct')) {
-                e.preventDefault();
-                // Create inline logic to avoid stale closure
-                if (feedback === 'correct') {
-                    setCorrectCount((prev)=>prev + 1);
-                    setShuffledData((prev)=>{
-                        const newData = [
-                            ...prev
-                        ];
-                        newData.splice(currentIndex, 1);
-                        return newData;
-                    });
-                    setCurrentIndex((prev)=>prev >= shuffledData.length - 1 ? 0 : prev);
-                } else setShuffledData((prev)=>{
-                    const newData = [
-                        ...prev
-                    ];
-                    const [currentQ] = newData.splice(currentIndex, 1);
-                    newData.push(currentQ);
-                    return newData;
-                });
-                setFeedback(null);
-                setUserInput('');
-                setShowAnswer(false);
-                if (inputRef.current) inputRef.current.focus();
-            }
-        };
-        if (feedback) window.addEventListener('keydown', handleGlobalKeyDown);
-        return ()=>{
-            window.removeEventListener('keydown', handleGlobalKeyDown);
-        };
-    }, [
+    const { currentQuestion, feedback, handleNext, handleRetry } = (0, _indexJs.useQuiz)();
+    // Enable keyboard shortcuts
+    (0, _indexJs4.useKeyboardShortcuts)({
         feedback,
-        currentIndex,
-        shuffledData.length
-    ]);
-    const handleGiveUp = ()=>{
-        // Show the answer first, then user presses Next to trigger re-insertion
-        setFeedback('incorrect');
-        setShowAnswer(true);
-        // Focus remains on input implicitly or explicitly
-        if (inputRef.current) inputRef.current.focus();
-    };
-    const handleRetry = ()=>{
-        setFeedback(null);
-        setUserInput('');
-        setShowAnswer(false);
-        if (inputRef.current) inputRef.current.focus();
-    };
-    const handleRestart = ()=>{
-        // Re-initialize the quiz with current settings
-        const filtered = (0, _sentenceDataJs.VERB_DATA).filter((item)=>selectedLevels.includes(item.level) && selectedTypes.includes(item.type));
-        if (filtered.length > 0) {
-            let finalPool;
-            // Sort by ID for Fixed Sequence, otherwise shuffle randomly
-            if (isFixedOrder) finalPool = [
-                ...filtered
-            ].sort((a, b)=>a.id - b.id);
-            else finalPool = [
-                ...filtered
-            ].sort(()=>Math.random() - 0.5);
-            setShuffledData(finalPool);
-            setCurrentIndex(0);
-            setFeedback(null);
-            setUserInput('');
-            setShowAnswer(false);
-            setCorrectCount(0);
-            setTotalQuestions(finalPool.length);
-        }
-        if (inputRef.current) inputRef.current.focus();
-    };
-    const toggleLevel = (level)=>{
-        setSelectedLevels((prev)=>{
-            if (prev.includes(level)) {
-                if (prev.length === 1) return prev;
-                return prev.filter((l)=>l !== level);
-            } else return [
-                ...prev,
-                level
-            ];
-        });
-    };
-    const toggleType = (type)=>{
-        setSelectedTypes((prev)=>{
-            if (prev.includes(type)) {
-                if (prev.length === 1) return prev;
-                return prev.filter((t)=>t !== type);
-            } else return [
-                ...prev,
-                type
-            ];
-        });
-    };
-    const toggleForm = (form)=>{
-        setSelectedForms((prev)=>{
-            if (prev.includes(form)) {
-                if (prev.length === 1) return prev; // At least one must remain
-                return prev.filter((f)=>f !== form);
-            } else return [
-                ...prev,
-                form
-            ];
-        });
-    };
+        onNext: handleNext,
+        onRetry: handleRetry
+    });
+    if (!currentQuestion) return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(LoadingState, {}, void 0, false, {
+        fileName: "src/App.jsx",
+        lineNumber: 49,
+        columnNumber: 12
+    }, this);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizCard), {}, void 0, false, {
+                fileName: "src/App.jsx",
+                lineNumber: 54,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "w-full max-w-sm space-y-2 mt-4",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizInput), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 58,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizFeedback), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 59,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizControls), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 60,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/App.jsx",
+                lineNumber: 57,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/App.jsx",
+        lineNumber: 53,
+        columnNumber: 5
+    }, this);
+}
+_s(QuizMain, "gdqKXuWjiZcatROYEo0nvldNAOc=", false, function() {
+    return [
+        (0, _indexJs.useQuiz),
+        (0, _indexJs4.useKeyboardShortcuts)
+    ];
+});
+_c2 = QuizMain;
+// Quiz layout with conditional rendering
+function QuizLayout() {
+    _s1();
+    const { isComplete, isEmpty, shuffledData, currentQuestion } = (0, _indexJs.useQuiz)();
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "min-h-screen bg-[#1a1a1a] text-white flex flex-col font-sans relative",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "h-[60vh] flex flex-col relative",
                 children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                        className: "absolute top-4 left-3 z-50",
-                        ref: settingsRef,
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                onClick: ()=>setIsSettingsOpen(!isSettingsOpen),
-                                className: "flex items-center gap-2 bg-[#2a2a2a] hover:bg-[#333] text-gray-200 px-4 py-2 rounded-lg border border-[#333] shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500",
-                                children: [
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.Settings), {
-                                        size: 18,
-                                        className: "text-gray-300"
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 442,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                        className: "font-medium text-sm tracking-wide",
-                                        children: "\u8A2D\u5B9A"
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 443,
-                                        columnNumber: 13
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "src/main.js",
-                                lineNumber: 438,
-                                columnNumber: 11
-                            }, this),
-                            isSettingsOpen && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "absolute top-full left-0 mt-1 bg-[#2a2a2a] p-2 rounded-lg border border-[#333] shadow-xl w-48 animate-in fade-in slide-in-from-top-2 z-50 max-h-[100vh] overflow-y-auto",
-                                children: [
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
-                                        children: "Select Levels"
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 450,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "flex flex-col gap-0 mb-2",
-                                        children: [
-                                            1,
-                                            2,
-                                            3,
-                                            4,
-                                            5,
-                                            6
-                                        ].map((level)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedLevels.includes(level) ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
-                                                        children: selectedLevels.includes(level) && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 457,
-                                                            columnNumber: 58
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 456,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: selectedLevels.includes(level),
-                                                        onChange: ()=>toggleLevel(level)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 459,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                        className: `text-base ${selectedLevels.includes(level) ? 'text-white font-bold' : 'text-gray-400'}`,
-                                                        children: [
-                                                            "\u30EC\u30D9\u30EB ",
-                                                            level
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 465,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, level, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 455,
-                                                columnNumber: 18
-                                            }, this))
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 453,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
-                                        children: "Verb Type"
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 473,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "flex flex-col gap-0 mb-2",
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedTypes.includes('Intransitive') ? 'bg-purple-500 border-purple-500' : 'border-gray-500'}`,
-                                                        children: selectedTypes.includes('Intransitive') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 479,
-                                                            columnNumber: 64
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 478,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: selectedTypes.includes('Intransitive'),
-                                                        onChange: ()=>toggleType('Intransitive')
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 481,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${selectedTypes.includes('Intransitive') ? 'text-purple-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "\u81EA\u52D5\u8A5E"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 488,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${selectedTypes.includes('Intransitive') ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "Intransitive"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 491,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 487,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 477,
-                                                columnNumber: 16
-                                            }, this),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedTypes.includes('Transitive') ? 'bg-yellow-500 border-yellow-500' : 'border-gray-500'}`,
-                                                        children: selectedTypes.includes('Transitive') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 497,
-                                                            columnNumber: 62
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 496,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: selectedTypes.includes('Transitive'),
-                                                        onChange: ()=>toggleType('Transitive')
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 499,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${selectedTypes.includes('Transitive') ? 'text-yellow-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "\u4ED6\u52D5\u8A5E"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 506,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${selectedTypes.includes('Transitive') ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "Transitive"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 509,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 505,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 495,
-                                                columnNumber: 16
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 476,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
-                                        children: "Verb Form"
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 515,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "flex flex-col gap-0 mb-2",
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedForms.includes('Polite') ? 'bg-[#5F9EA0] border-[#5F9EA0]' : 'border-gray-500'}`,
-                                                        children: selectedForms.includes('Polite') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 521,
-                                                            columnNumber: 58
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 520,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: selectedForms.includes('Polite'),
-                                                        onChange: ()=>toggleForm('Polite')
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 523,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${selectedForms.includes('Polite') ? 'text-[#5F9EA0] font-bold' : 'text-gray-400'}`,
-                                                                children: "\u4E01\u5BE7\u5F62"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 530,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${selectedForms.includes('Polite') ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "Polite Form"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 533,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 529,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 519,
-                                                columnNumber: 16
-                                            }, this),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedForms.includes('Plain') ? 'bg-[#D1AD8C] border-[#D1AD8C]' : 'border-gray-500'}`,
-                                                        children: selectedForms.includes('Plain') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 539,
-                                                            columnNumber: 57
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 538,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: selectedForms.includes('Plain'),
-                                                        onChange: ()=>toggleForm('Plain')
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 541,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${selectedForms.includes('Plain') ? 'text-[#D1AD8C] font-bold' : 'text-gray-400'}`,
-                                                                children: "\u666E\u901A\u5F62"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 548,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${selectedForms.includes('Plain') ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "Plain Form"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 551,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 547,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 537,
-                                                columnNumber: 16
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 518,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
-                                        children: "Display Options"
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 557,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "flex flex-col gap-0 mb-2",
-                                        children: [
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${showEnglish ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
-                                                        children: showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 563,
-                                                            columnNumber: 37
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 562,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: showEnglish,
-                                                        onChange: ()=>setShowEnglish(!showEnglish)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 565,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${showEnglish ? 'text-white font-bold' : 'text-gray-400'}`,
-                                                                children: "\u82F1\u8A9E\u8868\u8A18"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 572,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${showEnglish ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "English Labels"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 575,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 571,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 561,
-                                                columnNumber: 16
-                                            }, this),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${showFurigana ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
-                                                        children: showFurigana && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 581,
-                                                            columnNumber: 38
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 580,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: showFurigana,
-                                                        onChange: ()=>setShowFurigana(!showFurigana)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 583,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${showFurigana ? 'text-white font-bold' : 'text-gray-400'}`,
-                                                                children: "\u632F\u4EEE\u540D"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 590,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${showFurigana ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "Furigana"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 593,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 589,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 579,
-                                                columnNumber: 16
-                                            }, this),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${showDictionary ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
-                                                        children: showDictionary && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 599,
-                                                            columnNumber: 40
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 598,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: showDictionary,
-                                                        onChange: ()=>setShowDictionary(!showDictionary)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 601,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${showDictionary ? 'text-white font-bold' : 'text-gray-400'}`,
-                                                                children: "\u8F9E\u66F8\u5F62"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 608,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${showDictionary ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "Dictionary Form"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 611,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 607,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 597,
-                                                columnNumber: 16
-                                            }, this),
-                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                                className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${showPairs ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
-                                                        children: showPairs && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                            size: 12,
-                                                            className: "text-white"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 617,
-                                                            columnNumber: 35
-                                                        }, this)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 616,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                        type: "checkbox",
-                                                        className: "hidden",
-                                                        checked: showPairs,
-                                                        onChange: ()=>setShowPairs(!showPairs)
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 619,
-                                                        columnNumber: 19
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                        className: "flex flex-col",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-base ${showPairs ? 'text-white font-bold' : 'text-gray-400'}`,
-                                                                children: "\u30DA\u30A2\u8868\u793A"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 626,
-                                                                columnNumber: 21
-                                                            }, this),
-                                                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                className: `text-[10px] ${showPairs ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                                children: "Show Pairs"
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 629,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 625,
-                                                        columnNumber: 19
-                                                    }, this)
-                                                ]
-                                            }, void 0, true, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 615,
-                                                columnNumber: 16
-                                            }, this)
-                                        ]
-                                    }, void 0, true, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 560,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
-                                        children: "Quiz Mode"
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 635,
-                                        columnNumber: 14
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "flex flex-col gap-0",
-                                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
-                                            className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${isFixedOrder ? 'bg-green-500 border-green-500' : 'border-gray-500'}`,
-                                                    children: isFixedOrder && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
-                                                        size: 12,
-                                                        className: "text-white"
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 641,
-                                                        columnNumber: 38
-                                                    }, this)
-                                                }, void 0, false, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 640,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                    type: "checkbox",
-                                                    className: "hidden",
-                                                    checked: isFixedOrder,
-                                                    onChange: ()=>setIsFixedOrder(!isFixedOrder)
-                                                }, void 0, false, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 643,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "flex flex-col",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: `text-base ${isFixedOrder ? 'text-white font-bold' : 'text-gray-400'}`,
-                                                            children: "\u56FA\u5B9A\u9806"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 650,
-                                                            columnNumber: 21
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                            className: `text-[10px] ${isFixedOrder ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
-                                                            children: "Fixed Sequence"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 653,
-                                                            columnNumber: 21
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 649,
-                                                    columnNumber: 19
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/main.js",
-                                            lineNumber: 639,
-                                            columnNumber: 16
-                                        }, this)
-                                    }, void 0, false, {
-                                        fileName: "src/main.js",
-                                        lineNumber: 638,
-                                        columnNumber: 14
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "src/main.js",
-                                lineNumber: 447,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/main.js",
-                        lineNumber: 437,
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs3.ProgressBar), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 74,
                         columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                        className: "w-full absolute top-0 h-1 bg-gray-800",
-                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                            className: "h-full bg-red-500 transition-all duration-300",
-                            style: {
-                                width: `${totalQuestions > 0 ? correctCount / totalQuestions * 100 : 0}%`
-                            }
-                        }, void 0, false, {
-                            fileName: "src/main.js",
-                            lineNumber: 664,
-                            columnNumber: 9
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "src/main.js",
-                        lineNumber: 663,
-                        columnNumber: 7
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs1.SettingsPanel), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 75,
+                        columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                        className: "absolute top-4 right-3 z-40 flex items-center gap-2",
-                        children: [
-                            currentQuestion && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                onClick: handleRestart,
-                                className: "px-3 py-2 bg-[#2a2a2a] rounded-lg shadow-inner border border-[#333] flex items-center justify-center hover:bg-[#333] transition-colors",
-                                title: "\u30EA\u30BB\u30C3\u30C8 (Reset Quiz)",
-                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.RefreshCw), {
-                                    size: 18,
-                                    className: "text-gray-300 opacity-90",
-                                    strokeWidth: 1.5
-                                }, void 0, false, {
-                                    fileName: "src/main.js",
-                                    lineNumber: 679,
-                                    columnNumber: 13
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "src/main.js",
-                                lineNumber: 674,
-                                columnNumber: 11
-                            }, this),
-                            currentQuestion && currentQuestion.icon && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "px-3 py-2 bg-[#2a2a2a] rounded-lg shadow-inner border border-[#333] flex items-center justify-center",
-                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(currentQuestion.icon, {
-                                    size: 18,
-                                    className: `${currentQuestion.color} opacity-90`,
-                                    strokeWidth: 1.5
-                                }, void 0, false, {
-                                    fileName: "src/main.js",
-                                    lineNumber: 686,
-                                    columnNumber: 13
-                                }, this)
-                            }, void 0, false, {
-                                fileName: "src/main.js",
-                                lineNumber: 685,
-                                columnNumber: 11
-                            }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/main.js",
-                        lineNumber: 671,
-                        columnNumber: 7
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizHeader), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 76,
+                        columnNumber: 9
                     }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                        className: "flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1",
-                        children: shuffledData.length === 0 && totalQuestions === 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                            className: "text-center text-gray-400 text-sm",
-                            children: "Select at least one level and type to start."
-                        }, void 0, false, {
-                            fileName: "src/main.js",
-                            lineNumber: 695,
-                            columnNumber: 11
-                        }, this) : shuffledData.length === 0 && totalQuestions > 0 ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                            className: "text-center text-green-400 text-xl font-bold space-y-4",
-                            children: [
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                    children: "\uD83C\uDF89 \u304A\u3081\u3067\u3068\u3046\u3054\u3056\u3044\u307E\u3059\uFF01"
-                                }, void 0, false, {
-                                    fileName: "src/main.js",
-                                    lineNumber: 700,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                    className: "text-base text-gray-300 font-normal",
-                                    children: [
-                                        "All ",
-                                        totalQuestions,
-                                        " questions answered correctly!"
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "src/main.js",
-                                    lineNumber: 701,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                    onClick: handleRestart,
-                                    className: "bg-green-800 hover:bg-green-700 text-white font-bold py-2.5 px-8 rounded-full transition-colors text-sm mt-4",
-                                    children: "Restart"
-                                }, void 0, false, {
-                                    fileName: "src/main.js",
-                                    lineNumber: 702,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true, {
-                            fileName: "src/main.js",
-                            lineNumber: 699,
-                            columnNumber: 11
-                        }, this) : !currentQuestion ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                            className: "flex items-center justify-center text-white text-sm",
-                            children: "Loading..."
-                        }, void 0, false, {
-                            fileName: "src/main.js",
-                            lineNumber: 710,
-                            columnNumber: 11
-                        }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
-                            children: [
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                    className: "w-full max-w-sm flex flex-col items-center gap-2",
-                                    children: [
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "w-full flex justify-between items-end px-4 pr-12",
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "flex flex-col items-center group",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                            className: "mb-0.5 h-12 flex items-end",
-                                                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(RubyText, {
-                                                                data: currentQuestion.nounRuby,
-                                                                showFurigana: showFurigana
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 721,
-                                                                columnNumber: 21
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 720,
-                                                            columnNumber: 19
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                            className: "flex flex-col items-center w-full",
-                                                            children: [
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                                    className: "h-[2px] w-10 bg-red-600 mb-0.5"
-                                                                }, void 0, false, {
-                                                                    fileName: "src/main.js",
-                                                                    lineNumber: 724,
-                                                                    columnNumber: 21
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                    className: "text-[10px] text-gray-300 tracking-wider font-semibold",
-                                                                    children: "\u540D\u8A5E"
-                                                                }, void 0, false, {
-                                                                    fileName: "src/main.js",
-                                                                    lineNumber: 725,
-                                                                    columnNumber: 21
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 723,
-                                                            columnNumber: 19
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 719,
-                                                    columnNumber: 17
-                                                }, this),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "flex flex-col items-center",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                            className: "mb-0.5 h-12 flex items-end",
-                                                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(RubyText, {
-                                                                data: showDictionary ? currentQuestion.dictionaryRuby : currentQuestion.verbRuby,
-                                                                showFurigana: showFurigana
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 732,
-                                                                columnNumber: 22
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 731,
-                                                            columnNumber: 19
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                            className: "flex flex-col items-center w-full",
-                                                            children: [
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                                    className: "h-[2px] w-10 bg-red-600 mb-0.5"
-                                                                }, void 0, false, {
-                                                                    fileName: "src/main.js",
-                                                                    lineNumber: 738,
-                                                                    columnNumber: 21
-                                                                }, this),
-                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                    className: "text-[10px] text-gray-300 tracking-wider font-semibold",
-                                                                    children: "\u52D5\u8A5E"
-                                                                }, void 0, false, {
-                                                                    fileName: "src/main.js",
-                                                                    lineNumber: 739,
-                                                                    columnNumber: 21
-                                                                }, this)
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 737,
-                                                            columnNumber: 19
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 730,
-                                                    columnNumber: 17
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/main.js",
-                                            lineNumber: 717,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: `text-xl tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-purple-400'}`,
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "font-bold",
-                                                    children: currentQuestion.type === 'Transitive' ? "\u4ED6\u52D5\u8A5E" : "\u81EA\u52D5\u8A5E"
-                                                }, void 0, false, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 746,
-                                                    columnNumber: 17
-                                                }, this),
-                                                showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                    className: "text-xs text-gray-300 font-normal",
-                                                    children: [
-                                                        " ",
-                                                        currentQuestion.type
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 746,
-                                                    columnNumber: 123
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/main.js",
-                                            lineNumber: 745,
-                                            columnNumber: 15
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "src/main.js",
-                                    lineNumber: 714,
-                                    columnNumber: 13
-                                }, this),
-                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                    className: "w-full max-w-sm space-y-2 mt-4",
-                                    children: [
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
-                                            onSubmit: handleCheck,
-                                            className: "relative w-full",
-                                            onKeyDown: (e)=>{
-                                                // Allow Enter to proceed to next even when input is disabled
-                                                if (e.key === 'Enter' && (feedback === 'incorrect' || feedback === 'correct')) {
-                                                    e.preventDefault();
-                                                    handleNext(feedback === 'correct');
-                                                }
-                                            },
-                                            children: [
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                                                    ref: inputRef,
-                                                    type: "text",
-                                                    value: userInput,
-                                                    onChange: handleInputChange,
-                                                    placeholder: "\u6587\u3092\u5165\u529B...",
-                                                    className: `w-full bg-white text-black text-center text-lg py-2.5 px-4 rounded-full focus:outline-none focus:ring-2 transition-all shadow-lg
-                    ${feedback === 'correct' ? 'ring-green-500 bg-green-50' : ''}
-                    ${feedback === 'incorrect' ? 'ring-red-500 bg-red-50' : ''}
-                    ${isInvalidInput ? 'ring-red-500 ring-2 bg-red-50 animate-shake' : ''}
-                    ${!feedback && !isInvalidInput ? 'ring-transparent focus:ring-blue-400' : ''}
-                  `,
-                                                    autoFocus: true,
-                                                    disabled: feedback === 'correct' || feedback === 'incorrect'
-                                                }, void 0, false, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 764,
-                                                    columnNumber: 17
-                                                }, this),
-                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "absolute right-3 top-1/2 -translate-y-1/2",
-                                                    children: [
-                                                        feedback === 'correct' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCircle), {
-                                                            size: 16,
-                                                            className: "text-green-600 animate-bounce"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 782,
-                                                            columnNumber: 47
-                                                        }, this),
-                                                        feedback === 'incorrect' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.XCircle), {
-                                                            size: 16,
-                                                            className: "text-red-600 animate-pulse"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 783,
-                                                            columnNumber: 49
-                                                        }, this)
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 781,
-                                                    columnNumber: 17
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/main.js",
-                                            lineNumber: 753,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "min-h-[90px] flex items-start justify-center pt-3",
-                                            children: [
-                                                feedback === 'incorrect' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "text-center animate-in fade-in slide-in-from-bottom-2 space-y-1.5",
-                                                    children: [
-                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                            className: "text-green-700 text-xs font-bold mb-2",
-                                                            children: "\u6B63\u3057\u3044\u56DE\u7B54"
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 791,
-                                                            columnNumber: 21
-                                                        }, this),
-                                                        selectedForms.includes('Polite') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                            className: "mb-2",
-                                                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(AnswerRubyText, {
-                                                                data: buildSentenceRuby(currentQuestion, true),
-                                                                colorClass: "text-[#5F9EA0]",
-                                                                showFurigana: showFurigana
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 796,
-                                                                columnNumber: 25
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 795,
-                                                            columnNumber: 23
-                                                        }, this),
-                                                        selectedForms.includes('Plain') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                            className: "mb-2",
-                                                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(AnswerRubyText, {
-                                                                data: buildSentenceRuby(currentQuestion, false),
-                                                                colorClass: "text-[#D1AD8C]",
-                                                                showFurigana: showFurigana
-                                                            }, void 0, false, {
-                                                                fileName: "src/main.js",
-                                                                lineNumber: 807,
-                                                                columnNumber: 25
-                                                            }, this)
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 806,
-                                                            columnNumber: 23
-                                                        }, this),
-                                                        showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                            className: "text-sm text-gray-300 italic",
-                                                            children: currentQuestion.english
-                                                        }, void 0, false, {
-                                                            fileName: "src/main.js",
-                                                            lineNumber: 816,
-                                                            columnNumber: 23
-                                                        }, this),
-                                                        showPairs && (()=>{
-                                                            const pairId = currentQuestion.id % 2 === 1 ? currentQuestion.id + 1 : currentQuestion.id - 1;
-                                                            const pairVerb = (0, _sentenceDataJs.VERB_DATA).find((v)=>v.id === pairId);
-                                                            if (pairVerb) {
-                                                                // Determine which is intransitive (blue) and transitive (yellow)
-                                                                const isCurrentIntransitive = currentQuestion.type === 'Intransitive';
-                                                                const intransitiveVerb = isCurrentIntransitive ? currentQuestion : pairVerb;
-                                                                const transitiveVerb = isCurrentIntransitive ? pairVerb : currentQuestion;
-                                                                // Get suffix types for both verbs
-                                                                const intransitiveSuffix = (0, _sentenceDataJs.getVerbSuffixType)(intransitiveVerb.dictionaryRuby);
-                                                                const transitiveSuffix = (0, _sentenceDataJs.getVerbSuffixType)(transitiveVerb.dictionaryRuby);
-                                                                return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                                    className: "flex flex-col items-center gap-2 mt-2",
-                                                                    children: [
-                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                                            className: "flex items-center justify-center gap-3",
-                                                                            children: [
-                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(AnswerRubyText, {
-                                                                                    data: intransitiveVerb.dictionaryRuby,
-                                                                                    colorClass: "text-purple-400",
-                                                                                    textSize: "text-lg",
-                                                                                    showFurigana: showFurigana
-                                                                                }, void 0, false, {
-                                                                                    fileName: "src/main.js",
-                                                                                    lineNumber: 835,
-                                                                                    columnNumber: 31
-                                                                                }, this),
-                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                                    className: "text-gray-500",
-                                                                                    children: "/"
-                                                                                }, void 0, false, {
-                                                                                    fileName: "src/main.js",
-                                                                                    lineNumber: 841,
-                                                                                    columnNumber: 31
-                                                                                }, this),
-                                                                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(AnswerRubyText, {
-                                                                                    data: transitiveVerb.dictionaryRuby,
-                                                                                    colorClass: "text-yellow-400",
-                                                                                    textSize: "text-lg",
-                                                                                    showFurigana: showFurigana
-                                                                                }, void 0, false, {
-                                                                                    fileName: "src/main.js",
-                                                                                    lineNumber: 842,
-                                                                                    columnNumber: 31
-                                                                                }, this)
-                                                                            ]
-                                                                        }, void 0, true, {
-                                                                            fileName: "src/main.js",
-                                                                            lineNumber: 834,
-                                                                            columnNumber: 29
-                                                                        }, this),
-                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                                            className: "flex flex-col items-center gap-1 text-base mt-1",
-                                                                            children: [
-                                                                                intransitiveSuffix === 'suffix-aru' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                                                    className: "flex items-center gap-2",
-                                                                                    children: [
-                                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                                            className: "text-purple-400",
-                                                                                            children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationJa
-                                                                                        }, void 0, false, {
-                                                                                            fileName: "src/main.js",
-                                                                                            lineNumber: 853,
-                                                                                            columnNumber: 35
-                                                                                        }, this),
-                                                                                        showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                                            className: "text-sm text-gray-300 italic",
-                                                                                            children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationEn
-                                                                                        }, void 0, false, {
-                                                                                            fileName: "src/main.js",
-                                                                                            lineNumber: 854,
-                                                                                            columnNumber: 51
-                                                                                        }, this)
-                                                                                    ]
-                                                                                }, void 0, true, {
-                                                                                    fileName: "src/main.js",
-                                                                                    lineNumber: 852,
-                                                                                    columnNumber: 33
-                                                                                }, this),
-                                                                                transitiveSuffix === 'suffix-su' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                                                    className: "flex items-center gap-2",
-                                                                                    children: [
-                                                                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                                            className: "text-yellow-400",
-                                                                                            children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationJa
-                                                                                        }, void 0, false, {
-                                                                                            fileName: "src/main.js",
-                                                                                            lineNumber: 859,
-                                                                                            columnNumber: 35
-                                                                                        }, this),
-                                                                                        showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                                                                            className: "text-sm text-gray-300 italic",
-                                                                                            children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationEn
-                                                                                        }, void 0, false, {
-                                                                                            fileName: "src/main.js",
-                                                                                            lineNumber: 860,
-                                                                                            columnNumber: 51
-                                                                                        }, this)
-                                                                                    ]
-                                                                                }, void 0, true, {
-                                                                                    fileName: "src/main.js",
-                                                                                    lineNumber: 858,
-                                                                                    columnNumber: 33
-                                                                                }, this)
-                                                                            ]
-                                                                        }, void 0, true, {
-                                                                            fileName: "src/main.js",
-                                                                            lineNumber: 850,
-                                                                            columnNumber: 29
-                                                                        }, this)
-                                                                    ]
-                                                                }, void 0, true, {
-                                                                    fileName: "src/main.js",
-                                                                    lineNumber: 833,
-                                                                    columnNumber: 27
-                                                                }, this);
-                                                            }
-                                                            return null;
-                                                        })()
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 790,
-                                                    columnNumber: 19
-                                                }, this),
-                                                feedback === 'correct' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                                    className: "text-center text-green-400 font-bold text-sm animate-in zoom-in space-y-1",
-                                                    children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
-                                                        children: "Great Job!"
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 873,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                }, void 0, false, {
-                                                    fileName: "src/main.js",
-                                                    lineNumber: 872,
-                                                    columnNumber: 19
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "src/main.js",
-                                            lineNumber: 788,
-                                            columnNumber: 15
-                                        }, this),
-                                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "flex gap-3 justify-center mt-12 mb-4",
-                                            children: (feedback === 'incorrect' || showAnswer) && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
-                                                children: [
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                                        onClick: handleRetry,
-                                                        className: "bg-gray-600 hover:bg-gray-500 text-white font-bold py-2.5 px-8 rounded-full flex items-center gap-1.5 transition-colors text-sm",
-                                                        children: "\u3082\u3046\u4E00\u5EA6"
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 882,
-                                                        columnNumber: 21
-                                                    }, this),
-                                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                                        onClick: ()=>handleNext(feedback === 'correct'),
-                                                        className: `${feedback === 'correct' ? 'bg-green-700 hover:bg-green-600' : 'bg-red-700 hover:bg-red-600'} text-white font-bold py-2.5 px-8 rounded-full transition-colors text-sm`,
-                                                        children: "\u6B21\u3078"
-                                                    }, void 0, false, {
-                                                        fileName: "src/main.js",
-                                                        lineNumber: 888,
-                                                        columnNumber: 21
-                                                    }, this)
-                                                ]
-                                            }, void 0, true)
-                                        }, void 0, false, {
-                                            fileName: "src/main.js",
-                                            lineNumber: 879,
-                                            columnNumber: 15
-                                        }, this),
-                                        feedback === null && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                            className: "flex justify-center",
-                                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
-                                                onClick: handleGiveUp,
-                                                className: "text-gray-300 hover:text-gray-100 text-sm font-medium py-1 px-4 transition-colors",
-                                                children: "\u308F\u304B\u3089\u306A\u3044"
-                                            }, void 0, false, {
-                                                fileName: "src/main.js",
-                                                lineNumber: 901,
-                                                columnNumber: 20
-                                            }, this)
-                                        }, void 0, false, {
-                                            fileName: "src/main.js",
-                                            lineNumber: 900,
-                                            columnNumber: 18
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "src/main.js",
-                                    lineNumber: 752,
-                                    columnNumber: 13
-                                }, this)
-                            ]
-                        }, void 0, true)
-                    }, void 0, false, {
-                        fileName: "src/main.js",
-                        lineNumber: 692,
-                        columnNumber: 7
+                    isEmpty ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(EmptyState, {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 79,
+                        columnNumber: 11
+                    }, this) : isComplete ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizComplete), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 81,
+                        columnNumber: 11
+                    }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(QuizMain, {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 83,
+                        columnNumber: 11
                     }, this),
-                    shuffledData.length > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                        className: "text-center text-gray-400 text-base pb-1",
-                        children: [
-                            "\u7B2C",
-                            correctCount + 1,
-                            "\u554F / \u5168",
-                            totalQuestions,
-                            "\u554F"
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/main.js",
-                        lineNumber: 917,
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizCounter), {}, void 0, false, {
+                        fileName: "src/App.jsx",
+                        lineNumber: 86,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
-                fileName: "src/main.js",
-                lineNumber: 435,
+                fileName: "src/App.jsx",
+                lineNumber: 73,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
                 className: "h-[40vh] bg-[#1a1a1a]"
             }, void 0, false, {
-                fileName: "src/main.js",
-                lineNumber: 925,
+                fileName: "src/App.jsx",
+                lineNumber: 90,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
-        fileName: "src/main.js",
-        lineNumber: 433,
+        fileName: "src/App.jsx",
+        lineNumber: 71,
         columnNumber: 5
     }, this);
 }
-_s1(App, "CdA05+/hjxdtzYww5eH/Wt3Tacg=");
-_c2 = App;
-var _c, _c1, _c2;
-$RefreshReg$(_c, "AnswerRubyText");
-$RefreshReg$(_c1, "RubyText");
-$RefreshReg$(_c2, "App");
+_s1(QuizLayout, "DU8+zec5ouqbN52yLt45wi793lk=", false, function() {
+    return [
+        (0, _indexJs.useQuiz)
+    ];
+});
+_c3 = QuizLayout;
+function App() {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs.SettingsProvider), {
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs.QuizProvider), {
+            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(QuizLayout, {}, void 0, false, {
+                fileName: "src/App.jsx",
+                lineNumber: 100,
+                columnNumber: 9
+            }, this)
+        }, void 0, false, {
+            fileName: "src/App.jsx",
+            lineNumber: 99,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "src/App.jsx",
+        lineNumber: 98,
+        columnNumber: 5
+    }, this);
+}
+_c4 = App;
+var _c, _c1, _c2, _c3, _c4;
+$RefreshReg$(_c, "EmptyState");
+$RefreshReg$(_c1, "LoadingState");
+$RefreshReg$(_c2, "QuizMain");
+$RefreshReg$(_c3, "QuizLayout");
+$RefreshReg$(_c4, "App");
 
-  $parcel$ReactRefreshHelpers$9dcd.postlude(module);
+  $parcel$ReactRefreshHelpers$be2d.postlude(module);
 } finally {
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","./icons.js":"djMwZ","./hiraganaUtils.js":"5vOEC","./sentenceData.js":"smgc1","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"djMwZ":[function(require,module,exports,__globalThis) {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","./context/index.js":"eWlIb","./components/settings/index.js":"8i9i2","./components/quiz/index.js":"4VvA3","./components/ui/index.js":"4uivk","./hooks/index.js":"eGcNQ","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"eWlIb":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SettingsProvider", ()=>(0, _settingsContextJsx.SettingsProvider));
+parcelHelpers.export(exports, "useSettings", ()=>(0, _settingsContextJsx.useSettings));
+parcelHelpers.export(exports, "QuizProvider", ()=>(0, _quizContextJsx.QuizProvider));
+parcelHelpers.export(exports, "useQuiz", ()=>(0, _quizContextJsx.useQuiz));
+var _settingsContextJsx = require("./SettingsContext.jsx");
+var _quizContextJsx = require("./QuizContext.jsx");
+
+},{"./SettingsContext.jsx":"hBba3","./QuizContext.jsx":"hrQeu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"hBba3":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$00f0 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$00f0.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$00f0.prelude(module);
+
+try {
+// Settings Context - manages all user preferences and display options
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "SettingsProvider", ()=>SettingsProvider);
+parcelHelpers.export(exports, "useSettings", ()=>useSettings);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _quizDefaultsJs = require("../constants/quizDefaults.js");
+var _s = $RefreshSig$(), _s1 = $RefreshSig$();
+const SettingsContext = /*#__PURE__*/ (0, _react.createContext)(null);
+// Helper to toggle an item in an array (with minimum 1 item constraint)
+const toggleItem = (prev, item)=>{
+    if (prev.includes(item)) {
+        if (prev.length === 1) return prev; // At least one must remain
+        return prev.filter((i)=>i !== item);
+    }
+    return [
+        ...prev,
+        item
+    ];
+};
+function SettingsProvider({ children }) {
+    _s();
+    // Filter settings
+    const [selectedLevels, setSelectedLevels] = (0, _react.useState)((0, _quizDefaultsJs.DEFAULT_LEVELS));
+    const [selectedTypes, setSelectedTypes] = (0, _react.useState)((0, _quizDefaultsJs.DEFAULT_TYPES));
+    const [selectedForms, setSelectedForms] = (0, _react.useState)((0, _quizDefaultsJs.DEFAULT_FORMS));
+    const [isFixedOrder, setIsFixedOrder] = (0, _react.useState)(false);
+    // Display settings
+    const [showFurigana, setShowFurigana] = (0, _react.useState)(false);
+    const [showDictionary, setShowDictionary] = (0, _react.useState)(false);
+    const [showPairs, setShowPairs] = (0, _react.useState)(false);
+    const [showEnglish, setShowEnglish] = (0, _react.useState)(false);
+    // Toggle functions with minimum constraint
+    const toggleLevel = (0, _react.useCallback)((level)=>{
+        setSelectedLevels((prev)=>toggleItem(prev, level));
+    }, []);
+    const toggleType = (0, _react.useCallback)((type)=>{
+        setSelectedTypes((prev)=>toggleItem(prev, type));
+    }, []);
+    const toggleForm = (0, _react.useCallback)((form)=>{
+        setSelectedForms((prev)=>toggleItem(prev, form));
+    }, []);
+    const value = {
+        // Filter settings
+        selectedLevels,
+        selectedTypes,
+        selectedForms,
+        isFixedOrder,
+        toggleLevel,
+        toggleType,
+        toggleForm,
+        setIsFixedOrder,
+        // Display settings
+        showFurigana,
+        showDictionary,
+        showPairs,
+        showEnglish,
+        setShowFurigana,
+        setShowDictionary,
+        setShowPairs,
+        setShowEnglish
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(SettingsContext.Provider, {
+        value: value,
+        children: children
+    }, void 0, false, {
+        fileName: "src/context/SettingsContext.jsx",
+        lineNumber: 65,
+        columnNumber: 5
+    }, this);
+}
+_s(SettingsProvider, "2hHK/0Me20gans5uCLRnwGXhCi8=");
+_c = SettingsProvider;
+const useSettings = ()=>{
+    _s1();
+    const context = (0, _react.useContext)(SettingsContext);
+    if (!context) throw new Error('useSettings must be used within a SettingsProvider');
+    return context;
+};
+_s1(useSettings, "b9L3QQ+jgeyIrH0NfHrJ8nn7VMU=");
+var _c;
+$RefreshReg$(_c, "SettingsProvider");
+
+  $parcel$ReactRefreshHelpers$00f0.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../constants/quizDefaults.js":"j5Psg","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"j5Psg":[function(require,module,exports,__globalThis) {
+// Default quiz settings
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DEFAULT_LEVELS", ()=>DEFAULT_LEVELS);
+parcelHelpers.export(exports, "DEFAULT_TYPES", ()=>DEFAULT_TYPES);
+parcelHelpers.export(exports, "DEFAULT_FORMS", ()=>DEFAULT_FORMS);
+parcelHelpers.export(exports, "AVAILABLE_LEVELS", ()=>AVAILABLE_LEVELS);
+const DEFAULT_LEVELS = [
+    1,
+    2
+];
+const DEFAULT_TYPES = [
+    'Intransitive',
+    'Transitive'
+];
+const DEFAULT_FORMS = [
+    'Polite',
+    'Plain'
+];
+const AVAILABLE_LEVELS = [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+];
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"jnFvT":[function(require,module,exports,__globalThis) {
+exports.interopDefault = function(a) {
+    return a && a.__esModule ? a : {
+        default: a
+    };
+};
+exports.defineInteropFlag = function(a) {
+    Object.defineProperty(a, '__esModule', {
+        value: true
+    });
+};
+exports.exportAll = function(source, dest) {
+    Object.keys(source).forEach(function(key) {
+        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
+        Object.defineProperty(dest, key, {
+            enumerable: true,
+            get: function() {
+                return source[key];
+            }
+        });
+    });
+    return dest;
+};
+exports.export = function(dest, destName, get) {
+    Object.defineProperty(dest, destName, {
+        enumerable: true,
+        get: get
+    });
+};
+
+},{}],"7h6Pi":[function(require,module,exports,__globalThis) {
+"use strict";
+var Refresh = require("7422ead32dcc1e6b");
+function debounce(func, delay) {
+    {
+        let timeout = undefined;
+        let lastTime = 0;
+        return function(args) {
+            // Call immediately if last call was more than the delay ago.
+            // Otherwise, set a timeout. This means the first call is fast
+            // (for the common case of a single update), and subsequent updates
+            // are batched.
+            let now = Date.now();
+            if (now - lastTime > delay) {
+                lastTime = now;
+                func.call(null, args);
+            } else {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    timeout = undefined;
+                    lastTime = Date.now();
+                    func.call(null, args);
+                }, delay);
+            }
+        };
+    }
+}
+var enqueueUpdate = debounce(function() {
+    Refresh.performReactRefresh();
+}, 30);
+module.exports.init = function() {
+    if (!globalThis.$RefreshReg$) {
+        Refresh.injectIntoGlobalHook(globalThis);
+        globalThis.$RefreshReg$ = function() {};
+        globalThis.$RefreshSig$ = function() {
+            return function(type) {
+                return type;
+            };
+        };
+        if (typeof window !== 'undefined') {
+            let ErrorOverlay = require("e4d875b7642f9496");
+            ErrorOverlay.setEditorHandler(function(errorLocation) {
+                let file = `${errorLocation.fileName}:${errorLocation.lineNumber || 1}:${errorLocation.colNumber || 1}`;
+                fetch(module.bundle.devServer + `/__parcel_launch_editor?file=${encodeURIComponent(file)}`);
+            });
+            ErrorOverlay.startReportingRuntimeErrors({
+                onError: function() {}
+            });
+            window.addEventListener('parcelhmraccept', ()=>{
+                ErrorOverlay.dismissRuntimeErrors();
+            });
+        }
+    }
+};
+// Everything below is either adapted or copied from
+// https://github.com/facebook/metro/blob/61de16bd1edd7e738dd0311c89555a644023ab2d/packages/metro/src/lib/polyfills/require.js
+// MIT License - Copyright (c) Facebook, Inc. and its affiliates.
+module.exports.prelude = function(module1) {
+    globalThis.$RefreshReg$ = function(type, id) {
+        Refresh.register(type, module1.id + ' ' + id);
+    };
+    globalThis.$RefreshSig$ = Refresh.createSignatureFunctionForTransform;
+};
+module.exports.postlude = function(module1) {
+    if (typeof window === 'undefined') return;
+    if (isReactRefreshBoundary(module1.exports)) {
+        registerExportsForReactRefresh(module1);
+        if (module1.hot) {
+            module1.hot.dispose(function(data) {
+                if (Refresh.hasUnrecoverableErrors()) window.location.reload();
+                data.prevExports = module1.exports;
+            });
+            module1.hot.accept(function(getParents) {
+                var prevExports = module1.hot.data.prevExports;
+                var nextExports = module1.exports;
+                // Since we just executed the code for it, it's possible
+                // that the new exports make it ineligible for being a boundary.
+                var isNoLongerABoundary = !isReactRefreshBoundary(nextExports);
+                // It can also become ineligible if its exports are incompatible
+                // with the previous exports.
+                // For example, if you add/remove/change exports, we'll want
+                // to re-execute the importing modules, and force those components
+                // to re-render. Similarly, if you convert a class component
+                // to a function, we want to invalidate the boundary.
+                var didInvalidate = shouldInvalidateReactRefreshBoundary(prevExports, nextExports);
+                if (isNoLongerABoundary || didInvalidate) {
+                    // We'll be conservative. The only case in which we won't do a full
+                    // reload is if all parent modules are also refresh boundaries.
+                    // In that case we'll add them to the current queue.
+                    var parents = getParents();
+                    if (parents.length === 0) {
+                        // Looks like we bubbled to the root. Can't recover from that.
+                        window.location.reload();
+                        return;
+                    }
+                    return parents;
+                }
+                enqueueUpdate();
+            });
+        }
+    }
+};
+function isReactRefreshBoundary(exports) {
+    if (Refresh.isLikelyComponentType(exports)) return true;
+    if (exports == null || typeof exports !== 'object') // Exit if we can't iterate over exports.
+    return false;
+    var hasExports = false;
+    var areAllExportsComponents = true;
+    let isESM = '__esModule' in exports;
+    for(var key in exports){
+        hasExports = true;
+        if (key === '__esModule') continue;
+        var desc = Object.getOwnPropertyDescriptor(exports, key);
+        if (desc && desc.get && !isESM) // Don't invoke getters for CJS as they may have side effects.
+        return false;
+        var exportValue = exports[key];
+        if (!Refresh.isLikelyComponentType(exportValue)) areAllExportsComponents = false;
+    }
+    return hasExports && areAllExportsComponents;
+}
+function shouldInvalidateReactRefreshBoundary(prevExports, nextExports) {
+    var prevSignature = getRefreshBoundarySignature(prevExports);
+    var nextSignature = getRefreshBoundarySignature(nextExports);
+    if (prevSignature.length !== nextSignature.length) return true;
+    for(var i = 0; i < nextSignature.length; i++){
+        if (prevSignature[i] !== nextSignature[i]) return true;
+    }
+    return false;
+}
+// When this signature changes, it's unsafe to stop at this refresh boundary.
+function getRefreshBoundarySignature(exports) {
+    var signature = [];
+    signature.push(Refresh.getFamilyByType(exports));
+    if (exports == null || typeof exports !== 'object') // Exit if we can't iterate over exports.
+    // (This is important for legacy environments.)
+    return signature;
+    let isESM = '__esModule' in exports;
+    for(var key in exports){
+        if (key === '__esModule') continue;
+        var desc = Object.getOwnPropertyDescriptor(exports, key);
+        if (desc && desc.get && !isESM) continue;
+        var exportValue = exports[key];
+        signature.push(key);
+        signature.push(Refresh.getFamilyByType(exportValue));
+    }
+    return signature;
+}
+function registerExportsForReactRefresh(module1) {
+    var exports = module1.exports, id = module1.id;
+    Refresh.register(exports, id + ' %exports%');
+    if (exports == null || typeof exports !== 'object') // Exit if we can't iterate over exports.
+    // (This is important for legacy environments.)
+    return;
+    let isESM = '__esModule' in exports;
+    for(var key in exports){
+        var desc = Object.getOwnPropertyDescriptor(exports, key);
+        if (desc && desc.get && !isESM) continue;
+        var exportValue = exports[key];
+        var typeID = id + ' %exports% ' + key;
+        Refresh.register(exportValue, typeID);
+    }
+}
+
+},{"7422ead32dcc1e6b":"hpiFP","e4d875b7642f9496":"gnoim"}],"hpiFP":[function(require,module,exports,__globalThis) {
+'use strict';
+module.exports = require("96622d495519d4e");
+
+},{"96622d495519d4e":"7AD9f"}],"7AD9f":[function(require,module,exports,__globalThis) {
+/**
+ * @license React
+ * react-refresh-runtime.development.js
+ *
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ "use strict";
+(function() {
+    function computeFullKey(signature) {
+        if (null !== signature.fullKey) return signature.fullKey;
+        var fullKey = signature.ownKey;
+        try {
+            var hooks = signature.getCustomHooks();
+        } catch (err) {
+            return signature.forceReset = !0, signature.fullKey = fullKey;
+        }
+        for(var i = 0; i < hooks.length; i++){
+            var hook = hooks[i];
+            if ("function" !== typeof hook) return signature.forceReset = !0, signature.fullKey = fullKey;
+            hook = allSignaturesByType.get(hook);
+            if (void 0 !== hook) {
+                var nestedHookKey = computeFullKey(hook);
+                hook.forceReset && (signature.forceReset = !0);
+                fullKey += "\n---\n" + nestedHookKey;
+            }
+        }
+        return signature.fullKey = fullKey;
+    }
+    function resolveFamily(type) {
+        return updatedFamiliesByType.get(type);
+    }
+    function cloneMap(map) {
+        var clone = new Map();
+        map.forEach(function(value, key) {
+            clone.set(key, value);
+        });
+        return clone;
+    }
+    function cloneSet(set) {
+        var clone = new Set();
+        set.forEach(function(value) {
+            clone.add(value);
+        });
+        return clone;
+    }
+    function getProperty(object, property) {
+        try {
+            return object[property];
+        } catch (err) {}
+    }
+    function register(type, id) {
+        if (!(null === type || "function" !== typeof type && "object" !== typeof type || allFamiliesByType.has(type))) {
+            var family = allFamiliesByID.get(id);
+            void 0 === family ? (family = {
+                current: type
+            }, allFamiliesByID.set(id, family)) : pendingUpdates.push([
+                family,
+                type
+            ]);
+            allFamiliesByType.set(type, family);
+            if ("object" === typeof type && null !== type) switch(getProperty(type, "$$typeof")){
+                case REACT_FORWARD_REF_TYPE:
+                    register(type.render, id + "$render");
+                    break;
+                case REACT_MEMO_TYPE:
+                    register(type.type, id + "$type");
+            }
+        }
+    }
+    function setSignature(type, key) {
+        var forceReset = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : !1, getCustomHooks = 3 < arguments.length ? arguments[3] : void 0;
+        allSignaturesByType.has(type) || allSignaturesByType.set(type, {
+            forceReset: forceReset,
+            ownKey: key,
+            fullKey: null,
+            getCustomHooks: getCustomHooks || function() {
+                return [];
+            }
+        });
+        if ("object" === typeof type && null !== type) switch(getProperty(type, "$$typeof")){
+            case REACT_FORWARD_REF_TYPE:
+                setSignature(type.render, key, forceReset, getCustomHooks);
+                break;
+            case REACT_MEMO_TYPE:
+                setSignature(type.type, key, forceReset, getCustomHooks);
+        }
+    }
+    function collectCustomHooksForSignature(type) {
+        type = allSignaturesByType.get(type);
+        void 0 !== type && computeFullKey(type);
+    }
+    var REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_MEMO_TYPE = Symbol.for("react.memo"), PossiblyWeakMap = "function" === typeof WeakMap ? WeakMap : Map, allFamiliesByID = new Map(), allFamiliesByType = new PossiblyWeakMap(), allSignaturesByType = new PossiblyWeakMap(), updatedFamiliesByType = new PossiblyWeakMap(), pendingUpdates = [], helpersByRendererID = new Map(), helpersByRoot = new Map(), mountedRoots = new Set(), failedRoots = new Set(), rootElements = "function" === typeof WeakMap ? new WeakMap() : null, isPerformingRefresh = !1;
+    exports._getMountedRootCount = function() {
+        return mountedRoots.size;
+    };
+    exports.collectCustomHooksForSignature = collectCustomHooksForSignature;
+    exports.createSignatureFunctionForTransform = function() {
+        var savedType, hasCustomHooks, didCollectHooks = !1;
+        return function(type, key, forceReset, getCustomHooks) {
+            if ("string" === typeof key) return savedType || (savedType = type, hasCustomHooks = "function" === typeof getCustomHooks), null == type || "function" !== typeof type && "object" !== typeof type || setSignature(type, key, forceReset, getCustomHooks), type;
+            !didCollectHooks && hasCustomHooks && (didCollectHooks = !0, collectCustomHooksForSignature(savedType));
+        };
+    };
+    exports.getFamilyByID = function(id) {
+        return allFamiliesByID.get(id);
+    };
+    exports.getFamilyByType = function(type) {
+        return allFamiliesByType.get(type);
+    };
+    exports.hasUnrecoverableErrors = function() {
+        return !1;
+    };
+    exports.injectIntoGlobalHook = function(globalObject) {
+        var hook = globalObject.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+        if (void 0 === hook) {
+            var nextID = 0;
+            globalObject.__REACT_DEVTOOLS_GLOBAL_HOOK__ = hook = {
+                renderers: new Map(),
+                supportsFiber: !0,
+                inject: function() {
+                    return nextID++;
+                },
+                onScheduleFiberRoot: function() {},
+                onCommitFiberRoot: function() {},
+                onCommitFiberUnmount: function() {}
+            };
+        }
+        if (hook.isDisabled) console.warn("Something has shimmed the React DevTools global hook (__REACT_DEVTOOLS_GLOBAL_HOOK__). Fast Refresh is not compatible with this shim and will be disabled.");
+        else {
+            var oldInject = hook.inject;
+            hook.inject = function(injected) {
+                var id = oldInject.apply(this, arguments);
+                "function" === typeof injected.scheduleRefresh && "function" === typeof injected.setRefreshHandler && helpersByRendererID.set(id, injected);
+                return id;
+            };
+            hook.renderers.forEach(function(injected, id) {
+                "function" === typeof injected.scheduleRefresh && "function" === typeof injected.setRefreshHandler && helpersByRendererID.set(id, injected);
+            });
+            var oldOnCommitFiberRoot = hook.onCommitFiberRoot, oldOnScheduleFiberRoot = hook.onScheduleFiberRoot || function() {};
+            hook.onScheduleFiberRoot = function(id, root, children) {
+                isPerformingRefresh || (failedRoots.delete(root), null !== rootElements && rootElements.set(root, children));
+                return oldOnScheduleFiberRoot.apply(this, arguments);
+            };
+            hook.onCommitFiberRoot = function(id, root, maybePriorityLevel, didError) {
+                var helpers = helpersByRendererID.get(id);
+                if (void 0 !== helpers) {
+                    helpersByRoot.set(root, helpers);
+                    helpers = root.current;
+                    var alternate = helpers.alternate;
+                    null !== alternate ? (alternate = null != alternate.memoizedState && null != alternate.memoizedState.element && mountedRoots.has(root), helpers = null != helpers.memoizedState && null != helpers.memoizedState.element, !alternate && helpers ? (mountedRoots.add(root), failedRoots.delete(root)) : alternate && helpers || (alternate && !helpers ? (mountedRoots.delete(root), didError ? failedRoots.add(root) : helpersByRoot.delete(root)) : alternate || helpers || didError && failedRoots.add(root))) : mountedRoots.add(root);
+                }
+                return oldOnCommitFiberRoot.apply(this, arguments);
+            };
+        }
+    };
+    exports.isLikelyComponentType = function(type) {
+        switch(typeof type){
+            case "function":
+                if (null != type.prototype) {
+                    if (type.prototype.isReactComponent) return !0;
+                    var ownNames = Object.getOwnPropertyNames(type.prototype);
+                    if (1 < ownNames.length || "constructor" !== ownNames[0] || type.prototype.__proto__ !== Object.prototype) return !1;
+                }
+                type = type.name || type.displayName;
+                return "string" === typeof type && /^[A-Z]/.test(type);
+            case "object":
+                if (null != type) switch(getProperty(type, "$$typeof")){
+                    case REACT_FORWARD_REF_TYPE:
+                    case REACT_MEMO_TYPE:
+                        return !0;
+                }
+                return !1;
+            default:
+                return !1;
+        }
+    };
+    exports.performReactRefresh = function() {
+        if (0 === pendingUpdates.length || isPerformingRefresh) return null;
+        isPerformingRefresh = !0;
+        try {
+            var staleFamilies = new Set(), updatedFamilies = new Set(), updates = pendingUpdates;
+            pendingUpdates = [];
+            updates.forEach(function(_ref) {
+                var family = _ref[0];
+                _ref = _ref[1];
+                var prevType = family.current;
+                updatedFamiliesByType.set(prevType, family);
+                updatedFamiliesByType.set(_ref, family);
+                family.current = _ref;
+                prevType.prototype && prevType.prototype.isReactComponent || _ref.prototype && _ref.prototype.isReactComponent ? _ref = !1 : (prevType = allSignaturesByType.get(prevType), _ref = allSignaturesByType.get(_ref), _ref = void 0 === prevType && void 0 === _ref || void 0 !== prevType && void 0 !== _ref && computeFullKey(prevType) === computeFullKey(_ref) && !_ref.forceReset ? !0 : !1);
+                _ref ? updatedFamilies.add(family) : staleFamilies.add(family);
+            });
+            var update = {
+                updatedFamilies: updatedFamilies,
+                staleFamilies: staleFamilies
+            };
+            helpersByRendererID.forEach(function(helpers) {
+                helpers.setRefreshHandler(resolveFamily);
+            });
+            var didError = !1, firstError = null, failedRootsSnapshot = cloneSet(failedRoots), mountedRootsSnapshot = cloneSet(mountedRoots), helpersByRootSnapshot = cloneMap(helpersByRoot);
+            failedRootsSnapshot.forEach(function(root) {
+                var helpers = helpersByRootSnapshot.get(root);
+                if (void 0 === helpers) throw Error("Could not find helpers for a root. This is a bug in React Refresh.");
+                failedRoots.has(root);
+                if (null !== rootElements && rootElements.has(root)) {
+                    var element = rootElements.get(root);
+                    try {
+                        helpers.scheduleRoot(root, element);
+                    } catch (err) {
+                        didError || (didError = !0, firstError = err);
+                    }
+                }
+            });
+            mountedRootsSnapshot.forEach(function(root) {
+                var helpers = helpersByRootSnapshot.get(root);
+                if (void 0 === helpers) throw Error("Could not find helpers for a root. This is a bug in React Refresh.");
+                mountedRoots.has(root);
+                try {
+                    helpers.scheduleRefresh(root, update);
+                } catch (err) {
+                    didError || (didError = !0, firstError = err);
+                }
+            });
+            if (didError) throw firstError;
+            return update;
+        } finally{
+            isPerformingRefresh = !1;
+        }
+    };
+    exports.register = register;
+    exports.setSignature = setSignature;
+})();
+
+},{}],"gnoim":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "setEditorHandler", ()=>$da9882e673ac146b$export$25a22ac46f1bd016);
+parcelHelpers.export(exports, "reportRuntimeError", ()=>$da9882e673ac146b$export$74e9101ce4078c0);
+parcelHelpers.export(exports, "startReportingRuntimeErrors", ()=>$da9882e673ac146b$export$cda2c88a41631c16);
+parcelHelpers.export(exports, "dismissRuntimeErrors", ()=>$da9882e673ac146b$export$1cfa6d161ca81bd9);
+parcelHelpers.export(exports, "stopReportingRuntimeErrors", ()=>$da9882e673ac146b$export$25ba7d9a816639e7);
+function $parcel$interopDefault(a) {
+    return a && a.__esModule ? a.default : a;
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /* eslint-env browser */ /* eslint-disable react/react-in-jsx-scope, no-console */ var $b6c7f0288a15c619$var$n, $b6c7f0288a15c619$export$41c562ebe57d11e2, $b6c7f0288a15c619$var$u, $b6c7f0288a15c619$export$a8257692ac88316c, $b6c7f0288a15c619$var$i, $b6c7f0288a15c619$var$r, $b6c7f0288a15c619$var$o, $b6c7f0288a15c619$var$e, $b6c7f0288a15c619$var$f, $b6c7f0288a15c619$var$c, $b6c7f0288a15c619$var$s, $b6c7f0288a15c619$var$a, $b6c7f0288a15c619$var$h, $b6c7f0288a15c619$var$p = {}, $b6c7f0288a15c619$var$y = [], $b6c7f0288a15c619$var$v = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i, $b6c7f0288a15c619$var$w = Array.isArray;
+function $b6c7f0288a15c619$var$d(n, l) {
+    for(var u in l)n[u] = l[u];
+    return n;
+}
+function $b6c7f0288a15c619$var$g(n) {
+    n && n.parentNode && n.parentNode.removeChild(n);
+}
+function $b6c7f0288a15c619$export$c8a8987d4410bf2d(l, u, t) {
+    var i, r, o, e = {};
+    for(o in u)"key" == o ? i = u[o] : "ref" == o ? r = u[o] : e[o] = u[o];
+    if (arguments.length > 2 && (e.children = arguments.length > 3 ? $b6c7f0288a15c619$var$n.call(arguments, 2) : t), "function" == typeof l && null != l.defaultProps) for(o in l.defaultProps)null == e[o] && (e[o] = l.defaultProps[o]);
+    return $b6c7f0288a15c619$var$m(l, e, i, r, null);
+}
+function $b6c7f0288a15c619$var$m(n, t, i, r, o) {
+    var e = {
+        type: n,
+        props: t,
+        key: i,
+        ref: r,
+        __k: null,
+        __: null,
+        __b: 0,
+        __e: null,
+        __c: null,
+        constructor: void 0,
+        __v: null == o ? ++$b6c7f0288a15c619$var$u : o,
+        __i: -1,
+        __u: 0
+    };
+    return null == o && null != $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode && $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode(e), e;
+}
+function $b6c7f0288a15c619$export$7d1e3a5e95ceca43() {
+    return {
+        current: null
+    };
+}
+function $b6c7f0288a15c619$export$ffb0004e005737fa(n) {
+    return n.children;
+}
+function $b6c7f0288a15c619$export$16fa2f45be04daa8(n, l) {
+    this.props = n, this.context = l;
+}
+function $b6c7f0288a15c619$var$S(n, l) {
+    if (null == l) return n.__ ? $b6c7f0288a15c619$var$S(n.__, n.__i + 1) : null;
+    for(var u; l < n.__k.length; l++)if (null != (u = n.__k[l]) && null != u.__e) return u.__e;
+    return "function" == typeof n.type ? $b6c7f0288a15c619$var$S(n) : null;
+}
+function $b6c7f0288a15c619$var$C(n) {
+    var l, u;
+    if (null != (n = n.__) && null != n.__c) {
+        for(n.__e = n.__c.base = null, l = 0; l < n.__k.length; l++)if (null != (u = n.__k[l]) && null != u.__e) {
+            n.__e = n.__c.base = u.__e;
+            break;
+        }
+        return $b6c7f0288a15c619$var$C(n);
+    }
+}
+function $b6c7f0288a15c619$var$M(n) {
+    (!n.__d && (n.__d = !0) && $b6c7f0288a15c619$var$i.push(n) && !$b6c7f0288a15c619$var$$.__r++ || $b6c7f0288a15c619$var$r != $b6c7f0288a15c619$export$41c562ebe57d11e2.debounceRendering) && (($b6c7f0288a15c619$var$r = $b6c7f0288a15c619$export$41c562ebe57d11e2.debounceRendering) || $b6c7f0288a15c619$var$o)($b6c7f0288a15c619$var$$);
+}
+function $b6c7f0288a15c619$var$$() {
+    for(var n, u, t, r, o, f, c, s = 1; $b6c7f0288a15c619$var$i.length;)$b6c7f0288a15c619$var$i.length > s && $b6c7f0288a15c619$var$i.sort($b6c7f0288a15c619$var$e), n = $b6c7f0288a15c619$var$i.shift(), s = $b6c7f0288a15c619$var$i.length, n.__d && (t = void 0, o = (r = (u = n).__v).__e, f = [], c = [], u.__P && ((t = $b6c7f0288a15c619$var$d({}, r)).__v = r.__v + 1, $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode && $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode(t), $b6c7f0288a15c619$var$O(u.__P, t, r, u.__n, u.__P.namespaceURI, 32 & r.__u ? [
+        o
+    ] : null, f, null == o ? $b6c7f0288a15c619$var$S(r) : o, !!(32 & r.__u), c), t.__v = r.__v, t.__.__k[t.__i] = t, $b6c7f0288a15c619$var$z(f, t, c), t.__e != o && $b6c7f0288a15c619$var$C(t)));
+    $b6c7f0288a15c619$var$$.__r = 0;
+}
+function $b6c7f0288a15c619$var$I(n, l, u, t, i, r, o, e, f, c, s) {
+    var a, h, v, w, d, g, _ = t && t.__k || $b6c7f0288a15c619$var$y, m = l.length;
+    for(f = $b6c7f0288a15c619$var$P(u, l, _, f, m), a = 0; a < m; a++)null != (v = u.__k[a]) && (h = -1 == v.__i ? $b6c7f0288a15c619$var$p : _[v.__i] || $b6c7f0288a15c619$var$p, v.__i = a, g = $b6c7f0288a15c619$var$O(n, v, h, i, r, o, e, f, c, s), w = v.__e, v.ref && h.ref != v.ref && (h.ref && $b6c7f0288a15c619$var$q(h.ref, null, v), s.push(v.ref, v.__c || w, v)), null == d && null != w && (d = w), 4 & v.__u || h.__k === v.__k ? f = $b6c7f0288a15c619$var$A(v, f, n) : "function" == typeof v.type && void 0 !== g ? f = g : w && (f = w.nextSibling), v.__u &= -7);
+    return u.__e = d, f;
+}
+function $b6c7f0288a15c619$var$P(n, l, u, t, i) {
+    var r, o, e, f, c, s = u.length, a = s, h = 0;
+    for(n.__k = new Array(i), r = 0; r < i; r++)null != (o = l[r]) && "boolean" != typeof o && "function" != typeof o ? (f = r + h, (o = n.__k[r] = "string" == typeof o || "number" == typeof o || "bigint" == typeof o || o.constructor == String ? $b6c7f0288a15c619$var$m(null, o, null, null, null) : $b6c7f0288a15c619$var$w(o) ? $b6c7f0288a15c619$var$m($b6c7f0288a15c619$export$ffb0004e005737fa, {
+        children: o
+    }, null, null, null) : null == o.constructor && o.__b > 0 ? $b6c7f0288a15c619$var$m(o.type, o.props, o.key, o.ref ? o.ref : null, o.__v) : o).__ = n, o.__b = n.__b + 1, e = null, -1 != (c = o.__i = $b6c7f0288a15c619$var$L(o, u, f, a)) && (a--, (e = u[c]) && (e.__u |= 2)), null == e || null == e.__v ? (-1 == c && (i > s ? h-- : i < s && h++), "function" != typeof o.type && (o.__u |= 4)) : c != f && (c == f - 1 ? h-- : c == f + 1 ? h++ : (c > f ? h-- : h++, o.__u |= 4))) : n.__k[r] = null;
+    if (a) for(r = 0; r < s; r++)null != (e = u[r]) && 0 == (2 & e.__u) && (e.__e == t && (t = $b6c7f0288a15c619$var$S(e)), $b6c7f0288a15c619$var$B(e, e));
+    return t;
+}
+function $b6c7f0288a15c619$var$A(n, l, u) {
+    var t, i;
+    if ("function" == typeof n.type) {
+        for(t = n.__k, i = 0; t && i < t.length; i++)t[i] && (t[i].__ = n, l = $b6c7f0288a15c619$var$A(t[i], l, u));
+        return l;
+    }
+    n.__e != l && (l && n.type && !u.contains(l) && (l = $b6c7f0288a15c619$var$S(n)), u.insertBefore(n.__e, l || null), l = n.__e);
+    do l = l && l.nextSibling;
+    while (null != l && 8 == l.nodeType);
+    return l;
+}
+function $b6c7f0288a15c619$export$47e4c5b300681277(n, l) {
+    return l = l || [], null == n || "boolean" == typeof n || ($b6c7f0288a15c619$var$w(n) ? n.some(function(n) {
+        $b6c7f0288a15c619$export$47e4c5b300681277(n, l);
+    }) : l.push(n)), l;
+}
+function $b6c7f0288a15c619$var$L(n, l, u, t) {
+    var i, r, o = n.key, e = n.type, f = l[u];
+    if (null === f && null == n.key || f && o == f.key && e == f.type && 0 == (2 & f.__u)) return u;
+    if (t > (null != f && 0 == (2 & f.__u) ? 1 : 0)) for(i = u - 1, r = u + 1; i >= 0 || r < l.length;){
+        if (i >= 0) {
+            if ((f = l[i]) && 0 == (2 & f.__u) && o == f.key && e == f.type) return i;
+            i--;
+        }
+        if (r < l.length) {
+            if ((f = l[r]) && 0 == (2 & f.__u) && o == f.key && e == f.type) return r;
+            r++;
+        }
+    }
+    return -1;
+}
+function $b6c7f0288a15c619$var$T(n, l, u) {
+    "-" == l[0] ? n.setProperty(l, null == u ? "" : u) : n[l] = null == u ? "" : "number" != typeof u || $b6c7f0288a15c619$var$v.test(l) ? u : u + "px";
+}
+function $b6c7f0288a15c619$var$j(n, l, u, t, i) {
+    var r;
+    n: if ("style" == l) {
+        if ("string" == typeof u) n.style.cssText = u;
+        else {
+            if ("string" == typeof t && (n.style.cssText = t = ""), t) for(l in t)u && l in u || $b6c7f0288a15c619$var$T(n.style, l, "");
+            if (u) for(l in u)t && u[l] == t[l] || $b6c7f0288a15c619$var$T(n.style, l, u[l]);
+        }
+    } else if ("o" == l[0] && "n" == l[1]) r = l != (l = l.replace($b6c7f0288a15c619$var$f, "$1")), l = l.toLowerCase() in n || "onFocusOut" == l || "onFocusIn" == l ? l.toLowerCase().slice(2) : l.slice(2), n.l || (n.l = {}), n.l[l + r] = u, u ? t ? u.u = t.u : (u.u = $b6c7f0288a15c619$var$c, n.addEventListener(l, r ? $b6c7f0288a15c619$var$a : $b6c7f0288a15c619$var$s, r)) : n.removeEventListener(l, r ? $b6c7f0288a15c619$var$a : $b6c7f0288a15c619$var$s, r);
+    else {
+        if ("http://www.w3.org/2000/svg" == i) l = l.replace(/xlink(H|:h)/, "h").replace(/sName$/, "s");
+        else if ("width" != l && "height" != l && "href" != l && "list" != l && "form" != l && "tabIndex" != l && "download" != l && "rowSpan" != l && "colSpan" != l && "role" != l && "popover" != l && l in n) try {
+            n[l] = null == u ? "" : u;
+            break n;
+        } catch (n) {}
+        "function" == typeof u || (null == u || !1 === u && "-" != l[4] ? n.removeAttribute(l) : n.setAttribute(l, "popover" == l && 1 == u ? "" : u));
+    }
+}
+function $b6c7f0288a15c619$var$F(n) {
+    return function(u) {
+        if (this.l) {
+            var t = this.l[u.type + n];
+            if (null == u.t) u.t = $b6c7f0288a15c619$var$c++;
+            else if (u.t < t.u) return;
+            return t($b6c7f0288a15c619$export$41c562ebe57d11e2.event ? $b6c7f0288a15c619$export$41c562ebe57d11e2.event(u) : u);
+        }
+    };
+}
+function $b6c7f0288a15c619$var$O(n, u, t, i, r, o, e, f, c, s) {
+    var a, h, p, y, v, _, m, b, S, C, M, $, P, A, H, L, T, j = u.type;
+    if (null != u.constructor) return null;
+    128 & t.__u && (c = !!(32 & t.__u), o = [
+        f = u.__e = t.__e
+    ]), (a = $b6c7f0288a15c619$export$41c562ebe57d11e2.__b) && a(u);
+    n: if ("function" == typeof j) try {
+        if (b = u.props, S = "prototype" in j && j.prototype.render, C = (a = j.contextType) && i[a.__c], M = a ? C ? C.props.value : a.__ : i, t.__c ? m = (h = u.__c = t.__c).__ = h.__E : (S ? u.__c = h = new j(b, M) : (u.__c = h = new $b6c7f0288a15c619$export$16fa2f45be04daa8(b, M), h.constructor = j, h.render = $b6c7f0288a15c619$var$D), C && C.sub(h), h.props = b, h.state || (h.state = {}), h.context = M, h.__n = i, p = h.__d = !0, h.__h = [], h._sb = []), S && null == h.__s && (h.__s = h.state), S && null != j.getDerivedStateFromProps && (h.__s == h.state && (h.__s = $b6c7f0288a15c619$var$d({}, h.__s)), $b6c7f0288a15c619$var$d(h.__s, j.getDerivedStateFromProps(b, h.__s))), y = h.props, v = h.state, h.__v = u, p) S && null == j.getDerivedStateFromProps && null != h.componentWillMount && h.componentWillMount(), S && null != h.componentDidMount && h.__h.push(h.componentDidMount);
+        else {
+            if (S && null == j.getDerivedStateFromProps && b !== y && null != h.componentWillReceiveProps && h.componentWillReceiveProps(b, M), !h.__e && null != h.shouldComponentUpdate && !1 === h.shouldComponentUpdate(b, h.__s, M) || u.__v == t.__v) {
+                for(u.__v != t.__v && (h.props = b, h.state = h.__s, h.__d = !1), u.__e = t.__e, u.__k = t.__k, u.__k.some(function(n) {
+                    n && (n.__ = u);
+                }), $ = 0; $ < h._sb.length; $++)h.__h.push(h._sb[$]);
+                h._sb = [], h.__h.length && e.push(h);
+                break n;
+            }
+            null != h.componentWillUpdate && h.componentWillUpdate(b, h.__s, M), S && null != h.componentDidUpdate && h.__h.push(function() {
+                h.componentDidUpdate(y, v, _);
+            });
+        }
+        if (h.context = M, h.props = b, h.__P = n, h.__e = !1, P = $b6c7f0288a15c619$export$41c562ebe57d11e2.__r, A = 0, S) {
+            for(h.state = h.__s, h.__d = !1, P && P(u), a = h.render(h.props, h.state, h.context), H = 0; H < h._sb.length; H++)h.__h.push(h._sb[H]);
+            h._sb = [];
+        } else do h.__d = !1, P && P(u), a = h.render(h.props, h.state, h.context), h.state = h.__s;
+        while (h.__d && ++A < 25);
+        h.state = h.__s, null != h.getChildContext && (i = $b6c7f0288a15c619$var$d($b6c7f0288a15c619$var$d({}, i), h.getChildContext())), S && !p && null != h.getSnapshotBeforeUpdate && (_ = h.getSnapshotBeforeUpdate(y, v)), L = a, null != a && a.type === $b6c7f0288a15c619$export$ffb0004e005737fa && null == a.key && (L = $b6c7f0288a15c619$var$N(a.props.children)), f = $b6c7f0288a15c619$var$I(n, $b6c7f0288a15c619$var$w(L) ? L : [
+            L
+        ], u, t, i, r, o, e, f, c, s), h.base = u.__e, u.__u &= -161, h.__h.length && e.push(h), m && (h.__E = h.__ = null);
+    } catch (n) {
+        if (u.__v = null, c || null != o) {
+            if (n.then) {
+                for(u.__u |= c ? 160 : 128; f && 8 == f.nodeType && f.nextSibling;)f = f.nextSibling;
+                o[o.indexOf(f)] = null, u.__e = f;
+            } else for(T = o.length; T--;)$b6c7f0288a15c619$var$g(o[T]);
+        } else u.__e = t.__e, u.__k = t.__k;
+        $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, u, t);
+    }
+    else null == o && u.__v == t.__v ? (u.__k = t.__k, u.__e = t.__e) : f = u.__e = $b6c7f0288a15c619$var$V(t.__e, u, t, i, r, o, e, c, s);
+    return (a = $b6c7f0288a15c619$export$41c562ebe57d11e2.diffed) && a(u), 128 & u.__u ? void 0 : f;
+}
+function $b6c7f0288a15c619$var$z(n, u, t) {
+    for(var i = 0; i < t.length; i++)$b6c7f0288a15c619$var$q(t[i], t[++i], t[++i]);
+    $b6c7f0288a15c619$export$41c562ebe57d11e2.__c && $b6c7f0288a15c619$export$41c562ebe57d11e2.__c(u, n), n.some(function(u) {
+        try {
+            n = u.__h, u.__h = [], n.some(function(n) {
+                n.call(u);
+            });
+        } catch (n) {
+            $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, u.__v);
+        }
+    });
+}
+function $b6c7f0288a15c619$var$N(n) {
+    return "object" != typeof n || null == n || n.__b && n.__b > 0 ? n : $b6c7f0288a15c619$var$w(n) ? n.map($b6c7f0288a15c619$var$N) : $b6c7f0288a15c619$var$d({}, n);
+}
+function $b6c7f0288a15c619$var$V(u, t, i, r, o, e, f, c, s) {
+    var a, h, y, v, d, _, m, b = i.props, k = t.props, x = t.type;
+    if ("svg" == x ? o = "http://www.w3.org/2000/svg" : "math" == x ? o = "http://www.w3.org/1998/Math/MathML" : o || (o = "http://www.w3.org/1999/xhtml"), null != e) {
+        for(a = 0; a < e.length; a++)if ((d = e[a]) && "setAttribute" in d == !!x && (x ? d.localName == x : 3 == d.nodeType)) {
+            u = d, e[a] = null;
+            break;
+        }
+    }
+    if (null == u) {
+        if (null == x) return document.createTextNode(k);
+        u = document.createElementNS(o, x, k.is && k), c && ($b6c7f0288a15c619$export$41c562ebe57d11e2.__m && $b6c7f0288a15c619$export$41c562ebe57d11e2.__m(t, e), c = !1), e = null;
+    }
+    if (null == x) b === k || c && u.data == k || (u.data = k);
+    else {
+        if (e = e && $b6c7f0288a15c619$var$n.call(u.childNodes), b = i.props || $b6c7f0288a15c619$var$p, !c && null != e) for(b = {}, a = 0; a < u.attributes.length; a++)b[(d = u.attributes[a]).name] = d.value;
+        for(a in b)if (d = b[a], "children" == a) ;
+        else if ("dangerouslySetInnerHTML" == a) y = d;
+        else if (!(a in k)) {
+            if ("value" == a && "defaultValue" in k || "checked" == a && "defaultChecked" in k) continue;
+            $b6c7f0288a15c619$var$j(u, a, null, d, o);
+        }
+        for(a in k)d = k[a], "children" == a ? v = d : "dangerouslySetInnerHTML" == a ? h = d : "value" == a ? _ = d : "checked" == a ? m = d : c && "function" != typeof d || b[a] === d || $b6c7f0288a15c619$var$j(u, a, d, b[a], o);
+        if (h) c || y && (h.__html == y.__html || h.__html == u.innerHTML) || (u.innerHTML = h.__html), t.__k = [];
+        else if (y && (u.innerHTML = ""), $b6c7f0288a15c619$var$I("template" == t.type ? u.content : u, $b6c7f0288a15c619$var$w(v) ? v : [
+            v
+        ], t, i, r, "foreignObject" == x ? "http://www.w3.org/1999/xhtml" : o, e, f, e ? e[0] : i.__k && $b6c7f0288a15c619$var$S(i, 0), c, s), null != e) for(a = e.length; a--;)$b6c7f0288a15c619$var$g(e[a]);
+        c || (a = "value", "progress" == x && null == _ ? u.removeAttribute("value") : null != _ && (_ !== u[a] || "progress" == x && !_ || "option" == x && _ != b[a]) && $b6c7f0288a15c619$var$j(u, a, _, b[a], o), a = "checked", null != m && m != u[a] && $b6c7f0288a15c619$var$j(u, a, m, b[a], o));
+    }
+    return u;
+}
+function $b6c7f0288a15c619$var$q(n, u, t) {
+    try {
+        if ("function" == typeof n) {
+            var i = "function" == typeof n.__u;
+            i && n.__u(), i && null == u || (n.__u = n(u));
+        } else n.current = u;
+    } catch (n) {
+        $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, t);
+    }
+}
+function $b6c7f0288a15c619$var$B(n, u, t) {
+    var i, r;
+    if ($b6c7f0288a15c619$export$41c562ebe57d11e2.unmount && $b6c7f0288a15c619$export$41c562ebe57d11e2.unmount(n), (i = n.ref) && (i.current && i.current != n.__e || $b6c7f0288a15c619$var$q(i, null, u)), null != (i = n.__c)) {
+        if (i.componentWillUnmount) try {
+            i.componentWillUnmount();
+        } catch (n) {
+            $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, u);
+        }
+        i.base = i.__P = null;
+    }
+    if (i = n.__k) for(r = 0; r < i.length; r++)i[r] && $b6c7f0288a15c619$var$B(i[r], u, t || "function" != typeof n.type);
+    t || $b6c7f0288a15c619$var$g(n.__e), n.__c = n.__ = n.__e = void 0;
+}
+function $b6c7f0288a15c619$var$D(n, l, u) {
+    return this.constructor(n, u);
+}
+function $b6c7f0288a15c619$export$b3890eb0ae9dca99(u, t, i) {
+    var r, o, e, f;
+    t == document && (t = document.documentElement), $b6c7f0288a15c619$export$41c562ebe57d11e2.__ && $b6c7f0288a15c619$export$41c562ebe57d11e2.__(u, t), o = (r = "function" == typeof i) ? null : i && i.__k || t.__k, e = [], f = [], $b6c7f0288a15c619$var$O(t, u = (!r && i || t).__k = $b6c7f0288a15c619$export$c8a8987d4410bf2d($b6c7f0288a15c619$export$ffb0004e005737fa, null, [
+        u
+    ]), o || $b6c7f0288a15c619$var$p, $b6c7f0288a15c619$var$p, t.namespaceURI, !r && i ? [
+        i
+    ] : o ? null : t.firstChild ? $b6c7f0288a15c619$var$n.call(t.childNodes) : null, e, !r && i ? i : o ? o.__e : t.firstChild, r, f), $b6c7f0288a15c619$var$z(e, u, f);
+}
+function $b6c7f0288a15c619$export$fa8d919ba61d84db(n, l) {
+    $b6c7f0288a15c619$export$b3890eb0ae9dca99(n, l, $b6c7f0288a15c619$export$fa8d919ba61d84db);
+}
+function $b6c7f0288a15c619$export$e530037191fcd5d7(l, u, t) {
+    var i, r, o, e, f = $b6c7f0288a15c619$var$d({}, l.props);
+    for(o in l.type && l.type.defaultProps && (e = l.type.defaultProps), u)"key" == o ? i = u[o] : "ref" == o ? r = u[o] : f[o] = null == u[o] && null != e ? e[o] : u[o];
+    return arguments.length > 2 && (f.children = arguments.length > 3 ? $b6c7f0288a15c619$var$n.call(arguments, 2) : t), $b6c7f0288a15c619$var$m(l.type, f, i || l.key, r || l.ref, null);
+}
+function $b6c7f0288a15c619$export$fd42f52fd3ae1109(n) {
+    function l(n) {
+        var u, t;
+        return this.getChildContext || (u = new Set, (t = {})[l.__c] = this, this.getChildContext = function() {
+            return t;
+        }, this.componentWillUnmount = function() {
+            u = null;
+        }, this.shouldComponentUpdate = function(n) {
+            this.props.value != n.value && u.forEach(function(n) {
+                n.__e = !0, $b6c7f0288a15c619$var$M(n);
+            });
+        }, this.sub = function(n) {
+            u.add(n);
+            var l = n.componentWillUnmount;
+            n.componentWillUnmount = function() {
+                u && u.delete(n), l && l.call(n);
+            };
+        }), n.children;
+    }
+    return l.__c = "__cC" + $b6c7f0288a15c619$var$h++, l.__ = n, l.Provider = l.__l = (l.Consumer = function(n, l) {
+        return n.children(l);
+    }).contextType = l, l;
+}
+$b6c7f0288a15c619$var$n = $b6c7f0288a15c619$var$y.slice, $b6c7f0288a15c619$export$41c562ebe57d11e2 = {
+    __e: function(n, l, u, t) {
+        for(var i, r, o; l = l.__;)if ((i = l.__c) && !i.__) try {
+            if ((r = i.constructor) && null != r.getDerivedStateFromError && (i.setState(r.getDerivedStateFromError(n)), o = i.__d), null != i.componentDidCatch && (i.componentDidCatch(n, t || {}), o = i.__d), o) return i.__E = i;
+        } catch (l) {
+            n = l;
+        }
+        throw n;
+    }
+}, $b6c7f0288a15c619$var$u = 0, $b6c7f0288a15c619$export$a8257692ac88316c = function(n) {
+    return null != n && null == n.constructor;
+}, $b6c7f0288a15c619$export$16fa2f45be04daa8.prototype.setState = function(n, l) {
+    var u;
+    u = null != this.__s && this.__s != this.state ? this.__s : this.__s = $b6c7f0288a15c619$var$d({}, this.state), "function" == typeof n && (n = n($b6c7f0288a15c619$var$d({}, u), this.props)), n && $b6c7f0288a15c619$var$d(u, n), null != n && this.__v && (l && this._sb.push(l), $b6c7f0288a15c619$var$M(this));
+}, $b6c7f0288a15c619$export$16fa2f45be04daa8.prototype.forceUpdate = function(n) {
+    this.__v && (this.__e = !0, n && this.__h.push(n), $b6c7f0288a15c619$var$M(this));
+}, $b6c7f0288a15c619$export$16fa2f45be04daa8.prototype.render = $b6c7f0288a15c619$export$ffb0004e005737fa, $b6c7f0288a15c619$var$i = [], $b6c7f0288a15c619$var$o = "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, $b6c7f0288a15c619$var$e = function(n, l) {
+    return n.__v.__b - l.__v.__b;
+}, $b6c7f0288a15c619$var$$.__r = 0, $b6c7f0288a15c619$var$f = /(PointerCapture)$|Capture$/i, $b6c7f0288a15c619$var$c = 0, $b6c7f0288a15c619$var$s = $b6c7f0288a15c619$var$F(!1), $b6c7f0288a15c619$var$a = $b6c7f0288a15c619$var$F(!0), $b6c7f0288a15c619$var$h = 0;
+var $23b7c1cb98b19658$var$t = /["&<]/;
+function $23b7c1cb98b19658$var$n(r) {
+    if (0 === r.length || !1 === $23b7c1cb98b19658$var$t.test(r)) return r;
+    for(var e = 0, n = 0, o = "", f = ""; n < r.length; n++){
+        switch(r.charCodeAt(n)){
+            case 34:
+                f = "&quot;";
+                break;
+            case 38:
+                f = "&amp;";
+                break;
+            case 60:
+                f = "&lt;";
+                break;
+            default:
+                continue;
+        }
+        n !== e && (o += r.slice(e, n)), o += f, e = n + 1;
+    }
+    return n !== e && (o += r.slice(e, n)), o;
+}
+var $23b7c1cb98b19658$var$o = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i, $23b7c1cb98b19658$var$f = 0, $23b7c1cb98b19658$var$i = Array.isArray;
+function $23b7c1cb98b19658$export$34b9dba7ce09269b(e, t, n, o, i, u) {
+    t || (t = {});
+    var a, c, p = t;
+    if ("ref" in p) for(c in p = {}, t)"ref" == c ? a = t[c] : p[c] = t[c];
+    var l = {
+        type: e,
+        props: p,
+        key: n,
+        ref: a,
+        __k: null,
+        __: null,
+        __b: 0,
+        __e: null,
+        __c: null,
+        constructor: void 0,
+        __v: --$23b7c1cb98b19658$var$f,
+        __i: -1,
+        __u: 0,
+        __source: i,
+        __self: u
+    };
+    if ("function" == typeof e && (a = e.defaultProps)) for(c in a)void 0 === p[c] && (p[c] = a[c]);
+    return $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode && $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode(l), l;
+}
+function $23b7c1cb98b19658$export$45700d561b2268ac(r) {
+    var t = $23b7c1cb98b19658$export$34b9dba7ce09269b($b6c7f0288a15c619$export$ffb0004e005737fa, {
+        tpl: r,
+        exprs: [].slice.call(arguments, 1)
+    });
+    return t.key = t.__v, t;
+}
+var $23b7c1cb98b19658$var$c = {}, $23b7c1cb98b19658$var$p = /[A-Z]/g;
+function $23b7c1cb98b19658$export$991f6ffe102e5bac(e, t) {
+    if ($b6c7f0288a15c619$export$41c562ebe57d11e2.attr) {
+        var f = $b6c7f0288a15c619$export$41c562ebe57d11e2.attr(e, t);
+        if ("string" == typeof f) return f;
+    }
+    if ("ref" === e || "key" === e) return "";
+    if ("style" === e && "object" == typeof t) {
+        var i = "";
+        for(var u in t){
+            var a = t[u];
+            if (null != a && "" !== a) {
+                var l = "-" == u[0] ? u : $23b7c1cb98b19658$var$c[u] || ($23b7c1cb98b19658$var$c[u] = u.replace($23b7c1cb98b19658$var$p, "-$&").toLowerCase()), s = ";";
+                "number" != typeof a || l.startsWith("--") || $23b7c1cb98b19658$var$o.test(l) || (s = "px;"), i = i + l + ":" + a + s;
+            }
+        }
+        return e + '="' + i + '"';
+    }
+    return null == t || !1 === t || "function" == typeof t || "object" == typeof t ? "" : !0 === t ? e : e + '="' + $23b7c1cb98b19658$var$n(t) + '"';
+}
+function $23b7c1cb98b19658$export$40e96e718441efeb(r) {
+    if (null == r || "boolean" == typeof r || "function" == typeof r) return null;
+    if ("object" == typeof r) {
+        if (void 0 === r.constructor) return r;
+        if ($23b7c1cb98b19658$var$i(r)) {
+            for(var e = 0; e < r.length; e++)r[e] = $23b7c1cb98b19658$export$40e96e718441efeb(r[e]);
+            return r;
+        }
+    }
+    return $23b7c1cb98b19658$var$n("" + r);
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /* eslint-env browser */ /**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ let $883a43040cbd0629$var$boundErrorHandler = null;
+function $883a43040cbd0629$var$errorHandler(callback, e) {
+    // $FlowFixMe
+    if (!e.error) return;
+    // $FlowFixMe
+    const { error: error } = e;
+    if (error instanceof Error) callback(error);
+    else // Look in your browser's devtools for more information
+    callback(new Error(error));
+}
+function $883a43040cbd0629$export$6503ec6e8aabbaf(target, callback) {
+    if ($883a43040cbd0629$var$boundErrorHandler !== null) return;
+    $883a43040cbd0629$var$boundErrorHandler = $883a43040cbd0629$var$errorHandler.bind(undefined, callback);
+    target.addEventListener('error', $883a43040cbd0629$var$boundErrorHandler);
+}
+function $883a43040cbd0629$export$d07f55d4c15c0440(target) {
+    if ($883a43040cbd0629$var$boundErrorHandler === null) return;
+    target.removeEventListener('error', $883a43040cbd0629$var$boundErrorHandler);
+    $883a43040cbd0629$var$boundErrorHandler = null;
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ let $900f8c32b7484e20$var$boundRejectionHandler = null;
+function $900f8c32b7484e20$var$rejectionHandler(callback, e) {
+    if (e == null || e.reason == null) return callback(new Error('Unknown'));
+    let { reason: reason } = e;
+    if (reason instanceof Error) return callback(reason);
+    // A non-error was rejected, we don't have a trace :(
+    // Look in your browser's devtools for more information
+    return callback(new Error(reason));
+}
+function $900f8c32b7484e20$export$6503ec6e8aabbaf(target, callback) {
+    if ($900f8c32b7484e20$var$boundRejectionHandler !== null) return;
+    $900f8c32b7484e20$var$boundRejectionHandler = $900f8c32b7484e20$var$rejectionHandler.bind(undefined, callback);
+    // $FlowFixMe
+    target.addEventListener('unhandledrejection', $900f8c32b7484e20$var$boundRejectionHandler);
+}
+function $900f8c32b7484e20$export$d07f55d4c15c0440(target) {
+    if ($900f8c32b7484e20$var$boundRejectionHandler === null) return;
+    // $FlowFixMe
+    target.removeEventListener('unhandledrejection', $900f8c32b7484e20$var$boundRejectionHandler);
+    $900f8c32b7484e20$var$boundRejectionHandler = null;
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ let $5f72ade198404e99$var$stackTraceRegistered = false;
+// Default: https://docs.microsoft.com/en-us/scripting/javascript/reference/stacktracelimit-property-error-javascript
+let $5f72ade198404e99$var$restoreStackTraceValue = 10;
+const $5f72ade198404e99$var$MAX_STACK_LENGTH = 50;
+function $5f72ade198404e99$export$6503ec6e8aabbaf(limit = $5f72ade198404e99$var$MAX_STACK_LENGTH) {
+    if ($5f72ade198404e99$var$stackTraceRegistered) return;
+    try {
+        $5f72ade198404e99$var$restoreStackTraceValue = Error.stackTraceLimit;
+        Error.stackTraceLimit = limit;
+        $5f72ade198404e99$var$stackTraceRegistered = true;
+    } catch (e) {
+    // Not all browsers support this so we don't care if it errors
+    }
+}
+function $5f72ade198404e99$export$d07f55d4c15c0440() {
+    if (!$5f72ade198404e99$var$stackTraceRegistered) return;
+    try {
+        Error.stackTraceLimit = $5f72ade198404e99$var$restoreStackTraceValue;
+        $5f72ade198404e99$var$stackTraceRegistered = false;
+    } catch (e) {
+    // Not all browsers support this so we don't care if it errors
+    }
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /**
+ * A representation of a stack frame.
+ */ class $d35756f426c25812$export$8949fddf10447898 {
+    constructor(functionName = null, fileName = null, lineNumber = null, columnNumber = null, scriptCode = null, sourceFunctionName = null, sourceFileName = null, sourceLineNumber = null, sourceColumnNumber = null, sourceScriptCode = null){
+        if (functionName && functionName.indexOf('Object.') === 0) functionName = functionName.slice(7);
+        if (// https://github.com/facebook/create-react-app/issues/2097
+        // Let's ignore a meaningless name we get for top-level modules.
+        functionName === 'friendlySyntaxErrorLabel' || functionName === 'exports.__esModule' || functionName === '<anonymous>' || !functionName) functionName = null;
+        this.functionName = functionName;
+        this.fileName = fileName;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
+        this._originalFunctionName = sourceFunctionName;
+        this._originalFileName = sourceFileName;
+        this._originalLineNumber = sourceLineNumber;
+        this._originalColumnNumber = sourceColumnNumber;
+        this._scriptCode = scriptCode;
+        this._originalScriptCode = sourceScriptCode;
+    }
+    /**
+   * Returns the name of this function.
+   */ getFunctionName() {
+        return this.functionName || '(anonymous function)';
+    }
+    /**
+   * Returns the source of the frame.
+   * This contains the file name, line number, and column number when available.
+   */ getSource() {
+        let str = '';
+        if (this.fileName != null) str += this.fileName + ':';
+        if (this.lineNumber != null) str += this.lineNumber + ':';
+        if (this.columnNumber != null) str += this.columnNumber + ':';
+        return str.slice(0, -1);
+    }
+    /**
+   * Returns a pretty version of this stack frame.
+   */ toString() {
+        const functionName = this.getFunctionName();
+        const source = this.getSource();
+        return `${functionName}${source ? ` (${source})` : ``}`;
+    }
+}
+var $d35756f426c25812$export$2e2bcd8739ae039 = $d35756f426c25812$export$8949fddf10447898;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $865b9ffc545cb441$var$regexExtractLocation = /\(?(.+?)(?::(\d+))?(?::(\d+))?\)?$/;
+function $865b9ffc545cb441$var$extractLocation(token) {
+    return $865b9ffc545cb441$var$regexExtractLocation.exec(token) // $FlowFixMe
+    .slice(1).map((v)=>{
+        const p = Number(v);
+        if (!isNaN(p)) return p;
+        return v;
+    });
+}
+const $865b9ffc545cb441$var$regexValidFrame_Chrome = /^\s*(at|in)\s.+(:\d+)/;
+const $865b9ffc545cb441$var$regexValidFrame_FireFox = /(^|@)\S+:\d+|.+line\s+\d+\s+>\s+(eval|Function).+/;
+function $865b9ffc545cb441$var$parseStack(stack) {
+    let frames = stack.filter((e)=>$865b9ffc545cb441$var$regexValidFrame_Chrome.test(e) || $865b9ffc545cb441$var$regexValidFrame_FireFox.test(e)).map((e)=>{
+        if ($865b9ffc545cb441$var$regexValidFrame_FireFox.test(e)) {
+            // Strip eval, we don't care about it
+            let isEval = false;
+            if (/ > (eval|Function)/.test(e)) {
+                e = e.replace(/ line (\d+)(?: > eval line \d+)* > (eval|Function):\d+:\d+/g, ':$1');
+                isEval = true;
+            }
+            const data = e.split(/[@]/g);
+            const last = data.pop();
+            return new $d35756f426c25812$export$2e2bcd8739ae039(data.join('@') || (isEval ? 'eval' : null), ...$865b9ffc545cb441$var$extractLocation(last));
+        } else {
+            // Strip eval, we don't care about it
+            if (e.indexOf('(eval ') !== -1) e = e.replace(/(\(eval at [^()]*)|(\),.*$)/g, '');
+            if (e.indexOf('(at ') !== -1) e = e.replace(/\(at /, '(');
+            const data = e.trim().split(/\s+/g).slice(1);
+            const last = data.pop();
+            return new $d35756f426c25812$export$2e2bcd8739ae039(data.join(' ') || null, ...$865b9ffc545cb441$var$extractLocation(last));
+        }
+    });
+    let index = frames.findIndex((frame)=>frame.getFunctionName().includes('react-stack-bottom-frame'));
+    if (index >= 0) frames = frames.slice(0, index);
+    return frames;
+}
+/**
+ * Turns an <code>Error</code>, or similar object, into a set of <code>StackFrame</code>s.
+ * @alias parse
+ */ function $865b9ffc545cb441$export$98e6a39c04603d36(error) {
+    if (error == null) throw new Error('You cannot pass a null object.');
+    if (typeof error === 'string') return $865b9ffc545cb441$var$parseStack(error.split('\n'));
+    if (Array.isArray(error)) return $865b9ffc545cb441$var$parseStack(error);
+    if (typeof error.stack === 'string') return $865b9ffc545cb441$var$parseStack(error.stack.split('\n'));
+    throw new Error('The error you provided does not contain a stack trace.');
+}
+var $865b9ffc545cb441$export$2e2bcd8739ae039 = $865b9ffc545cb441$export$98e6a39c04603d36;
+/**
+ * Enhances a set of <code>StackFrame</code>s with their original positions and code (when available).
+ * @param {StackFrame[]} frames A set of <code>StackFrame</code>s which contain (generated) code positions.
+ * @param {number} [contextLines=3] The number of lines to provide before and after the line specified in the <code>StackFrame</code>.
+ */ async function $df495b51087c401c$export$35b6448019ed80b8(error, contextLines = 3) {
+    const frames = $865b9ffc545cb441$export$98e6a39c04603d36(error);
+    // $FlowFixMe
+    let res = await fetch(module.bundle.devServer + '/__parcel_code_frame', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            contextLines: contextLines,
+            frames: frames.map((f)=>({
+                    fileName: f.fileName,
+                    lineNumber: f.lineNumber,
+                    columnNumber: f.columnNumber
+                }))
+        })
+    });
+    let json = await res.json();
+    return json.map((f, i)=>new $d35756f426c25812$export$8949fddf10447898(frames[i].functionName, f.fileName, f.lineNumber, f.columnNumber, f.compiledLines, frames[i].functionName, f.sourceFileName, f.sourceLineNumber, f.sourceColumnNumber, f.sourceLines));
+}
+var $df495b51087c401c$export$2e2bcd8739ae039 = $df495b51087c401c$export$35b6448019ed80b8;
+const $6d40ebe8356580e0$var$CONTEXT_SIZE = 3;
+function $6d40ebe8356580e0$export$9123e6c9c0ac21ed(crash) {
+    return (error, unhandledRejection = false)=>{
+        $df495b51087c401c$export$2e2bcd8739ae039(error, $6d40ebe8356580e0$var$CONTEXT_SIZE).then((stackFrames)=>{
+            if (stackFrames == null) return;
+            crash({
+                error: error,
+                unhandledRejection: unhandledRejection,
+                contextSize: $6d40ebe8356580e0$var$CONTEXT_SIZE,
+                stackFrames: stackFrames
+            });
+        }).catch((e)=>{
+            // eslint-disable-next-line no-console
+            console.log('Could not get the stack frames of error:', e);
+        });
+    };
+}
+function $6d40ebe8356580e0$var$patchConsole(method, onError) {
+    /* eslint-disable no-console */ let original = console[method];
+    console[method] = (...args)=>{
+        let error = null;
+        if (typeof args[0] === 'string') {
+            let format = args[0].match(/%[oOdisfc]/g);
+            if (format) {
+                let errorIndex = format.findIndex((match)=>match === '%o' || match === '%O');
+                if (errorIndex < 0) errorIndex = format.findIndex((match)=>match === '%s');
+                if (errorIndex >= 0) error = args[errorIndex + 1];
+                else error = args[1];
+                if (!(error instanceof Error)) {
+                    let index = 1;
+                    let message = args[0].replace(/%[oOdisfc]/g, (match)=>{
+                        switch(match){
+                            case '%s':
+                                return String(args[index++]);
+                            case '%f':
+                                return parseFloat(args[index++]);
+                            case '%d':
+                            case '%i':
+                                return parseInt(args[index++], 10);
+                            case '%o':
+                            case '%O':
+                                if (args[index] instanceof Error) return String(args[index++]);
+                                else return JSON.stringify(args[index++]);
+                            case '%c':
+                                index++;
+                                return '';
+                        }
+                    });
+                    error = new Error(message);
+                }
+            } else error = new Error(args[0]);
+        } else error = args.find((arg)=>arg instanceof Error);
+        if (error && !error.message.includes('[parcel]') && typeof window !== 'undefined' && window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
+            // Attempt to append the React component stack
+            // TODO: use React.captureOwnerStack once stable.
+            let hook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
+            if (hook.renderers instanceof Map) {
+                for (let renderer of hook.renderers.values())if (typeof renderer?.currentDispatcherRef?.getCurrentStack === 'function') {
+                    let stack = renderer.currentDispatcherRef.getCurrentStack();
+                    if (stack) {
+                        error.stack += stack;
+                        break;
+                    }
+                }
+            }
+            onError(error);
+        }
+        original.apply(console, args);
+    };
+/* eslint-enable no-console */ }
+function $6d40ebe8356580e0$export$38ec23daa6e8dcdf(crash) {
+    const crashWithFramesRunTime = $6d40ebe8356580e0$export$9123e6c9c0ac21ed(crash);
+    $883a43040cbd0629$export$6503ec6e8aabbaf(window, (error)=>crashWithFramesRunTime(error, false));
+    $900f8c32b7484e20$export$6503ec6e8aabbaf(window, (error)=>crashWithFramesRunTime(error, true));
+    $5f72ade198404e99$export$6503ec6e8aabbaf();
+    $6d40ebe8356580e0$var$patchConsole('error', (error)=>crashWithFramesRunTime(error, false));
+    return function() {
+        $5f72ade198404e99$export$d07f55d4c15c0440();
+        $900f8c32b7484e20$export$d07f55d4c15c0440(window);
+        $883a43040cbd0629$export$d07f55d4c15c0440(window);
+    };
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /* eslint-env browser */ var $10ecac3e4062713a$var$t, $10ecac3e4062713a$var$r, $10ecac3e4062713a$var$u, $10ecac3e4062713a$var$i, $10ecac3e4062713a$var$o = 0, $10ecac3e4062713a$var$f = [], $10ecac3e4062713a$var$c = $b6c7f0288a15c619$export$41c562ebe57d11e2, $10ecac3e4062713a$var$e = $10ecac3e4062713a$var$c.__b, $10ecac3e4062713a$var$a = $10ecac3e4062713a$var$c.__r, $10ecac3e4062713a$var$v = $10ecac3e4062713a$var$c.diffed, $10ecac3e4062713a$var$l = $10ecac3e4062713a$var$c.__c, $10ecac3e4062713a$var$m = $10ecac3e4062713a$var$c.unmount, $10ecac3e4062713a$var$s = $10ecac3e4062713a$var$c.__;
+function $10ecac3e4062713a$var$p(n, t) {
+    $10ecac3e4062713a$var$c.__h && $10ecac3e4062713a$var$c.__h($10ecac3e4062713a$var$r, n, $10ecac3e4062713a$var$o || t), $10ecac3e4062713a$var$o = 0;
+    var u = $10ecac3e4062713a$var$r.__H || ($10ecac3e4062713a$var$r.__H = {
+        __: [],
+        __h: []
+    });
+    return n >= u.__.length && u.__.push({}), u.__[n];
+}
+function $10ecac3e4062713a$export$60241385465d0a34(n) {
+    return $10ecac3e4062713a$var$o = 1, $10ecac3e4062713a$export$13e3392192263954($10ecac3e4062713a$var$D, n);
+}
+function $10ecac3e4062713a$export$13e3392192263954(n, u, i) {
+    var o = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 2);
+    if (o.t = n, !o.__c && (o.__ = [
+        i ? i(u) : $10ecac3e4062713a$var$D(void 0, u),
+        function(n) {
+            var t = o.__N ? o.__N[0] : o.__[0], r = o.t(t, n);
+            t !== r && (o.__N = [
+                r,
+                o.__[1]
+            ], o.__c.setState({}));
+        }
+    ], o.__c = $10ecac3e4062713a$var$r, !$10ecac3e4062713a$var$r.__f)) {
+        var f = function(n, t, r) {
+            if (!o.__c.__H) return !0;
+            var u = o.__c.__H.__.filter(function(n) {
+                return !!n.__c;
+            });
+            if (u.every(function(n) {
+                return !n.__N;
+            })) return !c || c.call(this, n, t, r);
+            var i = o.__c.props !== n;
+            return u.forEach(function(n) {
+                if (n.__N) {
+                    var t = n.__[0];
+                    n.__ = n.__N, n.__N = void 0, t !== n.__[0] && (i = !0);
+                }
+            }), c && c.call(this, n, t, r) || i;
+        };
+        $10ecac3e4062713a$var$r.__f = !0;
+        var c = $10ecac3e4062713a$var$r.shouldComponentUpdate, e = $10ecac3e4062713a$var$r.componentWillUpdate;
+        $10ecac3e4062713a$var$r.componentWillUpdate = function(n, t, r) {
+            if (this.__e) {
+                var u = c;
+                c = void 0, f(n, t, r), c = u;
+            }
+            e && e.call(this, n, t, r);
+        }, $10ecac3e4062713a$var$r.shouldComponentUpdate = f;
+    }
+    return o.__N || o.__;
+}
+function $10ecac3e4062713a$export$6d9c69b0de29b591(n, u) {
+    var i = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 3);
+    !$10ecac3e4062713a$var$c.__s && $10ecac3e4062713a$var$C(i.__H, u) && (i.__ = n, i.u = u, $10ecac3e4062713a$var$r.__H.__h.push(i));
+}
+function $10ecac3e4062713a$export$e5c5a5f917a5871c(n, u) {
+    var i = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 4);
+    !$10ecac3e4062713a$var$c.__s && $10ecac3e4062713a$var$C(i.__H, u) && (i.__ = n, i.u = u, $10ecac3e4062713a$var$r.__h.push(i));
+}
+function $10ecac3e4062713a$export$b8f5890fc79d6aca(n) {
+    return $10ecac3e4062713a$var$o = 5, $10ecac3e4062713a$export$1538c33de8887b59(function() {
+        return {
+            current: n
+        };
+    }, []);
+}
+function $10ecac3e4062713a$export$d5a552a76deda3c2(n, t, r) {
+    $10ecac3e4062713a$var$o = 6, $10ecac3e4062713a$export$e5c5a5f917a5871c(function() {
+        if ("function" == typeof n) {
+            var r = n(t());
+            return function() {
+                n(null), r && "function" == typeof r && r();
+            };
+        }
+        if (n) return n.current = t(), function() {
+            return n.current = null;
+        };
+    }, null == r ? r : r.concat(n));
+}
+function $10ecac3e4062713a$export$1538c33de8887b59(n, r) {
+    var u = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 7);
+    return $10ecac3e4062713a$var$C(u.__H, r) && (u.__ = n(), u.__H = r, u.__h = n), u.__;
+}
+function $10ecac3e4062713a$export$35808ee640e87ca7(n, t) {
+    return $10ecac3e4062713a$var$o = 8, $10ecac3e4062713a$export$1538c33de8887b59(function() {
+        return n;
+    }, t);
+}
+function $10ecac3e4062713a$export$fae74005e78b1a27(n) {
+    var u = $10ecac3e4062713a$var$r.context[n.__c], i = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 9);
+    return i.c = n, u ? (null == i.__ && (i.__ = !0, u.sub($10ecac3e4062713a$var$r)), u.props.value) : n.__;
+}
+function $10ecac3e4062713a$export$dc8fbce3eb94dc1e(n, t) {
+    $10ecac3e4062713a$var$c.useDebugValue && $10ecac3e4062713a$var$c.useDebugValue(t ? t(n) : n);
+}
+function $10ecac3e4062713a$export$c052f6604b7d51fe(n) {
+    var u = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 10), i = $10ecac3e4062713a$export$60241385465d0a34();
+    return u.__ = n, $10ecac3e4062713a$var$r.componentDidCatch || ($10ecac3e4062713a$var$r.componentDidCatch = function(n, t) {
+        u.__ && u.__(n, t), i[1](n);
+    }), [
+        i[0],
+        function() {
+            i[1](void 0);
+        }
+    ];
+}
+function $10ecac3e4062713a$export$f680877a34711e37() {
+    var n = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 11);
+    if (!n.__) {
+        for(var u = $10ecac3e4062713a$var$r.__v; null !== u && !u.__m && null !== u.__;)u = u.__;
+        var i = u.__m || (u.__m = [
+            0,
+            0
+        ]);
+        n.__ = "P" + i[0] + "-" + i[1]++;
+    }
+    return n.__;
+}
+function $10ecac3e4062713a$var$j() {
+    for(var n; n = $10ecac3e4062713a$var$f.shift();)if (n.__P && n.__H) try {
+        n.__H.__h.forEach($10ecac3e4062713a$var$z), n.__H.__h.forEach($10ecac3e4062713a$var$B), n.__H.__h = [];
+    } catch (t) {
+        n.__H.__h = [], $10ecac3e4062713a$var$c.__e(t, n.__v);
+    }
+}
+$10ecac3e4062713a$var$c.__b = function(n) {
+    $10ecac3e4062713a$var$r = null, $10ecac3e4062713a$var$e && $10ecac3e4062713a$var$e(n);
+}, $10ecac3e4062713a$var$c.__ = function(n, t) {
+    n && t.__k && t.__k.__m && (n.__m = t.__k.__m), $10ecac3e4062713a$var$s && $10ecac3e4062713a$var$s(n, t);
+}, $10ecac3e4062713a$var$c.__r = function(n) {
+    $10ecac3e4062713a$var$a && $10ecac3e4062713a$var$a(n), $10ecac3e4062713a$var$t = 0;
+    var i = ($10ecac3e4062713a$var$r = n.__c).__H;
+    i && ($10ecac3e4062713a$var$u === $10ecac3e4062713a$var$r ? (i.__h = [], $10ecac3e4062713a$var$r.__h = [], i.__.forEach(function(n) {
+        n.__N && (n.__ = n.__N), n.u = n.__N = void 0;
+    })) : (i.__h.forEach($10ecac3e4062713a$var$z), i.__h.forEach($10ecac3e4062713a$var$B), i.__h = [], $10ecac3e4062713a$var$t = 0)), $10ecac3e4062713a$var$u = $10ecac3e4062713a$var$r;
+}, $10ecac3e4062713a$var$c.diffed = function(n) {
+    $10ecac3e4062713a$var$v && $10ecac3e4062713a$var$v(n);
+    var t = n.__c;
+    t && t.__H && (t.__H.__h.length && (1 !== $10ecac3e4062713a$var$f.push(t) && $10ecac3e4062713a$var$i === $10ecac3e4062713a$var$c.requestAnimationFrame || (($10ecac3e4062713a$var$i = $10ecac3e4062713a$var$c.requestAnimationFrame) || $10ecac3e4062713a$var$w)($10ecac3e4062713a$var$j)), t.__H.__.forEach(function(n) {
+        n.u && (n.__H = n.u), n.u = void 0;
+    })), $10ecac3e4062713a$var$u = $10ecac3e4062713a$var$r = null;
+}, $10ecac3e4062713a$var$c.__c = function(n, t) {
+    t.some(function(n) {
+        try {
+            n.__h.forEach($10ecac3e4062713a$var$z), n.__h = n.__h.filter(function(n) {
+                return !n.__ || $10ecac3e4062713a$var$B(n);
+            });
+        } catch (r) {
+            t.some(function(n) {
+                n.__h && (n.__h = []);
+            }), t = [], $10ecac3e4062713a$var$c.__e(r, n.__v);
+        }
+    }), $10ecac3e4062713a$var$l && $10ecac3e4062713a$var$l(n, t);
+}, $10ecac3e4062713a$var$c.unmount = function(n) {
+    $10ecac3e4062713a$var$m && $10ecac3e4062713a$var$m(n);
+    var t, r = n.__c;
+    r && r.__H && (r.__H.__.forEach(function(n) {
+        try {
+            $10ecac3e4062713a$var$z(n);
+        } catch (n) {
+            t = n;
+        }
+    }), r.__H = void 0, t && $10ecac3e4062713a$var$c.__e(t, r.__v));
+};
+var $10ecac3e4062713a$var$k = "function" == typeof requestAnimationFrame;
+function $10ecac3e4062713a$var$w(n) {
+    var t, r = function() {
+        clearTimeout(u), $10ecac3e4062713a$var$k && cancelAnimationFrame(t), setTimeout(n);
+    }, u = setTimeout(r, 100);
+    $10ecac3e4062713a$var$k && (t = requestAnimationFrame(r));
+}
+function $10ecac3e4062713a$var$z(n) {
+    var t = $10ecac3e4062713a$var$r, u = n.__c;
+    "function" == typeof u && (n.__c = void 0, u()), $10ecac3e4062713a$var$r = t;
+}
+function $10ecac3e4062713a$var$B(n) {
+    var t = $10ecac3e4062713a$var$r;
+    n.__c = n.__(), $10ecac3e4062713a$var$r = t;
+}
+function $10ecac3e4062713a$var$C(n, t) {
+    return !n || n.length !== t.length || t.some(function(t, r) {
+        return t !== n[r];
+    });
+}
+function $10ecac3e4062713a$var$D(n, t) {
+    return "function" == typeof t ? t(n) : t;
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $74bb4be6e9b78681$export$f30cb9bc4f736419 = {
+    // Colors for components styles
+    background: 'white',
+    color: 'black',
+    headerColor: '#ce1126',
+    primaryPreBackground: 'rgba(206, 17, 38, 0.05)',
+    primaryPreColor: 'inherit',
+    secondaryPreBackground: 'rgba(251, 245, 180, 0.3)',
+    secondaryPreColor: 'inherit',
+    footer: '#878e91',
+    anchorColor: '#878e91',
+    toggleBackground: 'transparent',
+    toggleColor: '#878e91',
+    closeColor: '#293238',
+    navBackground: 'rgba(206, 17, 38, 0.05)',
+    navArrow: '#ce1126',
+    diffAdded: 'green',
+    diffRemoved: '#ce1126',
+    // Light color scheme inspired by https://chriskempson.github.io/base16/css/base16-github.css
+    // base00: '#ffffff',
+    base01: '#f5f5f5',
+    // base02: '#c8c8fa',
+    base03: '#6e6e6e',
+    // base04: '#e8e8e8',
+    base05: '#333333',
+    // base06: '#ffffff',
+    // base07: '#ffffff',
+    base08: '#881280',
+    // base09: '#0086b3',
+    // base0A: '#795da3',
+    base0B: '#1155cc',
+    base0C: '#994500',
+    // base0D: '#795da3',
+    base0E: '#c80000'
+};
+const $74bb4be6e9b78681$export$3e936a8db52a10a0 = {
+    // Colors for components styles
+    background: '#353535',
+    color: 'white',
+    headerColor: '#e83b46',
+    primaryPreBackground: 'rgba(206, 17, 38, 0.1)',
+    primaryPreColor: '#fccfcf',
+    secondaryPreBackground: 'rgba(251, 245, 180, 0.1)',
+    secondaryPreColor: '#fbf5b4',
+    footer: '#878e91',
+    anchorColor: '#878e91',
+    toggleBackground: 'transparent',
+    toggleColor: '#878e91',
+    closeColor: '#ffffff',
+    navBackground: 'rgba(206, 17, 38, 0.2)',
+    navArrow: '#ce1126',
+    diffAdded: '#85e285',
+    diffRemoved: '#ff5459',
+    // Dark color scheme inspired by https://github.com/atom/base16-tomorrow-dark-theme/blob/master/styles/colors.less
+    // base00: '#1d1f21',
+    base01: '#282a2e',
+    // base02: '#373b41',
+    base03: '#969896',
+    // base04: '#b4b7b4',
+    base05: '#c5c8c6',
+    // base06: '#e0e0e0',
+    // base07: '#ffffff',
+    base08: '#cc6666',
+    // base09: '#de935f',
+    // base0A: '#f0c674',
+    base0B: '#b5bd68',
+    base0C: '#8abeb7',
+    // base0D: '#81a2be',
+    base0E: '#b294bb'
+};
+const $74bb4be6e9b78681$export$bca14c5b3b88a9c9 = Object.fromEntries(Object.keys($74bb4be6e9b78681$export$f30cb9bc4f736419).map((key)=>[
+        key,
+        `light-dark(${$74bb4be6e9b78681$export$f30cb9bc4f736419[key]}, ${$74bb4be6e9b78681$export$3e936a8db52a10a0[key]})`
+    ]));
+const $74bb4be6e9b78681$export$7ef984671d1853d7 = {
+    width: '100vw',
+    height: '100vh',
+    maxWidth: 'none',
+    maxHeight: 'none',
+    border: 0,
+    margin: 0,
+    padding: 0,
+    boxSizing: 'border-box',
+    textAlign: 'center',
+    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.background,
+    outline: 'none',
+    colorScheme: 'light dark'
+};
+const $20d888b381d18c6c$var$overlayStyle = {
+    position: 'relative',
+    display: 'inline-flex',
+    flexDirection: 'column',
+    height: '100%',
+    width: '1024px',
+    maxWidth: '100%',
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    padding: '0.5rem',
+    boxSizing: 'border-box',
+    textAlign: 'left',
+    fontFamily: 'Consolas, Menlo, monospace',
+    fontSize: '11px',
+    whiteSpace: 'pre-wrap',
+    wordBreak: 'break-word',
+    lineHeight: 1.5,
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.color
+};
+function $20d888b381d18c6c$var$ErrorOverlay(props) {
+    const { shortcutHandler: shortcutHandler } = props;
+    $10ecac3e4062713a$export$6d9c69b0de29b591(()=>{
+        const onKeyDown = (e)=>{
+            if (shortcutHandler) shortcutHandler(e.key);
+        };
+        window.addEventListener('keydown', onKeyDown);
+        return ()=>{
+            window.removeEventListener('keydown', onKeyDown);
+        };
+    }, [
+        shortcutHandler
+    ]);
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+        style: $20d888b381d18c6c$var$overlayStyle,
+        children: props.children
+    });
+}
+var $20d888b381d18c6c$export$2e2bcd8739ae039 = $20d888b381d18c6c$var$ErrorOverlay;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $7aae0c9ea64fc08c$var$closeButtonStyle = {
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.closeColor,
+    lineHeight: '1rem',
+    fontSize: '1.5rem',
+    padding: '1rem',
+    cursor: 'pointer',
+    position: 'absolute',
+    right: 0,
+    top: 0
+};
+function $7aae0c9ea64fc08c$var$CloseButton({ close: close }) {
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
+        title: "Click or press Escape to dismiss.",
+        onClick: close,
+        style: $7aae0c9ea64fc08c$var$closeButtonStyle,
+        children: "\xd7"
+    });
+}
+var $7aae0c9ea64fc08c$export$2e2bcd8739ae039 = $7aae0c9ea64fc08c$var$CloseButton;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $1adc179a826c5dd2$var$navigationBarStyle = {
+    marginBottom: '0.5rem'
+};
+const $1adc179a826c5dd2$var$buttonContainerStyle = {
+    marginRight: '1em'
+};
+const $1adc179a826c5dd2$var$_navButtonStyle = {
+    border: 'none',
+    borderRadius: '4px',
+    padding: '3px 6px',
+    cursor: 'pointer'
+};
+const $1adc179a826c5dd2$var$leftButtonStyle = {
+    ...$1adc179a826c5dd2$var$_navButtonStyle,
+    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navBackground,
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navArrow,
+    borderTopRightRadius: '0px',
+    borderBottomRightRadius: '0px',
+    marginRight: '1px'
+};
+const $1adc179a826c5dd2$var$rightButtonStyle = {
+    ...$1adc179a826c5dd2$var$_navButtonStyle,
+    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navBackground,
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navArrow,
+    borderTopLeftRadius: '0px',
+    borderBottomLeftRadius: '0px'
+};
+function $1adc179a826c5dd2$var$NavigationBar(props) {
+    const { currentError: currentError, totalErrors: totalErrors, previous: previous, next: next } = props;
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+        style: $1adc179a826c5dd2$var$navigationBarStyle,
+        children: [
+            $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
+                style: $1adc179a826c5dd2$var$buttonContainerStyle,
+                children: [
+                    $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
+                        onClick: previous,
+                        style: $1adc179a826c5dd2$var$leftButtonStyle,
+                        children: "\u2190"
+                    }),
+                    $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
+                        onClick: next,
+                        style: $1adc179a826c5dd2$var$rightButtonStyle,
+                        children: "\u2192"
+                    })
+                ]
+            }),
+            `${currentError} of ${totalErrors} errors on the page`
+        ]
+    });
+}
+var $1adc179a826c5dd2$export$2e2bcd8739ae039 = $1adc179a826c5dd2$var$NavigationBar;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $c306e3a42547c8c2$var$headerStyle = {
+    fontSize: '2em',
+    fontFamily: 'sans-serif',
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.headerColor,
+    whiteSpace: 'pre-wrap',
+    // Top bottom margin spaces header
+    // Right margin revents overlap with close button
+    margin: '0 2rem 0.75rem 0',
+    flex: '0 0 auto'
+};
+function $c306e3a42547c8c2$var$Header(props) {
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+        style: $c306e3a42547c8c2$var$headerStyle,
+        children: props.headerText
+    });
+}
+var $c306e3a42547c8c2$export$2e2bcd8739ae039 = $c306e3a42547c8c2$var$Header;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ /**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $97c30df7f5c364f7$var$_preStyle = {
+    position: 'relative',
+    display: 'block',
+    padding: '0.5em',
+    marginTop: '0.5em',
+    marginBottom: '0.5em',
+    overflowX: 'auto',
+    whiteSpace: 'pre-wrap',
+    borderRadius: '0.25rem'
+};
+const $97c30df7f5c364f7$var$codeStyle = {
+    fontFamily: 'Consolas, Menlo, monospace'
+};
+function $97c30df7f5c364f7$var$CodeBlock({ main: main, codeHTML: codeHTML }) {
+    const primaryPreStyle = {
+        ...$97c30df7f5c364f7$var$_preStyle,
+        backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreBackground,
+        color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreColor
+    };
+    const secondaryPreStyle = {
+        ...$97c30df7f5c364f7$var$_preStyle,
+        backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.secondaryPreBackground,
+        color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.secondaryPreColor
+    };
+    const preStyle = main ? primaryPreStyle : secondaryPreStyle;
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("pre", {
+        style: preStyle,
+        children: $23b7c1cb98b19658$export$34b9dba7ce09269b("code", {
+            style: $97c30df7f5c364f7$var$codeStyle,
+            dangerouslySetInnerHTML: {
+                __html: codeHTML
+            }
+        })
+    });
+}
+var $97c30df7f5c364f7$export$2e2bcd8739ae039 = $97c30df7f5c364f7$var$CodeBlock;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ function $f78f50d61026cdc5$export$44b1e5ee7f53eae1(sourceFileName, sourceLineNumber, sourceColumnNumber, fileName, lineNumber, columnNumber, compiled) {
+    let prettyURL;
+    if (!compiled && sourceFileName && typeof sourceLineNumber === 'number') {
+        // Remove everything up to the first /src/ or /node_modules/
+        const trimMatch = /^[/|\\].*?[/|\\]((src|node_modules)[/|\\].*)/.exec(sourceFileName);
+        if (trimMatch && trimMatch[1]) prettyURL = trimMatch[1];
+        else prettyURL = sourceFileName;
+        prettyURL += ':' + sourceLineNumber;
+        // Note: we intentionally skip 0's because they're produced by cheap webpack maps
+        if (sourceColumnNumber) prettyURL += ':' + sourceColumnNumber;
+    } else if (fileName && typeof lineNumber === 'number') {
+        prettyURL = fileName + ':' + lineNumber;
+        // Note: we intentionally skip 0's because they're produced by cheap webpack maps
+        if (columnNumber) prettyURL += ':' + columnNumber;
+    } else prettyURL = 'unknown';
+    return prettyURL.replace('webpack://', '.');
+}
+var $f78f50d61026cdc5$export$2e2bcd8739ae039 = $f78f50d61026cdc5$export$44b1e5ee7f53eae1;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ var $cdea3ae92bef6910$exports = {};
+'use strict';
+$cdea3ae92bef6910$exports = $cdea3ae92bef6910$var$ansiHTML;
+// Reference to https://github.com/sindresorhus/ansi-regex
+var $cdea3ae92bef6910$var$_regANSI = /(?:(?:\u001b\[)|\u009b)(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-M|f-m])|\u001b[A-M]/;
+var $cdea3ae92bef6910$var$_defColors = {
+    reset: [
+        'fff',
+        '000'
+    ],
+    black: '000',
+    red: 'ff0000',
+    green: '209805',
+    yellow: 'e8bf03',
+    blue: '0000ff',
+    magenta: 'ff00ff',
+    cyan: '00ffee',
+    lightgrey: 'f0f0f0',
+    darkgrey: '888'
+};
+var $cdea3ae92bef6910$var$_styles = {
+    30: 'black',
+    31: 'red',
+    32: 'green',
+    33: 'yellow',
+    34: 'blue',
+    35: 'magenta',
+    36: 'cyan',
+    37: 'lightgrey'
+};
+var $cdea3ae92bef6910$var$_openTags = {
+    '1': 'font-weight:bold',
+    '2': 'opacity:0.5',
+    '3': '<i>',
+    '4': '<u>',
+    '8': 'display:none',
+    '9': '<del>' // delete
+};
+var $cdea3ae92bef6910$var$_closeTags = {
+    '23': '</i>',
+    '24': '</u>',
+    '29': '</del>' // reset delete
+};
+[
+    0,
+    21,
+    22,
+    27,
+    28,
+    39,
+    49
+].forEach(function(n) {
+    $cdea3ae92bef6910$var$_closeTags[n] = '</span>';
+});
+/**
+ * Converts text with ANSI color codes to HTML markup.
+ * @param {String} text
+ * @returns {*}
+ */ function $cdea3ae92bef6910$var$ansiHTML(text) {
+    // Returns the text if the string has no ANSI escape code.
+    if (!$cdea3ae92bef6910$var$_regANSI.test(text)) return text;
+    // Cache opened sequence.
+    var ansiCodes = [];
+    // Replace with markup.
+    var ret = text.replace(/\033\[(\d+)m/g, function(match, seq) {
+        var ot = $cdea3ae92bef6910$var$_openTags[seq];
+        if (ot) {
+            // If current sequence has been opened, close it.
+            if (!!~ansiCodes.indexOf(seq)) {
+                ansiCodes.pop();
+                return '</span>';
+            }
+            // Open tag.
+            ansiCodes.push(seq);
+            return ot[0] === '<' ? ot : '<span style="' + ot + ';">';
+        }
+        var ct = $cdea3ae92bef6910$var$_closeTags[seq];
+        if (ct) {
+            // Pop sequence
+            ansiCodes.pop();
+            return ct;
+        }
+        return '';
+    });
+    // Make sure tags are closed.
+    var l = ansiCodes.length;
+    l > 0 && (ret += Array(l + 1).join('</span>'));
+    return ret;
+}
+/**
+ * Customize colors.
+ * @param {Object} colors reference to _defColors
+ */ $cdea3ae92bef6910$var$ansiHTML.setColors = function(colors) {
+    if (typeof colors !== 'object') throw new Error('`colors` parameter must be an Object.');
+    var _finalColors = {};
+    for(var key in $cdea3ae92bef6910$var$_defColors){
+        var hex = colors.hasOwnProperty(key) ? colors[key] : null;
+        if (!hex) {
+            _finalColors[key] = $cdea3ae92bef6910$var$_defColors[key];
+            continue;
+        }
+        if ('reset' === key) {
+            if (typeof hex === 'string') hex = [
+                hex
+            ];
+            if (!Array.isArray(hex) || hex.length === 0 || hex.some(function(h) {
+                return typeof h !== 'string';
+            })) throw new Error('The value of `' + key + '` property must be an Array and each item could only be a hex string, e.g.: FF0000');
+            var defHexColor = $cdea3ae92bef6910$var$_defColors[key];
+            if (!hex[0]) hex[0] = defHexColor[0];
+            if (hex.length === 1 || !hex[1]) {
+                hex = [
+                    hex[0]
+                ];
+                hex.push(defHexColor[1]);
+            }
+            hex = hex.slice(0, 2);
+        } else if (typeof hex !== 'string') throw new Error('The value of `' + key + '` property must be a hex string, e.g.: FF0000');
+        _finalColors[key] = hex;
+    }
+    $cdea3ae92bef6910$var$_setTags(_finalColors);
+};
+/**
+ * Reset colors.
+ */ $cdea3ae92bef6910$var$ansiHTML.reset = function() {
+    $cdea3ae92bef6910$var$_setTags($cdea3ae92bef6910$var$_defColors);
+};
+/**
+ * Expose tags, including open and close.
+ * @type {Object}
+ */ $cdea3ae92bef6910$var$ansiHTML.tags = {};
+if (Object.defineProperty) {
+    Object.defineProperty($cdea3ae92bef6910$var$ansiHTML.tags, 'open', {
+        get: function() {
+            return $cdea3ae92bef6910$var$_openTags;
+        }
+    });
+    Object.defineProperty($cdea3ae92bef6910$var$ansiHTML.tags, 'close', {
+        get: function() {
+            return $cdea3ae92bef6910$var$_closeTags;
+        }
+    });
+} else {
+    $cdea3ae92bef6910$var$ansiHTML.tags.open = $cdea3ae92bef6910$var$_openTags;
+    $cdea3ae92bef6910$var$ansiHTML.tags.close = $cdea3ae92bef6910$var$_closeTags;
+}
+function $cdea3ae92bef6910$var$_setTags(colors) {
+    // reset all
+    $cdea3ae92bef6910$var$_openTags['0'] = 'font-weight:normal;opacity:1;color:#' + colors.reset[0] + ';background:#' + colors.reset[1];
+    // inverse
+    $cdea3ae92bef6910$var$_openTags['7'] = 'color:#' + colors.reset[1] + ';background:#' + colors.reset[0];
+    // dark grey
+    $cdea3ae92bef6910$var$_openTags['90'] = 'color:#' + colors.darkgrey;
+    for(var code in $cdea3ae92bef6910$var$_styles){
+        var color = $cdea3ae92bef6910$var$_styles[code];
+        var oriColor = colors[color] || '000';
+        $cdea3ae92bef6910$var$_openTags[code] = 'color:#' + oriColor;
+        code = parseInt(code);
+        $cdea3ae92bef6910$var$_openTags[(code + 10).toString()] = 'background:#' + oriColor;
+    }
+}
+$cdea3ae92bef6910$var$ansiHTML.reset();
+// Map ANSI colors from what babel-code-frame uses to base16-github
+// See: https://github.com/babel/babel/blob/e86f62b304d280d0bab52c38d61842b853848ba6/packages/babel-code-frame/src/index.js#L9-L22
+const $b67e2a05a9c13039$var$colors = {
+    reset: [
+        $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base05,
+        'transparent'
+    ],
+    black: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base05,
+    red: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base08 /* marker, bg-invalid */ ,
+    green: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0B /* string */ ,
+    yellow: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base08 /* capitalized, jsx_tag, punctuator */ ,
+    blue: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0C,
+    magenta: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0C /* regex */ ,
+    cyan: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0E /* keyword */ ,
+    gray: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base03 /* comment, gutter */ ,
+    lightgrey: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base01,
+    darkgrey: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base03
+};
+/*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).setColors($b67e2a05a9c13039$var$colors);
+// $FlowFixMe
+for(let tag in /*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).tags.open)/*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).tags.open[tag] = /*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).tags.open[tag].replace(/#light-dark/g, 'light-dark');
+function $b67e2a05a9c13039$var$generateAnsiHTML(txt) {
+    return /*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports)(txt.replace(/[&<>"']/g, (c)=>{
+        switch(c){
+            case '&':
+                return '&amp';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt';
+            case '"':
+                return '&quot;';
+            case "'":
+                return '&#39;';
+            default:
+                return c;
+        }
+    }));
+}
+var $b67e2a05a9c13039$export$2e2bcd8739ae039 = $b67e2a05a9c13039$var$generateAnsiHTML;
+const $e0e0fa52b83f95a9$var$linkStyle = {
+    fontSize: '0.9em',
+    marginBottom: '0.9em'
+};
+const $e0e0fa52b83f95a9$var$anchorStyle = {
+    textDecoration: 'none',
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.anchorColor,
+    cursor: 'pointer'
+};
+const $e0e0fa52b83f95a9$var$codeAnchorStyle = {
+    cursor: 'pointer'
+};
+const $e0e0fa52b83f95a9$var$toggleStyle = {
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.toggleColor,
+    cursor: 'pointer',
+    border: 'none',
+    display: 'block',
+    width: '100%',
+    textAlign: 'left',
+    background: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.toggleBackground,
+    fontFamily: 'Consolas, Menlo, monospace',
+    fontSize: '1em',
+    padding: '0px',
+    lineHeight: '1.5'
+};
+function $e0e0fa52b83f95a9$var$StackFrame(props) {
+    const { frame: frame, critical: critical, showCode: showCode } = props;
+    const { fileName: fileName, lineNumber: lineNumber, columnNumber: columnNumber, _scriptCode: scriptLines, _originalFileName: sourceFileName, _originalLineNumber: sourceLineNumber, _originalColumnNumber: sourceColumnNumber, _originalScriptCode: sourceLines } = frame;
+    const functionName = frame.getFunctionName();
+    const [compiled, setCompiled] = $10ecac3e4062713a$export$60241385465d0a34(!sourceLines);
+    const getErrorLocation = ()=>{
+        const { _originalFileName: fileName, _originalLineNumber: lineNumber } = props.frame;
+        // Unknown file
+        if (!fileName) return null;
+        // e.g. "/path-to-my-app/webpack/bootstrap eaddeb46b67d75e4dfc1"
+        const isInternalWebpackBootstrapCode = fileName.trim().indexOf(' ') !== -1;
+        if (isInternalWebpackBootstrapCode) return null;
+        // Code is in a real file
+        return {
+            fileName: fileName,
+            lineNumber: lineNumber || 1
+        };
+    };
+    const editorHandler = ()=>{
+        const errorLoc = getErrorLocation();
+        if (!errorLoc) return;
+        props.editorHandler?.(errorLoc);
+    };
+    const url = $f78f50d61026cdc5$export$44b1e5ee7f53eae1(sourceFileName, sourceLineNumber, sourceColumnNumber, fileName, lineNumber, columnNumber, compiled);
+    let codeBlockProps = null;
+    if (showCode) {
+        if (compiled && scriptLines && scriptLines.length !== 0 && lineNumber != null) codeBlockProps = {
+            codeHTML: $b67e2a05a9c13039$export$2e2bcd8739ae039(scriptLines),
+            main: critical
+        };
+        else if (!compiled && sourceLines && sourceLines.length !== 0 && sourceLineNumber != null) codeBlockProps = {
+            codeHTML: $b67e2a05a9c13039$export$2e2bcd8739ae039(sourceLines),
+            main: critical
+        };
+    }
+    const canOpenInEditor = getErrorLocation() !== null && props.editorHandler !== null;
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+        children: [
+            $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+                children: functionName
+            }),
+            $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+                style: $e0e0fa52b83f95a9$var$linkStyle,
+                children: $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
+                    role: "link",
+                    style: canOpenInEditor ? $e0e0fa52b83f95a9$var$anchorStyle : null,
+                    onClick: canOpenInEditor ? editorHandler : null,
+                    onKeyDown: canOpenInEditor ? (e)=>{
+                        if (e.key === 'Enter') editorHandler();
+                    } : null,
+                    tabIndex: canOpenInEditor ? '0' : null,
+                    children: url
+                })
+            }),
+            codeBlockProps && $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+                style: {
+                    marginBottom: '1.5em'
+                },
+                children: [
+                    $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
+                        onClick: canOpenInEditor ? editorHandler : null,
+                        style: canOpenInEditor ? $e0e0fa52b83f95a9$var$codeAnchorStyle : null,
+                        children: $23b7c1cb98b19658$export$34b9dba7ce09269b($97c30df7f5c364f7$export$2e2bcd8739ae039, {
+                            ...codeBlockProps
+                        })
+                    }),
+                    scriptLines && sourceLines && $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
+                        style: $e0e0fa52b83f95a9$var$toggleStyle,
+                        onClick: ()=>{
+                            setCompiled(!compiled);
+                        },
+                        children: 'View ' + (compiled ? 'source' : 'compiled')
+                    })
+                ]
+            })
+        ]
+    });
+}
+var $e0e0fa52b83f95a9$export$2e2bcd8739ae039 = $e0e0fa52b83f95a9$var$StackFrame;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $9a1abb59f5d10ec8$var$_collapsibleStyle = {
+    cursor: 'pointer',
+    border: 'none',
+    display: 'block',
+    width: '100%',
+    textAlign: 'left',
+    fontFamily: 'Consolas, Menlo, monospace',
+    fontSize: '1em',
+    padding: '0px',
+    lineHeight: '1.5'
+};
+const $9a1abb59f5d10ec8$var$collapsibleCollapsedStyle = {
+    ...$9a1abb59f5d10ec8$var$_collapsibleStyle,
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.color,
+    background: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.background,
+    marginBottom: '1.5em'
+};
+const $9a1abb59f5d10ec8$var$collapsibleExpandedStyle = {
+    ...$9a1abb59f5d10ec8$var$_collapsibleStyle,
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.color,
+    background: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.background,
+    marginBottom: '0.6em'
+};
+function $9a1abb59f5d10ec8$var$Collapsible(props) {
+    const [collapsed, setCollapsed] = $10ecac3e4062713a$export$60241385465d0a34(true);
+    const toggleCollapsed = ()=>{
+        setCollapsed(!collapsed);
+    };
+    const count = props.children.length;
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("details", {
+        open: !collapsed,
+        onToggle: toggleCollapsed,
+        children: [
+            $23b7c1cb98b19658$export$34b9dba7ce09269b("summary", {
+                style: collapsed ? $9a1abb59f5d10ec8$var$collapsibleCollapsedStyle : $9a1abb59f5d10ec8$var$collapsibleExpandedStyle,
+                children: (collapsed ? "\u25B6" : "\u25BC") + ` ${count} stack frames were ` + (collapsed ? 'collapsed.' : 'expanded.')
+            }),
+            $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+                children: [
+                    props.children,
+                    $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
+                        onClick: toggleCollapsed,
+                        style: $9a1abb59f5d10ec8$var$collapsibleExpandedStyle,
+                        children: `\u{25B2} ${count} stack frames were expanded.`
+                    })
+                ]
+            })
+        ]
+    });
+}
+var $9a1abb59f5d10ec8$export$2e2bcd8739ae039 = $9a1abb59f5d10ec8$var$Collapsible;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ function $e95d7084caaf4e6d$export$723fa77eef12dd9f(sourceFileName, fileName) {
+    return sourceFileName == null || sourceFileName === '' || sourceFileName.indexOf('~/') !== -1 || sourceFileName.indexOf('node_modules/') !== -1 || sourceFileName.indexOf('error-overlay') !== -1 || sourceFileName.trim().indexOf(' ') !== -1 || fileName == null || fileName === '';
+}
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ function $a5027556d7003a42$export$64794fcb05cf0bcf(errorName) {
+    switch(errorName){
+        case 'EvalError':
+        case 'InternalError':
+        case 'RangeError':
+        case 'ReferenceError':
+        case 'SyntaxError':
+        case 'TypeError':
+        case 'URIError':
+            return true;
+        default:
+            return false;
+    }
+}
+var $a5027556d7003a42$export$2e2bcd8739ae039 = $a5027556d7003a42$export$64794fcb05cf0bcf;
+const $5ee7d2edb790dd06$var$traceStyle = {
+    fontSize: '1em',
+    flex: '0 1 auto',
+    minHeight: '0px',
+    overflow: 'auto'
+};
+function $5ee7d2edb790dd06$var$StackTrace(props) {
+    const { stackFrames: stackFrames, errorName: errorName, contextSize: contextSize, editorHandler: editorHandler } = props;
+    const renderedFrames = [];
+    let hasReachedAppCode = false, currentBundle = [], bundleCount = 0;
+    stackFrames.forEach((frame, index)=>{
+        const { fileName: fileName, _originalFileName: sourceFileName } = frame;
+        const isInternalUrl = $e95d7084caaf4e6d$export$723fa77eef12dd9f(sourceFileName, fileName);
+        const isThrownIntentionally = !$a5027556d7003a42$export$64794fcb05cf0bcf(errorName);
+        const shouldCollapse = isInternalUrl && (isThrownIntentionally || hasReachedAppCode);
+        if (!isInternalUrl) hasReachedAppCode = true;
+        const frameEle = $23b7c1cb98b19658$export$34b9dba7ce09269b($e0e0fa52b83f95a9$export$2e2bcd8739ae039, {
+            frame: frame,
+            contextSize: contextSize,
+            critical: index === 0,
+            showCode: !shouldCollapse,
+            editorHandler: editorHandler
+        }, 'frame-' + index);
+        const lastElement = index === stackFrames.length - 1;
+        if (shouldCollapse) currentBundle.push(frameEle);
+        if (!shouldCollapse || lastElement) {
+            if (currentBundle.length === 1) renderedFrames.push(currentBundle[0]);
+            else if (currentBundle.length > 1) {
+                bundleCount++;
+                renderedFrames.push($23b7c1cb98b19658$export$34b9dba7ce09269b($9a1abb59f5d10ec8$export$2e2bcd8739ae039, {
+                    children: currentBundle
+                }, 'bundle-' + bundleCount));
+            }
+            currentBundle = [];
+        }
+        if (!shouldCollapse) renderedFrames.push(frameEle);
+    });
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+        style: $5ee7d2edb790dd06$var$traceStyle,
+        children: renderedFrames
+    });
+}
+var $5ee7d2edb790dd06$export$2e2bcd8739ae039 = $5ee7d2edb790dd06$var$StackTrace;
+const $2eeadf2892cff4e4$var$diffStyle = {
+    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreBackground,
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreColor,
+    padding: '0.5em',
+    overflowX: 'auto',
+    whiteSpace: 'pre-wrap',
+    borderRadius: '0.25rem'
+};
+function $2eeadf2892cff4e4$export$2e2bcd8739ae039({ diff: diff }) {
+    let lines = diff.split('\n').flatMap((line, i)=>[
+            $2eeadf2892cff4e4$var$formatLine(line, i),
+            '\n'
+        ]).slice(0, -1);
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("pre", {
+        style: $2eeadf2892cff4e4$var$diffStyle,
+        children: lines
+    });
+}
+function $2eeadf2892cff4e4$var$formatLine(line, index) {
+    if (line.startsWith('+')) return $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
+        style: {
+            color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.diffAdded,
+            fontWeight: 'bold'
+        },
+        children: line
+    }, index);
+    else if (line.startsWith('-') || line.startsWith('>')) return $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
+        style: {
+            color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.diffRemoved,
+            fontWeight: 'bold'
+        },
+        children: line
+    }, index);
+    else return line;
+}
+const $4baa71cb4cecc0ea$var$wrapperStyle = {
+    display: 'flex',
+    flexDirection: 'column'
+};
+function $4baa71cb4cecc0ea$var$RuntimeError({ errorRecord: errorRecord, editorHandler: editorHandler }) {
+    const { error: error, unhandledRejection: unhandledRejection, contextSize: contextSize, stackFrames: stackFrames } = errorRecord;
+    const errorName = unhandledRejection ? 'Unhandled Rejection (' + error.name + ')' : error.name;
+    // Make header prettier
+    const message = error.message;
+    let headerText = message.match(/^\w*:/) || !errorName ? message : errorName + ': ' + message;
+    headerText = headerText // TODO: maybe remove this prefix from fbjs?
+    // It's just scaring people
+    .replace(/^Invariant Violation:\s*/, '') // This is not helpful either:
+    .replace(/^Warning:\s*/, '') // Break the actionable part to the next line.
+    // AFAIK React 16+ should already do this.
+    .replace(' Check the render method', '\n\nCheck the render method').replace(' Check your code at', '\n\nCheck your code at');
+    let link, diff;
+    if (headerText.includes('https://react.dev/link/hydration-mismatch')) {
+        [headerText, diff] = headerText.split('https://react.dev/link/hydration-mismatch');
+        link = 'https://react.dev/link/hydration-mismatch';
+    } else if (headerText.includes('This will cause a hydration error.')) {
+        [headerText, diff] = headerText.split('This will cause a hydration error.');
+        headerText += 'This will cause a hydration error.';
+    }
+    let lines = headerText.split('\n');
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+        style: $4baa71cb4cecc0ea$var$wrapperStyle,
+        children: [
+            $23b7c1cb98b19658$export$34b9dba7ce09269b($c306e3a42547c8c2$export$2e2bcd8739ae039, {
+                headerText: lines[0]
+            }),
+            $23b7c1cb98b19658$export$34b9dba7ce09269b("pre", {
+                children: lines.slice(1).join('\n').trim()
+            }),
+            link && $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+                children: $23b7c1cb98b19658$export$34b9dba7ce09269b("a", {
+                    href: link,
+                    target: "_blank",
+                    rel: "noreferrer",
+                    children: link
+                })
+            }),
+            diff && $23b7c1cb98b19658$export$34b9dba7ce09269b($2eeadf2892cff4e4$export$2e2bcd8739ae039, {
+                diff: diff.trim()
+            }),
+            $23b7c1cb98b19658$export$34b9dba7ce09269b($5ee7d2edb790dd06$export$2e2bcd8739ae039, {
+                stackFrames: stackFrames,
+                errorName: errorName,
+                contextSize: contextSize,
+                editorHandler: editorHandler
+            })
+        ]
+    });
+}
+var $4baa71cb4cecc0ea$export$2e2bcd8739ae039 = $4baa71cb4cecc0ea$var$RuntimeError;
+/**
+ * Copyright (c) 2015-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */ const $7606db210182b733$var$footerStyle = {
+    fontFamily: 'sans-serif',
+    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.footer,
+    marginTop: '0.5rem',
+    flex: '0 0 auto'
+};
+function $7606db210182b733$var$Footer(props) {
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+        style: $7606db210182b733$var$footerStyle,
+        children: [
+            props.line1,
+            $23b7c1cb98b19658$export$34b9dba7ce09269b("br", {}),
+            props.line2
+        ]
+    });
+}
+var $7606db210182b733$export$2e2bcd8739ae039 = $7606db210182b733$var$Footer;
+function $d0eac8b125ed15e2$var$RuntimeErrorContainer(props) {
+    const { errorRecords: errorRecords, close: close } = props;
+    const totalErrors = errorRecords.length;
+    let [currentIndex, setCurrentIndex] = $10ecac3e4062713a$export$60241385465d0a34(0);
+    let previous = ()=>{
+        setCurrentIndex(currentIndex > 0 ? currentIndex - 1 : totalErrors - 1);
+    };
+    let next = ()=>{
+        setCurrentIndex(currentIndex < totalErrors - 1 ? currentIndex + 1 : 0);
+    };
+    return $23b7c1cb98b19658$export$34b9dba7ce09269b($20d888b381d18c6c$export$2e2bcd8739ae039, {
+        shortcutHandler: (key)=>{
+            if (key === 'Escape') props.close();
+            else if (key === 'ArrowLeft') previous();
+            else if (key === 'ArrowRight') next();
+        },
+        children: [
+            $23b7c1cb98b19658$export$34b9dba7ce09269b($7aae0c9ea64fc08c$export$2e2bcd8739ae039, {
+                close: close
+            }),
+            totalErrors > 1 && $23b7c1cb98b19658$export$34b9dba7ce09269b($1adc179a826c5dd2$export$2e2bcd8739ae039, {
+                currentError: currentIndex + 1,
+                totalErrors: totalErrors,
+                previous: previous,
+                next: next
+            }),
+            $23b7c1cb98b19658$export$34b9dba7ce09269b($4baa71cb4cecc0ea$export$2e2bcd8739ae039, {
+                errorRecord: errorRecords[currentIndex],
+                editorHandler: props.editorHandler
+            }),
+            $23b7c1cb98b19658$export$34b9dba7ce09269b($7606db210182b733$export$2e2bcd8739ae039, {
+                line1: "This screen is visible only in development. It will not appear if the app crashes in production.",
+                line2: "Open your browser\u2019s developer console to further inspect this error.  Click the 'X' or hit ESC to dismiss this message."
+            })
+        ]
+    });
+}
+var $d0eac8b125ed15e2$export$2e2bcd8739ae039 = $d0eac8b125ed15e2$var$RuntimeErrorContainer;
+let $da9882e673ac146b$var$iframe = null;
+let $da9882e673ac146b$var$editorHandler = null;
+let $da9882e673ac146b$var$currentRuntimeErrorRecords = [];
+let $da9882e673ac146b$var$stopListeningToRuntimeErrors = null;
+function $da9882e673ac146b$export$25a22ac46f1bd016(handler) {
+    $da9882e673ac146b$var$editorHandler = handler;
+    if ($da9882e673ac146b$var$iframe) $da9882e673ac146b$var$update();
+}
+function $da9882e673ac146b$export$74e9101ce4078c0(error, options) {
+    $6d40ebe8356580e0$export$9123e6c9c0ac21ed($da9882e673ac146b$var$handleRuntimeError(options))(error, false);
+}
+function $da9882e673ac146b$export$cda2c88a41631c16(options) {
+    if ($da9882e673ac146b$var$stopListeningToRuntimeErrors !== null) throw new Error('Already listening');
+    $da9882e673ac146b$var$stopListeningToRuntimeErrors = $6d40ebe8356580e0$export$38ec23daa6e8dcdf($da9882e673ac146b$var$handleRuntimeError(options));
+}
+const $da9882e673ac146b$var$handleRuntimeError = (options)=>(errorRecord)=>{
+        try {
+            if (typeof options.onError === 'function') options.onError.call(null);
+        } finally{
+            if ($da9882e673ac146b$var$currentRuntimeErrorRecords.some(({ error: error })=>error === errorRecord.error)) // This fixes https://github.com/facebook/create-react-app/issues/3011.
+            // eslint-disable-next-line no-unsafe-finally
+            return;
+            $da9882e673ac146b$var$currentRuntimeErrorRecords = $da9882e673ac146b$var$currentRuntimeErrorRecords.concat([
+                errorRecord
+            ]);
+            $da9882e673ac146b$var$update();
+        }
+    };
+function $da9882e673ac146b$export$1cfa6d161ca81bd9() {
+    $da9882e673ac146b$var$currentRuntimeErrorRecords = [];
+    $da9882e673ac146b$var$update();
+}
+function $da9882e673ac146b$export$25ba7d9a816639e7() {
+    if ($da9882e673ac146b$var$stopListeningToRuntimeErrors === null) throw new Error('Not currently listening');
+    try {
+        $da9882e673ac146b$var$stopListeningToRuntimeErrors();
+    } finally{
+        $da9882e673ac146b$var$stopListeningToRuntimeErrors = null;
+    }
+}
+let $da9882e673ac146b$var$rootNode, $da9882e673ac146b$var$shadow;
+function $da9882e673ac146b$var$update() {
+    if (!$da9882e673ac146b$var$rootNode) {
+        $da9882e673ac146b$var$rootNode = document.createElement('parcel-error-overlay');
+        $da9882e673ac146b$var$shadow = $da9882e673ac146b$var$rootNode.attachShadow({
+            mode: 'open'
+        });
+        if ($da9882e673ac146b$var$rootNode) document.body?.appendChild($da9882e673ac146b$var$rootNode);
+    }
+    if ($da9882e673ac146b$var$currentRuntimeErrorRecords.length > 0 && $da9882e673ac146b$var$shadow) $b6c7f0288a15c619$export$b3890eb0ae9dca99($23b7c1cb98b19658$export$34b9dba7ce09269b("dialog", {
+        ref: (d)=>d?.showModal(),
+        style: $74bb4be6e9b78681$export$7ef984671d1853d7,
+        onClose: $da9882e673ac146b$export$1cfa6d161ca81bd9,
+        children: $23b7c1cb98b19658$export$34b9dba7ce09269b($da9882e673ac146b$var$ErrorOverlay, {})
+    }), $da9882e673ac146b$var$shadow);
+    else {
+        $da9882e673ac146b$var$rootNode?.remove();
+        $da9882e673ac146b$var$rootNode = null;
+    }
+}
+function $da9882e673ac146b$var$ErrorOverlay() {
+    if ($da9882e673ac146b$var$currentRuntimeErrorRecords.length > 0) return $23b7c1cb98b19658$export$34b9dba7ce09269b($d0eac8b125ed15e2$export$2e2bcd8739ae039, {
+        errorRecords: $da9882e673ac146b$var$currentRuntimeErrorRecords,
+        close: $da9882e673ac146b$export$1cfa6d161ca81bd9,
+        editorHandler: $da9882e673ac146b$var$editorHandler
+    });
+    return null;
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"hrQeu":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$a011 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$a011.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$a011.prelude(module);
+
+try {
+// Quiz Context - manages quiz state using useReducer
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizProvider", ()=>QuizProvider);
+parcelHelpers.export(exports, "useQuiz", ()=>useQuiz);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _quizLogicJs = require("../utils/quizLogic.js");
+var _settingsContextJsx = require("./SettingsContext.jsx");
+var _s = $RefreshSig$(), _s1 = $RefreshSig$();
+const QuizContext = /*#__PURE__*/ (0, _react.createContext)(null);
+// Initial state
+const initialState = {
+    shuffledData: [],
+    currentIndex: 0,
+    feedback: null,
+    userInput: '',
+    showAnswer: false,
+    correctCount: 0,
+    totalQuestions: 0,
+    isInvalidInput: false
+};
+// Action types
+const ACTIONS = {
+    SET_DATA: 'SET_DATA',
+    SET_FEEDBACK: 'SET_FEEDBACK',
+    SET_INPUT: 'SET_INPUT',
+    SET_SHOW_ANSWER: 'SET_SHOW_ANSWER',
+    SET_INVALID_INPUT: 'SET_INVALID_INPUT',
+    CORRECT_ANSWER: 'CORRECT_ANSWER',
+    INCORRECT_ANSWER: 'INCORRECT_ANSWER',
+    RETRY: 'RETRY',
+    RESET: 'RESET'
+};
+function quizReducer(state, action) {
+    switch(action.type){
+        case ACTIONS.SET_DATA:
+            return {
+                ...state,
+                shuffledData: action.payload,
+                currentIndex: 0,
+                feedback: null,
+                userInput: '',
+                showAnswer: false,
+                correctCount: 0,
+                totalQuestions: action.payload.length
+            };
+        case ACTIONS.SET_FEEDBACK:
+            return {
+                ...state,
+                feedback: action.payload
+            };
+        case ACTIONS.SET_INPUT:
+            return {
+                ...state,
+                userInput: action.payload,
+                isInvalidInput: false
+            };
+        case ACTIONS.SET_SHOW_ANSWER:
+            return {
+                ...state,
+                showAnswer: action.payload
+            };
+        case ACTIONS.SET_INVALID_INPUT:
+            return {
+                ...state,
+                isInvalidInput: action.payload
+            };
+        case ACTIONS.CORRECT_ANSWER:
+            {
+                // Remove current question from pool
+                const newData = [
+                    ...state.shuffledData
+                ];
+                newData.splice(state.currentIndex, 1);
+                return {
+                    ...state,
+                    shuffledData: newData,
+                    correctCount: state.correctCount + 1,
+                    currentIndex: state.currentIndex >= newData.length ? 0 : state.currentIndex,
+                    feedback: null,
+                    userInput: '',
+                    showAnswer: false
+                };
+            }
+        case ACTIONS.INCORRECT_ANSWER:
+            {
+                // Move current question to end of pool
+                const newData = [
+                    ...state.shuffledData
+                ];
+                const [currentQ] = newData.splice(state.currentIndex, 1);
+                newData.push(currentQ);
+                return {
+                    ...state,
+                    shuffledData: newData,
+                    feedback: null,
+                    userInput: '',
+                    showAnswer: false
+                };
+            }
+        case ACTIONS.RETRY:
+            return {
+                ...state,
+                feedback: null,
+                userInput: '',
+                showAnswer: false
+            };
+        case ACTIONS.RESET:
+            return {
+                ...initialState,
+                totalQuestions: state.totalQuestions
+            };
+        default:
+            return state;
+    }
+}
+function QuizProvider({ children }) {
+    _s();
+    const [state, dispatch] = (0, _react.useReducer)(quizReducer, initialState);
+    const inputRef = (0, _react.useRef)(null);
+    const { selectedLevels, selectedTypes, isFixedOrder, selectedForms } = (0, _settingsContextJsx.useSettings)();
+    // Initialize/reinitialize quiz when filters change
+    (0, _react.useEffect)(()=>{
+        const data = (0, _quizLogicJs.filterAndShuffleData)(selectedLevels, selectedTypes, isFixedOrder);
+        dispatch({
+            type: ACTIONS.SET_DATA,
+            payload: data
+        });
+    }, [
+        selectedLevels,
+        selectedTypes,
+        isFixedOrder
+    ]);
+    // Force focus on mount
+    (0, _react.useEffect)(()=>{
+        if (inputRef.current) inputRef.current.focus();
+    }, []);
+    // Auto-focus when new question renders
+    const currentQuestion = state.shuffledData[state.currentIndex];
+    (0, _react.useEffect)(()=>{
+        if (currentQuestion && !state.feedback && inputRef.current) {
+            inputRef.current.focus();
+            inputRef.current.select();
+        }
+    }, [
+        currentQuestion,
+        state.feedback
+    ]);
+    // Action creators
+    const setInput = (0, _react.useCallback)((value)=>{
+        dispatch({
+            type: ACTIONS.SET_INPUT,
+            payload: value
+        });
+    }, []);
+    const setFeedback = (0, _react.useCallback)((value)=>{
+        dispatch({
+            type: ACTIONS.SET_FEEDBACK,
+            payload: value
+        });
+    }, []);
+    const setInvalidInput = (0, _react.useCallback)((value)=>{
+        dispatch({
+            type: ACTIONS.SET_INVALID_INPUT,
+            payload: value
+        });
+        if (value) setTimeout(()=>dispatch({
+                type: ACTIONS.SET_INVALID_INPUT,
+                payload: false
+            }), 500);
+    }, []);
+    const handleCorrect = (0, _react.useCallback)(()=>{
+        dispatch({
+            type: ACTIONS.CORRECT_ANSWER
+        });
+        if (inputRef.current) inputRef.current.focus();
+    }, []);
+    const handleIncorrect = (0, _react.useCallback)(()=>{
+        dispatch({
+            type: ACTIONS.INCORRECT_ANSWER
+        });
+        if (inputRef.current) inputRef.current.focus();
+    }, []);
+    const handleNext = (0, _react.useCallback)((wasCorrect)=>{
+        if (wasCorrect) handleCorrect();
+        else handleIncorrect();
+    }, [
+        handleCorrect,
+        handleIncorrect
+    ]);
+    const handleRetry = (0, _react.useCallback)(()=>{
+        dispatch({
+            type: ACTIONS.RETRY
+        });
+        if (inputRef.current) inputRef.current.focus();
+    }, []);
+    const handleGiveUp = (0, _react.useCallback)(()=>{
+        dispatch({
+            type: ACTIONS.SET_FEEDBACK,
+            payload: 'incorrect'
+        });
+        dispatch({
+            type: ACTIONS.SET_SHOW_ANSWER,
+            payload: true
+        });
+        if (inputRef.current) inputRef.current.focus();
+    }, []);
+    const handleRestart = (0, _react.useCallback)(()=>{
+        const data = (0, _quizLogicJs.filterAndShuffleData)(selectedLevels, selectedTypes, isFixedOrder);
+        dispatch({
+            type: ACTIONS.SET_DATA,
+            payload: data
+        });
+        if (inputRef.current) inputRef.current.focus();
+    }, [
+        selectedLevels,
+        selectedTypes,
+        isFixedOrder
+    ]);
+    const checkAnswer = (0, _react.useCallback)((input)=>{
+        if (!currentQuestion) return false;
+        return (0, _quizLogicJs.validateAnswer)(input, currentQuestion, selectedForms);
+    }, [
+        currentQuestion,
+        selectedForms
+    ]);
+    const value = {
+        // State
+        ...state,
+        currentQuestion,
+        inputRef,
+        // Derived state
+        isComplete: state.shuffledData.length === 0 && state.totalQuestions > 0,
+        isEmpty: state.shuffledData.length === 0 && state.totalQuestions === 0,
+        progress: state.totalQuestions > 0 ? state.correctCount / state.totalQuestions * 100 : 0,
+        questionNumber: state.correctCount + 1,
+        // Actions
+        setInput,
+        setFeedback,
+        setInvalidInput,
+        handleNext,
+        handleRetry,
+        handleGiveUp,
+        handleRestart,
+        handleCorrect,
+        handleIncorrect,
+        checkAnswer
+    };
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(QuizContext.Provider, {
+        value: value,
+        children: children
+    }, void 0, false, {
+        fileName: "src/context/QuizContext.jsx",
+        lineNumber: 212,
+        columnNumber: 5
+    }, this);
+}
+_s(QuizProvider, "nTCHlzbZ7vd/6SX35evVyVrPxIQ=", false, function() {
+    return [
+        (0, _settingsContextJsx.useSettings)
+    ];
+});
+_c = QuizProvider;
+const useQuiz = ()=>{
+    _s1();
+    const context = (0, _react.useContext)(QuizContext);
+    if (!context) throw new Error('useQuiz must be used within a QuizProvider');
+    return context;
+};
+_s1(useQuiz, "b9L3QQ+jgeyIrH0NfHrJ8nn7VMU=");
+var _c;
+$RefreshReg$(_c, "QuizProvider");
+
+  $parcel$ReactRefreshHelpers$a011.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../utils/quizLogic.js":"6SiZ1","./SettingsContext.jsx":"hBba3","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"6SiZ1":[function(require,module,exports,__globalThis) {
+// Quiz filtering, shuffling, and answer validation logic
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "filterAndShuffleData", ()=>filterAndShuffleData);
+parcelHelpers.export(exports, "validateAnswer", ()=>validateAnswer);
+parcelHelpers.export(exports, "findPairVerb", ()=>findPairVerb);
+var _sentenceDataJs = require("../data/sentenceData.js");
+var _hiraganaUtilsJs = require("./hiraganaUtils.js");
+const filterAndShuffleData = (levels, types, isFixedOrder)=>{
+    const filtered = (0, _sentenceDataJs.VERB_DATA).filter((item)=>levels.includes(item.level) && types.includes(item.type));
+    if (filtered.length === 0) return [];
+    return isFixedOrder ? [
+        ...filtered
+    ].sort((a, b)=>a.id - b.id) : [
+        ...filtered
+    ].sort(()=>Math.random() - 0.5);
+};
+const validateAnswer = (input, question, selectedForms)=>{
+    const inputHira = (0, _hiraganaUtilsJs.toHiragana)(input.trim().replace(/\s+/g, ''));
+    const validAnswers = [];
+    if (selectedForms.includes('Polite')) {
+        validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(question.politeSentence));
+        validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(question.politeKana.replace(/\s+/g, '')));
+    }
+    if (selectedForms.includes('Plain')) {
+        validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(question.plainSentence));
+        validAnswers.push((0, _hiraganaUtilsJs.toHiragana)(question.plainKana.replace(/\s+/g, '')));
+    }
+    return validAnswers.includes(inputHira);
+};
+const findPairVerb = (question)=>{
+    const pairId = question.id % 2 === 1 ? question.id + 1 : question.id - 1;
+    return (0, _sentenceDataJs.VERB_DATA).find((v)=>v.id === pairId);
+};
+
+},{"../data/sentenceData.js":"jyZsS","./hiraganaUtils.js":"5pW0g","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"jyZsS":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "VERB_SUFFIX_RULES", ()=>VERB_SUFFIX_RULES);
+/**
+ * Determines the suffix type of a verb based on its dictionaryRuby
+ * @param {Array} dictionaryRuby - Array of {text, rt} objects representing the dictionary form
+ * @returns {string|null} - 'suffix-su', 'suffix-aru', or null if no pattern matches
+ */ parcelHelpers.export(exports, "getVerbSuffixType", ()=>getVerbSuffixType);
+parcelHelpers.export(exports, "VERB_DATA", ()=>VERB_DATA);
+var _iconsJs = require("../components/ui/icons.js");
+const VERB_SUFFIX_RULES = {
+    su: {
+        pattern: 'suffix-su',
+        explanationJa: "\u2026\u3059 \u27F9 \u5916\u5411\u7684 (\u2248 \u3059\u308B)",
+        explanationEn: 'Outward-Directed (\u2248 "To do")',
+        type: 'Transitive'
+    },
+    aru: {
+        pattern: 'suffix-aru',
+        explanationJa: "\u2026\u3042 + \u308B \u27F9 \u5185\u5411\u7684 (\u2248 \u3042\u308B)",
+        explanationEn: 'Inward-Directed (\u2248 "To be")',
+        type: 'Intransitive'
+    }
+};
+// "A" column hiragana characters that precede る in the aru pattern
+const A_COLUMN_HIRAGANA = [
+    "\u3042",
+    "\u304B",
+    "\u3055",
+    "\u305F",
+    "\u306A",
+    "\u306F",
+    "\u307E",
+    "\u3084",
+    "\u3089",
+    "\u308F",
+    "\u304C",
+    "\u3056",
+    "\u3060",
+    "\u3070",
+    "\u3071"
+];
+function getVerbSuffixType(dictionaryRuby) {
+    if (!dictionaryRuby || dictionaryRuby.length === 0) return null;
+    // Get the reading of the verb (combine all rt values, falling back to text for kana)
+    const reading = dictionaryRuby.map((r)=>r.rt || r.text).join('');
+    // Check for suffix -su: ends in す
+    if (reading.endsWith("\u3059")) return 'suffix-su';
+    // Check for suffix -aru: ends in [a-column hiragana] + る
+    if (reading.endsWith("\u308B") && reading.length >= 2) {
+        const secondToLast = reading[reading.length - 2];
+        if (A_COLUMN_HIRAGANA.includes(secondToLast)) return 'suffix-aru';
+    }
+    return null;
+}
+const VERB_DATA = [
+    // --- LEVEL 1 (IDs 1-20) ---
+    {
+        id: 1,
+        level: 1,
+        politeSentence: "\u30C9\u30A2\u304C\u958B\u304D\u307E\u3059",
+        politeKana: "\u30C9\u30A2\u304C\u3042\u304D\u307E\u3059",
+        plainSentence: "\u30C9\u30A2\u304C\u958B\u304F",
+        plainKana: "\u30C9\u30A2\u304C\u3042\u304F",
+        type: "Intransitive",
+        english: "The door opens",
+        noun: "\u30C9\u30A2",
+        nounRuby: [
+            {
+                text: "\u30C9\u30A2",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u958B",
+        verbRuby: [
+            {
+                text: "\u958B",
+                rt: "\u3042"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u958B",
+                rt: "\u3042"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.DoorOpen),
+        color: "text-blue-400"
+    },
+    {
+        id: 2,
+        level: 1,
+        politeSentence: "\u30C9\u30A2\u3092\u958B\u3051\u307E\u3059",
+        politeKana: "\u30C9\u30A2\u3092\u3042\u3051\u307E\u3059",
+        plainSentence: "\u30C9\u30A2\u3092\u958B\u3051\u308B",
+        plainKana: "\u30C9\u30A2\u3092\u3042\u3051\u308B",
+        type: "Transitive",
+        english: "I open the door",
+        noun: "\u30C9\u30A2",
+        nounRuby: [
+            {
+                text: "\u30C9\u30A2",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u958B",
+        verbRuby: [
+            {
+                text: "\u958B",
+                rt: "\u3042"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u958B",
+                rt: "\u3042"
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.DoorOpen),
+        color: "text-green-400"
+    },
+    {
+        id: 3,
+        level: 1,
+        politeSentence: "\u30C9\u30A2\u304C\u9589\u307E\u308A\u307E\u3059",
+        politeKana: "\u30C9\u30A2\u304C\u3057\u307E\u308A\u307E\u3059",
+        plainSentence: "\u30C9\u30A2\u304C\u9589\u307E\u308B",
+        plainKana: "\u30C9\u30A2\u304C\u3057\u307E\u308B",
+        type: "Intransitive",
+        english: "The door closes",
+        noun: "\u30C9\u30A2",
+        nounRuby: [
+            {
+                text: "\u30C9\u30A2",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u9589",
+        verbRuby: [
+            {
+                text: "\u9589",
+                rt: "\u3057"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u9589",
+                rt: "\u3057"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.DoorClosed),
+        color: "text-blue-400"
+    },
+    {
+        id: 4,
+        level: 1,
+        politeSentence: "\u30C9\u30A2\u3092\u9589\u3081\u307E\u3059",
+        politeKana: "\u30C9\u30A2\u3092\u3057\u3081\u307E\u3059",
+        plainSentence: "\u30C9\u30A2\u3092\u9589\u3081\u308B",
+        plainKana: "\u30C9\u30A2\u3092\u3057\u3081\u308B",
+        type: "Transitive",
+        english: "I close the door",
+        noun: "\u30C9\u30A2",
+        nounRuby: [
+            {
+                text: "\u30C9\u30A2",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u9589",
+        verbRuby: [
+            {
+                text: "\u9589",
+                rt: "\u3057"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u9589",
+                rt: "\u3057"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.DoorClosed),
+        color: "text-green-400"
+    },
+    {
+        id: 5,
+        level: 1,
+        politeSentence: "\u72AC\u304C\u51FA\u307E\u3059",
+        politeKana: "\u3044\u306C\u304C\u3067\u307E\u3059",
+        plainSentence: "\u72AC\u304C\u51FA\u308B",
+        plainKana: "\u3044\u306C\u304C\u3067\u308B",
+        type: "Intransitive",
+        english: "The dog leaves / goes out",
+        noun: "\u72AC",
+        nounRuby: [
+            {
+                text: "\u72AC",
+                rt: "\u3044\u306C"
+            }
+        ],
+        verbPrompt: "\u51FA",
+        verbRuby: [
+            {
+                text: "\u51FA",
+                rt: "\u3067"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u51FA",
+                rt: "\u3067"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Dog),
+        color: "text-blue-400"
+    },
+    {
+        id: 6,
+        level: 1,
+        politeSentence: "\u72AC\u3092\u51FA\u3057\u307E\u3059",
+        politeKana: "\u3044\u306C\u3092\u3060\u3057\u307E\u3059",
+        plainSentence: "\u72AC\u3092\u51FA\u3059",
+        plainKana: "\u3044\u306C\u3092\u3060\u3059",
+        type: "Transitive",
+        english: "I let the dog out",
+        noun: "\u72AC",
+        nounRuby: [
+            {
+                text: "\u72AC",
+                rt: "\u3044\u306C"
+            }
+        ],
+        verbPrompt: "\u51FA",
+        verbRuby: [
+            {
+                text: "\u51FA",
+                rt: "\u3060"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u51FA",
+                rt: "\u3060"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Dog),
+        color: "text-green-400"
+    },
+    {
+        id: 7,
+        level: 1,
+        politeSentence: "\u8033\u304C\u52D5\u304D\u307E\u3059",
+        politeKana: "\u307F\u307F\u304C\u3046\u3054\u304D\u307E\u3059",
+        plainSentence: "\u8033\u304C\u52D5\u304F",
+        plainKana: "\u307F\u307F\u304C\u3046\u3054\u304F",
+        type: "Intransitive",
+        english: "The ears move",
+        noun: "\u8033",
+        nounRuby: [
+            {
+                text: "\u8033",
+                rt: "\u307F\u307F"
+            }
+        ],
+        verbPrompt: "\u52D5",
+        verbRuby: [
+            {
+                text: "\u52D5",
+                rt: "\u3046\u3054"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u52D5",
+                rt: "\u3046\u3054"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Ear),
+        color: "text-blue-400"
+    },
+    {
+        id: 8,
+        level: 1,
+        politeSentence: "\u8033\u3092\u52D5\u304B\u3057\u307E\u3059",
+        politeKana: "\u307F\u307F\u3092\u3046\u3054\u304B\u3057\u307E\u3059",
+        plainSentence: "\u8033\u3092\u52D5\u304B\u3059",
+        plainKana: "\u307F\u307F\u3092\u3046\u3054\u304B\u3059",
+        type: "Transitive",
+        english: "I move my ears",
+        noun: "\u8033",
+        nounRuby: [
+            {
+                text: "\u8033",
+                rt: "\u307F\u307F"
+            }
+        ],
+        verbPrompt: "\u52D5",
+        verbRuby: [
+            {
+                text: "\u52D5",
+                rt: "\u3046\u3054"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u52D5",
+                rt: "\u3046\u3054"
+            },
+            {
+                text: "\u304B",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Ear),
+        color: "text-green-400"
+    },
+    {
+        id: 9,
+        level: 1,
+        politeSentence: "\u8ECA\u304C\u6B62\u307E\u308A\u307E\u3059",
+        politeKana: "\u304F\u308B\u30DE\u30AC\u3068\u307E\u308A\u307E\u3059",
+        plainSentence: "\u8ECA\u304C\u6B62\u307E\u308B",
+        plainKana: "\u304F\u308B\u307E\u304C\u3068\u307E\u308B",
+        type: "Intransitive",
+        english: "The car stops",
+        noun: "\u8ECA",
+        nounRuby: [
+            {
+                text: "\u8ECA",
+                rt: "\u304F\u308B\u307E"
+            }
+        ],
+        verbPrompt: "\u6B62",
+        verbRuby: [
+            {
+                text: "\u6B62",
+                rt: "\u3068"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6B62",
+                rt: "\u3068"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CarFront),
+        color: "text-blue-400"
+    },
+    {
+        id: 10,
+        level: 1,
+        politeSentence: "\u8ECA\u3092\u6B62\u3081\u307E\u3059",
+        politeKana: "\u304F\u308B\u307E\u3092\u3068\u3081\u307E\u3059",
+        plainSentence: "\u8ECA\u3092\u6B62\u3081\u308B",
+        plainKana: "\u304F\u308B\u307E\u3092\u3068\u3081\u308B",
+        type: "Transitive",
+        english: "I stop the car",
+        noun: "\u8ECA",
+        nounRuby: [
+            {
+                text: "\u8ECA",
+                rt: "\u304F\u308B\u307E"
+            }
+        ],
+        verbPrompt: "\u6B62",
+        verbRuby: [
+            {
+                text: "\u6B62",
+                rt: "\u3068"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6B62",
+                rt: "\u3068"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CarFront),
+        color: "text-green-400"
+    },
+    {
+        id: 11,
+        level: 1,
+        politeSentence: "\u96FB\u6C17\u304C\u3064\u304D\u307E\u3059",
+        politeKana: "\u3067\u3093\u304D\u304C\u3064\u304D\u307E\u3059",
+        plainSentence: "\u96FB\u6C17\u304C\u3064\u304F",
+        plainKana: "\u3067\u3093\u304D\u304C\u3064\u304F",
+        type: "Intransitive",
+        english: "The light comes on",
+        noun: "\u96FB\u6C17",
+        nounRuby: [
+            {
+                text: "\u96FB",
+                rt: "\u3067\u3093"
+            },
+            {
+                text: "\u6C17",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u3064",
+        verbRuby: [
+            {
+                text: "\u3064",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u3064",
+                rt: ""
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Lightbulb),
+        color: "text-yellow-400"
+    },
+    {
+        id: 12,
+        level: 1,
+        politeSentence: "\u96FB\u6C17\u3092\u3064\u3051\u307E\u3059",
+        politeKana: "\u3067\u3093\u304D\u3092\u3064\u3051\u307E\u3059",
+        plainSentence: "\u96FB\u6C17\u3092\u3064\u3051\u308B",
+        plainKana: "\u3067\u3093\u304D\u3092\u3064\u3051\u308B",
+        type: "Transitive",
+        english: "I turn on the light",
+        noun: "\u96FB\u6C17",
+        nounRuby: [
+            {
+                text: "\u96FB",
+                rt: "\u3067\u3093"
+            },
+            {
+                text: "\u6C17",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u3064",
+        verbRuby: [
+            {
+                text: "\u3064",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u3064",
+                rt: ""
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Lightbulb),
+        color: "text-yellow-400"
+    },
+    {
+        id: 13,
+        level: 1,
+        politeSentence: "\u96FB\u6C17\u304C\u6D88\u3048\u307E\u3059",
+        politeKana: "\u3067\u3093\u304D\u304C\u304D\u3048\u307E\u3059",
+        plainSentence: "\u96FB\u6C17\u304C\u6D88\u3048\u308B",
+        plainKana: "\u3067\u3093\u304D\u304C\u304D\u3048\u308B",
+        type: "Intransitive",
+        english: "The light goes off",
+        noun: "\u96FB\u6C17",
+        nounRuby: [
+            {
+                text: "\u96FB",
+                rt: "\u3067\u3093"
+            },
+            {
+                text: "\u6C17",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u6D88",
+        verbRuby: [
+            {
+                text: "\u6D88",
+                rt: "\u304D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6D88",
+                rt: "\u304D"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.LightbulbOff),
+        color: "text-gray-400"
+    },
+    {
+        id: 14,
+        level: 1,
+        politeSentence: "\u96FB\u6C17\u3092\u6D88\u3057\u307E\u3059",
+        politeKana: "\u3067\u3093\u304D\u3092\u3051\u3057\u307E\u3059",
+        plainSentence: "\u96FB\u6C17\u3092\u6D88\u3059",
+        plainKana: "\u3067\u3093\u304D\u3092\u3051\u3059",
+        type: "Transitive",
+        english: "I turn off the light",
+        noun: "\u96FB\u6C17",
+        nounRuby: [
+            {
+                text: "\u96FB",
+                rt: "\u3067\u3093"
+            },
+            {
+                text: "\u6C17",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u6D88",
+        verbRuby: [
+            {
+                text: "\u6D88",
+                rt: "\u3051"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6D88",
+                rt: "\u3051"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.LightbulbOff),
+        color: "text-gray-400"
+    },
+    {
+        id: 15,
+        level: 1,
+        politeSentence: "\u4E88\u5B9A\u304C\u5909\u308F\u308A\u307E\u3059",
+        politeKana: "\u3088\u3066\u3044\u304C\u304B\u308F\u308A",
+        plainSentence: "\u4E88\u5B9A\u304C\u5909\u308F\u308B",
+        plainKana: "\u3088\u3066\u3044\u304C\u304B\u308F\u308B",
+        type: "Intransitive",
+        english: "The plan changes",
+        noun: "\u4E88\u5B9A",
+        nounRuby: [
+            {
+                text: "\u4E88",
+                rt: "\u3088"
+            },
+            {
+                text: "\u5B9A",
+                rt: "\u3066\u3044"
+            }
+        ],
+        verbPrompt: "\u5909",
+        verbRuby: [
+            {
+                text: "\u5909",
+                rt: "\u304B"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5909",
+                rt: "\u304B"
+            },
+            {
+                text: "\u308F",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Calendar),
+        color: "text-blue-400"
+    },
+    {
+        id: 16,
+        level: 1,
+        politeSentence: "\u4E88\u5B9A\u3092\u5909\u3048\u307E\u3059",
+        politeKana: "\u3088\u3066\u3044\u3092\u304B\u3048\u307E\u3059",
+        plainSentence: "\u4E88\u5B9A\u3092\u5909\u3048\u308B",
+        plainKana: "\u3088\u3066\u3044\u3092\u304B\u3048\u308B",
+        type: "Transitive",
+        english: "I change the plan",
+        noun: "\u4E88\u5B9A",
+        nounRuby: [
+            {
+                text: "\u4E88",
+                rt: "\u3088"
+            },
+            {
+                text: "\u5B9A",
+                rt: "\u3066\u3044"
+            }
+        ],
+        verbPrompt: "\u5909",
+        verbRuby: [
+            {
+                text: "\u5909",
+                rt: "\u304B"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5909",
+                rt: "\u304B"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Calendar),
+        color: "text-green-400"
+    },
+    {
+        id: 17,
+        level: 1,
+        politeSentence: "\u75C5\u6C17\u304C\u6CBB\u308A\u307E\u3059",
+        politeKana: "\u3073\u3087\u3046\u304D\u304C\u306A\u304A\u308A\u307E\u3059",
+        plainSentence: "\u75C5\u6C17\u304C\u6CBB\u308B",
+        plainKana: "\u3073\u3087\u3046\u304D\u304C\u306A\u304A\u308B",
+        type: "Intransitive",
+        english: "The illness is cured",
+        noun: "\u75C5\u6C17",
+        nounRuby: [
+            {
+                text: "\u75C5",
+                rt: "\u3073\u3087\u3046"
+            },
+            {
+                text: "\u6C17",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u6CBB",
+        verbRuby: [
+            {
+                text: "\u6CBB",
+                rt: "\u306A\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6CBB",
+                rt: "\u306A\u304A"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.HeartPulse),
+        color: "text-red-400"
+    },
+    {
+        id: 18,
+        level: 1,
+        politeSentence: "\u75C5\u6C17\u3092\u6CBB\u3057\u307E\u3059",
+        politeKana: "\u3073\u3087\u3046\u304D\u3092\u306A\u304A\u3057\u307E\u3059",
+        plainSentence: "\u75C5\u6C17\u3092\u6CBB\u3059",
+        plainKana: "\u3073\u3087\u3046\u304D\u3092\u306A\u304A\u3059",
+        type: "Transitive",
+        english: "I cure the illness",
+        noun: "\u75C5\u6C17",
+        nounRuby: [
+            {
+                text: "\u75C5",
+                rt: "\u3073\u3087\u3046"
+            },
+            {
+                text: "\u6C17",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u6CBB",
+        verbRuby: [
+            {
+                text: "\u6CBB",
+                rt: "\u306A\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6CBB",
+                rt: "\u306A\u304A"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.HeartPulse),
+        color: "text-red-400"
+    },
+    {
+        id: 19,
+        level: 1,
+        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u59CB\u307E\u308A\u307E\u3059",
+        politeKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u306F\u3058\u307E\u308A\u307E\u3059",
+        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u59CB\u307E\u308B",
+        plainKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u306F\u3058\u307E\u308B",
+        type: "Intransitive",
+        english: "The lesson begins",
+        noun: "\u30EC\u30C3\u30B9\u30F3",
+        nounRuby: [
+            {
+                text: "\u30EC\u30C3\u30B9\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u59CB",
+        verbRuby: [
+            {
+                text: "\u59CB",
+                rt: "\u306F\u3058"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u59CB",
+                rt: "\u306F\u3058"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.GraduationCap),
+        color: "text-blue-400"
+    },
+    {
+        id: 20,
+        level: 1,
+        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u59CB\u3081\u307E\u3059",
+        politeKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u306F\u3058\u3081\u307E\u3059",
+        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u59CB\u3081\u308B",
+        plainKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u306F\u3058\u3081\u308B",
+        type: "Transitive",
+        english: "I begin the lesson",
+        noun: "\u30EC\u30C3\u30B9\u30F3",
+        nounRuby: [
+            {
+                text: "\u30EC\u30C3\u30B9\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u59CB",
+        verbRuby: [
+            {
+                text: "\u59CB",
+                rt: "\u306F\u3058"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u59CB",
+                rt: "\u306F\u3058"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.GraduationCap),
+        color: "text-green-400"
+    },
+    // --- LEVEL 2 (IDs 21-40) ---
+    {
+        id: 21,
+        level: 2,
+        politeSentence: "\u30DA\u30F3\u304C\u843D\u3061\u307E\u3059",
+        politeKana: "\u30DA\u30F3\u304C\u304A\u3061\u307E\u3059",
+        plainSentence: "\u30DA\u30F3\u304C\u843D\u3061\u308B",
+        plainKana: "\u30DA\u30F3\u304C\u304A\u3061\u308B",
+        type: "Intransitive",
+        english: "The pen falls",
+        noun: "\u30DA\u30F3",
+        nounRuby: [
+            {
+                text: "\u30DA\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u843D",
+        verbRuby: [
+            {
+                text: "\u843D",
+                rt: "\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u843D",
+                rt: "\u304A"
+            },
+            {
+                text: "\u3061",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Pen),
+        color: "text-blue-400"
+    },
+    {
+        id: 22,
+        level: 2,
+        politeSentence: "\u30DA\u30F3\u3092\u843D\u3068\u3057\u307E\u3059",
+        politeKana: "\u30DA\u30F3\u3092\u304A\u3068\u3057\u307E\u3059",
+        plainSentence: "\u30DA\u30F3\u3092\u843D\u3068\u3059",
+        plainKana: "\u30DA\u30F3\u3092\u304A\u3068\u3059",
+        type: "Transitive",
+        english: "I drop the pen",
+        noun: "\u30DA\u30F3",
+        nounRuby: [
+            {
+                text: "\u30DA\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u843D",
+        verbRuby: [
+            {
+                text: "\u843D",
+                rt: "\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u843D",
+                rt: "\u304A"
+            },
+            {
+                text: "\u3068",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Pen),
+        color: "text-green-400"
+    },
+    {
+        id: 23,
+        level: 2,
+        politeSentence: "\u97F3\u697D\u304C\u805E\u3053\u3048\u307E\u3059",
+        politeKana: "\u304A\u3093\u304C\u304F\u304C\u304D\u3053\u3048\u307E\u3059",
+        plainSentence: "\u97F3\u697D\u304C\u805E\u3053\u3048\u308B",
+        plainKana: "\u304A\u3093\u304C\u304F\u304C\u304D\u3053\u3048\u308B",
+        type: "Intransitive",
+        english: "The music can be heard",
+        noun: "\u97F3\u697D",
+        nounRuby: [
+            {
+                text: "\u97F3",
+                rt: "\u304A\u3093"
+            },
+            {
+                text: "\u697D",
+                rt: "\u304C\u304F"
+            }
+        ],
+        verbPrompt: "\u805E",
+        verbRuby: [
+            {
+                text: "\u805E",
+                rt: "\u304D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u805E",
+                rt: "\u304D"
+            },
+            {
+                text: "\u3053",
+                rt: ""
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Music),
+        color: "text-purple-400"
+    },
+    {
+        id: 24,
+        level: 2,
+        politeSentence: "\u97F3\u697D\u3092\u805E\u304D\u307E\u3059",
+        politeKana: "\u304A\u3093\u304C\u304F\u3092\u304D\u304D\u307E\u3059",
+        plainSentence: "\u97F3\u697D\u3092\u805E\u304F",
+        plainKana: "\u304A\u3093\u304C\u304F\u3092\u304D\u304F",
+        type: "Transitive",
+        english: "I listen to music",
+        noun: "\u97F3\u697D",
+        nounRuby: [
+            {
+                text: "\u97F3",
+                rt: "\u304A\u3093"
+            },
+            {
+                text: "\u697D",
+                rt: "\u304C\u304F"
+            }
+        ],
+        verbPrompt: "\u805E",
+        verbRuby: [
+            {
+                text: "\u805E",
+                rt: "\u304D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u805E",
+                rt: "\u304D"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Music),
+        color: "text-purple-400"
+    },
+    {
+        id: 25,
+        level: 2,
+        politeSentence: "\u5BCC\u58EB\u5C71\u304C\u898B\u3048\u307E\u3059",
+        politeKana: "\u3075\u3058\u3055\u3093\u304C\u307F\u3048\u307E\u3059",
+        plainSentence: "\u5BCC\u58EB\u5C71\u304C\u898B\u3048\u308B",
+        plainKana: "\u3075\u3058\u3055\u3093\u304C\u307F\u3048\u308B",
+        type: "Intransitive",
+        english: "Mt. Fuji can be seen",
+        noun: "\u5BCC\u58EB\u5C71",
+        nounRuby: [
+            {
+                text: "\u5BCC",
+                rt: "\u3075"
+            },
+            {
+                text: "\u58EB",
+                rt: "\u3058"
+            },
+            {
+                text: "\u5C71",
+                rt: "\u3055\u3093"
+            }
+        ],
+        verbPrompt: "\u898B",
+        verbRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Mountain),
+        color: "text-blue-400"
+    },
+    {
+        id: 26,
+        level: 2,
+        politeSentence: "\u5BCC\u58EB\u5C71\u3092\u898B\u307E\u3059",
+        politeKana: "\u3075\u3058\u3055\u3093\u3092\u307F\u307E\u3059",
+        plainSentence: "\u5BCC\u58EB\u5C71\u3092\u898B\u308B",
+        plainKana: "\u3075\u3058\u3055\u3093\u3092\u307F\u308B",
+        type: "Transitive",
+        english: "I look at Mt. Fuji",
+        noun: "\u5BCC\u58EB\u5C71",
+        nounRuby: [
+            {
+                text: "\u5BCC",
+                rt: "\u3075"
+            },
+            {
+                text: "\u58EB",
+                rt: "\u3058"
+            },
+            {
+                text: "\u5C71",
+                rt: "\u3055\u3093"
+            }
+        ],
+        verbPrompt: "\u898B",
+        verbRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Mountain),
+        color: "text-green-400"
+    },
+    {
+        id: 27,
+        level: 2,
+        politeSentence: "\u8CA1\u5E03\u304C\u306A\u304F\u306A\u308A\u307E\u3059",
+        politeKana: "\u3055\u3044\u3075\u304C\u306A\u304F\u306A\u308A\u307E\u3059",
+        plainSentence: "\u8CA1\u5E03\u304C\u306A\u304F\u306A\u308B",
+        plainKana: "\u3055\u3044\u3075\u304C\u306A\u304F\u306A\u308B",
+        type: "Intransitive",
+        english: "The wallet gets lost",
+        noun: "\u8CA1\u5E03",
+        nounRuby: [
+            {
+                text: "\u8CA1",
+                rt: "\u3055\u3044"
+            },
+            {
+                text: "\u5E03",
+                rt: "\u3075"
+            }
+        ],
+        verbPrompt: "\u306A",
+        verbRuby: [
+            {
+                text: "\u306A",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u306A",
+                rt: ""
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            },
+            {
+                text: "\u306A",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Wallet),
+        color: "text-yellow-600"
+    },
+    {
+        id: 28,
+        level: 2,
+        politeSentence: "\u8CA1\u5E03\u3092\u306A\u304F\u3057\u307E\u3059",
+        politeKana: "\u3055\u3044\u3075\u3092\u306A\u304F\u3057\u307E\u3059",
+        plainSentence: "\u8CA1\u5E03\u3092\u306A\u304F\u3059",
+        plainKana: "\u3055\u3044\u3075\u3092\u306A\u304F\u3059",
+        type: "Transitive",
+        english: "I lose the wallet",
+        noun: "\u8CA1\u5E03",
+        nounRuby: [
+            {
+                text: "\u8CA1",
+                rt: "\u3055\u3044"
+            },
+            {
+                text: "\u5E03",
+                rt: "\u3075"
+            }
+        ],
+        verbPrompt: "\u306A",
+        verbRuby: [
+            {
+                text: "\u306A",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u306A",
+                rt: ""
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Wallet),
+        color: "text-yellow-600"
+    },
+    {
+        id: 29,
+        level: 2,
+        politeSentence: "\u8CA1\u5E03\u304C\u898B\u3064\u304B\u308A\u307E\u3059",
+        politeKana: "\u3055\u3044\u3075\u304C\u307F\u3064\u304B\u308A\u307E\u3059",
+        plainSentence: "\u8CA1\u5E03\u304C\u898B\u3064\u304B\u308B",
+        plainKana: "\u3055\u3044\u3075\u304C\u307F\u3064\u304B\u308B",
+        type: "Intransitive",
+        english: "The wallet is found",
+        noun: "\u8CA1\u5E03",
+        nounRuby: [
+            {
+                text: "\u8CA1",
+                rt: "\u3055\u3044"
+            },
+            {
+                text: "\u5E03",
+                rt: "\u3075"
+            }
+        ],
+        verbPrompt: "\u898B",
+        verbRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            },
+            {
+                text: "\u3064",
+                rt: ""
+            },
+            {
+                text: "\u304B",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Search),
+        color: "text-blue-400"
+    },
+    {
+        id: 30,
+        level: 2,
+        politeSentence: "\u8CA1\u5E03\u3092\u898B\u3064\u3051\u307E\u3059",
+        politeKana: "\u3055\u3044\u3075\u3092\u307F\u3064\u3051\u307E\u3059",
+        plainSentence: "\u8CA1\u5E03\u3092\u898B\u3064\u3051\u308B",
+        plainKana: "\u3055\u3044\u3075\u3092\u307F\u3064\u3051\u308B",
+        type: "Transitive",
+        english: "I find the wallet",
+        noun: "\u8CA1\u5E03",
+        nounRuby: [
+            {
+                text: "\u8CA1",
+                rt: "\u3055\u3044"
+            },
+            {
+                text: "\u5E03",
+                rt: "\u3075"
+            }
+        ],
+        verbPrompt: "\u898B",
+        verbRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u898B",
+                rt: "\u307F"
+            },
+            {
+                text: "\u3064",
+                rt: ""
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Search),
+        color: "text-green-400"
+    },
+    {
+        id: 31,
+        level: 2,
+        politeSentence: "\u4E88\u5B9A\u304C\u6C7A\u307E\u308A\u307E\u3059",
+        politeKana: "\u3088\u3066\u3044\u304C\u304D\u307E\u308A\u307E\u3059",
+        plainSentence: "\u4E88\u5B9A\u304C\u6C7A\u307E\u308B",
+        plainKana: "\u3088\u3066\u3044\u304C\u304D\u307E\u308B",
+        type: "Intransitive",
+        english: "The plan is decided",
+        noun: "\u4E88\u5B9A",
+        nounRuby: [
+            {
+                text: "\u4E88",
+                rt: "\u3088"
+            },
+            {
+                text: "\u5B9A",
+                rt: "\u3066\u3044"
+            }
+        ],
+        verbPrompt: "\u6C7A",
+        verbRuby: [
+            {
+                text: "\u6C7A",
+                rt: "\u304D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6C7A",
+                rt: "\u304D"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CheckSquare),
+        color: "text-blue-400"
+    },
+    {
+        id: 32,
+        level: 2,
+        politeSentence: "\u4E88\u5B9A\u3092\u6C7A\u3081\u307E\u3059",
+        politeKana: "\u3088\u3066\u3044\u3092\u304D\u3081\u307E\u3059",
+        plainSentence: "\u4E88\u5B9A\u3092\u6C7A\u3081\u308B",
+        plainKana: "\u3088\u3066\u3044\u3092\u304D\u3081\u308B",
+        type: "Transitive",
+        english: "I decide the plan",
+        noun: "\u4E88\u5B9A",
+        nounRuby: [
+            {
+                text: "\u4E88",
+                rt: "\u3088"
+            },
+            {
+                text: "\u5B9A",
+                rt: "\u3066\u3044"
+            }
+        ],
+        verbPrompt: "\u6C7A",
+        verbRuby: [
+            {
+                text: "\u6C7A",
+                rt: "\u304D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6C7A",
+                rt: "\u304D"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CheckSquare),
+        color: "text-green-400"
+    },
+    {
+        id: 33,
+        level: 2,
+        politeSentence: "\u98A8\u304C\u5165\u308A\u307E\u3059",
+        politeKana: "\u304B\u305C\u304C\u306F\u3044\u308A\u307E\u3059",
+        plainSentence: "\u98A8\u304C\u5165\u308B",
+        plainKana: "\u304B\u305C\u304C\u306F\u3044\u308B",
+        type: "Intransitive",
+        english: "The wind comes in",
+        noun: "\u98A8",
+        nounRuby: [
+            {
+                text: "\u98A8",
+                rt: "\u304B\u305C"
+            }
+        ],
+        verbPrompt: "\u5165",
+        verbRuby: [
+            {
+                text: "\u5165",
+                rt: "\u306F\u3044"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5165",
+                rt: "\u306F\u3044"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Wind),
+        color: "text-cyan-400"
+    },
+    {
+        id: 34,
+        level: 2,
+        politeSentence: "\u98A8\u3092\u5165\u308C\u307E\u3059",
+        politeKana: "\u304B\u305C\u3092\u3044\u308C\u307E\u3059",
+        plainSentence: "\u98A8\u3092\u5165\u308C\u308B",
+        plainKana: "\u304B\u305C\u3092\u3044\u308C\u308B",
+        type: "Transitive",
+        english: "I let the wind in",
+        noun: "\u98A8",
+        nounRuby: [
+            {
+                text: "\u98A8",
+                rt: "\u304B\u305C"
+            }
+        ],
+        verbPrompt: "\u5165",
+        verbRuby: [
+            {
+                text: "\u5165",
+                rt: "\u3044"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5165",
+                rt: "\u3044"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Wind),
+        color: "text-cyan-400"
+    },
+    {
+        id: 35,
+        level: 2,
+        politeSentence: "\u304A\u6E6F\u304C\u6CB8\u304D\u307E\u3059",
+        politeKana: "\u304A\u3086\u304C\u308F\u304D\u307E\u3059",
+        plainSentence: "\u304A\u6E6F\u304C\u6CB8\u304F",
+        plainKana: "\u304A\u3086\u304C\u308F\u304F",
+        type: "Intransitive",
+        english: "The water boils",
+        noun: "\u304A\u6E6F",
+        nounRuby: [
+            {
+                text: "\u304A",
+                rt: ""
+            },
+            {
+                text: "\u6E6F",
+                rt: "\u3086"
+            }
+        ],
+        verbPrompt: "\u6CB8",
+        verbRuby: [
+            {
+                text: "\u6CB8",
+                rt: "\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6CB8",
+                rt: "\u308F"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Flame),
+        color: "text-orange-400"
+    },
+    {
+        id: 36,
+        level: 2,
+        politeSentence: "\u304A\u6E6F\u3092\u6CB8\u304B\u3057\u307E\u3059",
+        politeKana: "\u304A\u3086\u3092\u308F\u304B\u3057\u307E\u3059",
+        plainSentence: "\u304A\u6E6F\u3092\u6CB8\u304B\u3059",
+        plainKana: "\u304A\u3086\u3092\u308F\u304B\u3059",
+        type: "Transitive",
+        english: "I boil the water",
+        noun: "\u304A\u6E6F",
+        nounRuby: [
+            {
+                text: "\u304A",
+                rt: ""
+            },
+            {
+                text: "\u6E6F",
+                rt: "\u3086"
+            }
+        ],
+        verbPrompt: "\u6CB8",
+        verbRuby: [
+            {
+                text: "\u6CB8",
+                rt: "\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6CB8",
+                rt: "\u308F"
+            },
+            {
+                text: "\u304B",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Flame),
+        color: "text-orange-400"
+    },
+    {
+        id: 37,
+        level: 2,
+        politeSentence: "\u30D1\u30F3\u304C\u713C\u3051\u307E\u3059",
+        politeKana: "\u30D1\u30F3\u304C\u3084\u3051\u307E\u3059",
+        plainSentence: "\u30D1\u30F3\u304C\u713C\u3051\u308B",
+        plainKana: "\u30D1\u30F3\u304C\u3084\u3051\u308B",
+        type: "Intransitive",
+        english: "The bread bakes",
+        noun: "\u30D1\u30F3",
+        nounRuby: [
+            {
+                text: "\u30D1\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u713C",
+        verbRuby: [
+            {
+                text: "\u713C",
+                rt: "\u3084"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u713C",
+                rt: "\u3084"
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Croissant),
+        color: "text-yellow-700"
+    },
+    {
+        id: 38,
+        level: 2,
+        politeSentence: "\u30D1\u30F3\u3092\u713C\u304D\u307E\u3059",
+        politeKana: "\u30D1\u30F3\u3092\u3084\u304D\u307E\u3059",
+        plainSentence: "\u30D1\u30F3\u3092\u713C\u304F",
+        plainKana: "\u30D1\u30F3\u3092\u3084\u304F",
+        type: "Transitive",
+        english: "I bake bread",
+        noun: "\u30D1\u30F3",
+        nounRuby: [
+            {
+                text: "\u30D1\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u713C",
+        verbRuby: [
+            {
+                text: "\u713C",
+                rt: "\u3084"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u713C",
+                rt: "\u3084"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Croissant),
+        color: "text-yellow-700"
+    },
+    {
+        id: 39,
+        level: 2,
+        politeSentence: "\u8089\u304C\u716E\u3048\u307E\u3059",
+        politeKana: "\u306B\u304F\u304C\u306B\u3048\u307E\u3059",
+        plainSentence: "\u8089\u304C\u716E\u3048\u308B",
+        plainKana: "\u306B\u304F\u304C\u306B\u3048\u308B",
+        type: "Intransitive",
+        english: "The meat cooks / boils",
+        noun: "\u8089",
+        nounRuby: [
+            {
+                text: "\u8089",
+                rt: "\u306B\u304F"
+            }
+        ],
+        verbPrompt: "\u716E",
+        verbRuby: [
+            {
+                text: "\u716E",
+                rt: "\u306B"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u716E",
+                rt: "\u306B"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Soup),
+        color: "text-red-700"
+    },
+    {
+        id: 40,
+        level: 2,
+        politeSentence: "\u8089\u3092\u716E\u307E\u3059",
+        politeKana: "\u306B\u304F\u3092\u306B\u307E\u3059",
+        plainSentence: "\u8089\u3092\u716E\u308B",
+        plainKana: "\u306B\u304F\u3092\u306B\u308B",
+        type: "Transitive",
+        english: "I cook / boil the meat",
+        noun: "\u8089",
+        nounRuby: [
+            {
+                text: "\u8089",
+                rt: "\u306B\u304F"
+            }
+        ],
+        verbPrompt: "\u716E",
+        verbRuby: [
+            {
+                text: "\u716E",
+                rt: "\u306B"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u716E",
+                rt: "\u306B"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Soup),
+        color: "text-red-700"
+    },
+    // --- LEVEL 3 (IDs 41-60) ---
+    {
+        id: 41,
+        level: 3,
+        politeSentence: "\u30AB\u30E1\u30E9\u304C\u58CA\u308C\u307E\u3059",
+        politeKana: "\u30AB\u30E1\u30E9\u304C\u3053\u308F\u308C\u307E\u3059",
+        plainSentence: "\u30AB\u30E1\u30E9\u304C\u58CA\u308C\u308B",
+        plainKana: "\u30AB\u30E1\u30E9\u304C\u3053\u308F\u308C\u308B",
+        type: "Intransitive",
+        english: "The camera breaks",
+        noun: "\u30AB\u30E1\u30E9",
+        nounRuby: [
+            {
+                text: "\u30AB\u30E1\u30E9",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u58CA",
+        verbRuby: [
+            {
+                text: "\u58CA",
+                rt: "\u3053\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u58CA",
+                rt: "\u3053\u308F"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Camera),
+        color: "text-red-500"
+    },
+    {
+        id: 42,
+        level: 3,
+        politeSentence: "\u30AB\u30E1\u30E9\u3092\u58CA\u3057\u307E\u3059",
+        politeKana: "\u30AB\u30E1\u30E9\u3092\u3053\u308F\u3057\u307E\u3059",
+        plainSentence: "\u30AB\u30E1\u30E9\u3092\u58CA\u3059",
+        plainKana: "\u30AB\u30E1\u30E9\u3092\u3053\u308F\u3059",
+        type: "Transitive",
+        english: "I break the camera",
+        noun: "\u30AB\u30E1\u30E9",
+        nounRuby: [
+            {
+                text: "\u30AB\u30E1\u30E9",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u58CA",
+        verbRuby: [
+            {
+                text: "\u58CA",
+                rt: "\u3053\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u58CA",
+                rt: "\u3053\u308F"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Camera),
+        color: "text-orange-500"
+    },
+    {
+        id: 43,
+        level: 3,
+        politeSentence: "\u30D1\u30BD\u30B3\u30F3\u304C\u76F4\u308A\u307E\u3059",
+        politeKana: "\u30D1\u30BD\u30B3\u30F3\u304C\u306A\u304A\u308A\u307E\u3059",
+        plainSentence: "\u30D1\u30BD\u30B3\u30F3\u304C\u76F4\u308B",
+        plainKana: "\u30D1\u30BD\u30B3\u30F3\u304C\u306A\u304A\u308B",
+        type: "Intransitive",
+        english: "The PC gets fixed",
+        noun: "\u30D1\u30BD\u30B3\u30F3",
+        nounRuby: [
+            {
+                text: "\u30D1\u30BD\u30B3\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u76F4",
+        verbRuby: [
+            {
+                text: "\u76F4",
+                rt: "\u306A\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u76F4",
+                rt: "\u306A\u304A"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Monitor),
+        color: "text-blue-500"
+    },
+    {
+        id: 44,
+        level: 3,
+        politeSentence: "\u30D1\u30BD\u30B3\u30F3\u3092\u76F4\u3057\u307E\u3059",
+        politeKana: "\u30D1\u30BD\u30B3\u30F3\u3092\u306A\u304A\u3057\u307E\u3059",
+        plainSentence: "\u30D1\u30BD\u30B3\u30F3\u3092\u76F4\u3059",
+        plainKana: "\u30D1\u30BD\u30B3\u30F3\u3092\u306A\u304A\u3059",
+        type: "Transitive",
+        english: "I fix the PC",
+        noun: "\u30D1\u30BD\u30B3\u30F3",
+        nounRuby: [
+            {
+                text: "\u30D1\u30BD\u30B3\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u76F4",
+        verbRuby: [
+            {
+                text: "\u76F4",
+                rt: "\u306A\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u76F4",
+                rt: "\u306A\u304A"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Monitor),
+        color: "text-green-500"
+    },
+    {
+        id: 45,
+        level: 3,
+        politeSentence: "\u8377\u7269\u304C\u5C4A\u304D\u307E\u3059",
+        politeKana: "\u306B\u3082\u3064\u304C\u3068\u3069\u304D\u307E\u3059",
+        plainSentence: "\u8377\u7269\u304C\u5C4A\u304F",
+        plainKana: "\u306B\u3082\u3064\u304C\u3068\u3069\u304F",
+        type: "Intransitive",
+        english: "The package arrives",
+        noun: "\u8377\u7269",
+        nounRuby: [
+            {
+                text: "\u8377",
+                rt: "\u306B"
+            },
+            {
+                text: "\u7269",
+                rt: "\u3082\u3064"
+            }
+        ],
+        verbPrompt: "\u5C4A",
+        verbRuby: [
+            {
+                text: "\u5C4A",
+                rt: "\u3068\u3069"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5C4A",
+                rt: "\u3068\u3069"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Package),
+        color: "text-yellow-600"
+    },
+    {
+        id: 46,
+        level: 3,
+        politeSentence: "\u8377\u7269\u3092\u5C4A\u3051\u307E\u3059",
+        politeKana: "\u306B\u3082\u3064\u3092\u3068\u3069\u3051\u307E\u3059",
+        plainSentence: "\u8377\u7269\u3092\u5C4A\u3051\u308B",
+        plainKana: "\u306B\u3082\u3064\u3092\u3068\u3069\u3051\u308B",
+        type: "Transitive",
+        english: "I deliver the package",
+        noun: "\u8377\u7269",
+        nounRuby: [
+            {
+                text: "\u8377",
+                rt: "\u306B"
+            },
+            {
+                text: "\u7269",
+                rt: "\u3082\u3064"
+            }
+        ],
+        verbPrompt: "\u5C4A",
+        verbRuby: [
+            {
+                text: "\u5C4A",
+                rt: "\u3068\u3069"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5C4A",
+                rt: "\u3068\u3069"
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Package),
+        color: "text-green-600"
+    },
+    {
+        id: 47,
+        level: 3,
+        politeSentence: "\u5024\u6BB5\u304C\u4E0A\u304C\u308A\u307E\u3059",
+        politeKana: "\u306D\u3060\u3093\u304C\u3042\u304C\u308A\u307E\u3059",
+        plainSentence: "\u5024\u6BB5\u304C\u4E0A\u304C\u308B",
+        plainKana: "\u306D\u3060\u3093\u304C\u3042\u304C\u308B",
+        type: "Intransitive",
+        english: "The price goes up",
+        noun: "\u5024\u6BB5",
+        nounRuby: [
+            {
+                text: "\u5024",
+                rt: "\u306D"
+            },
+            {
+                text: "\u6BB5",
+                rt: "\u3060\u3093"
+            }
+        ],
+        verbPrompt: "\u4E0A",
+        verbRuby: [
+            {
+                text: "\u4E0A",
+                rt: "\u3042"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E0A",
+                rt: "\u3042"
+            },
+            {
+                text: "\u304C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Tag),
+        color: "text-red-600"
+    },
+    {
+        id: 48,
+        level: 3,
+        politeSentence: "\u5024\u6BB5\u3092\u4E0A\u3052\u307E\u3059",
+        politeKana: "\u306D\u3060\u3093\u3092\u3042\u3052\u307E\u3059",
+        plainSentence: "\u5024\u6BB5\u3092\u4E0A\u3052\u308B",
+        plainKana: "\u306D\u3060\u3093\u3092\u3042\u3052\u308B",
+        type: "Transitive",
+        english: "I raise the price",
+        noun: "\u5024\u6BB5",
+        nounRuby: [
+            {
+                text: "\u5024",
+                rt: "\u306D"
+            },
+            {
+                text: "\u6BB5",
+                rt: "\u3060\u3093"
+            }
+        ],
+        verbPrompt: "\u4E0A",
+        verbRuby: [
+            {
+                text: "\u4E0A",
+                rt: "\u3042"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E0A",
+                rt: "\u3042"
+            },
+            {
+                text: "\u3052",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Tag),
+        color: "text-green-600"
+    },
+    {
+        id: 49,
+        level: 3,
+        politeSentence: "\u5024\u6BB5\u304C\u4E0B\u304C\u308A\u307E\u3059",
+        politeKana: "\u306D\u3060\u3093\u304C\u3055\u304C\u308A\u307E\u3059",
+        plainSentence: "\u5024\u6BB5\u304C\u4E0B\u304C\u308B",
+        plainKana: "\u306D\u3060\u3093\u304C\u3055\u304C\u308B",
+        type: "Intransitive",
+        english: "The price goes down",
+        noun: "\u5024\u6BB5",
+        nounRuby: [
+            {
+                text: "\u5024",
+                rt: "\u306D"
+            },
+            {
+                text: "\u6BB5",
+                rt: "\u3060\u3093"
+            }
+        ],
+        verbPrompt: "\u4E0B",
+        verbRuby: [
+            {
+                text: "\u4E0B",
+                rt: "\u3055"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E0B",
+                rt: "\u3055"
+            },
+            {
+                text: "\u304C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Tag),
+        color: "text-blue-600"
+    },
+    {
+        id: 50,
+        level: 3,
+        politeSentence: "\u5024\u6BB5\u3092\u4E0B\u3052\u307E\u3059",
+        politeKana: "\u306D\u3060\u3093\u3092\u3055\u3052\u307E\u3059",
+        plainSentence: "\u5024\u6BB5\u3092\u4E0B\u3052\u308B",
+        plainKana: "\u306D\u3060\u3093\u3092\u3055\u3052\u308B",
+        type: "Transitive",
+        english: "I lower the price",
+        noun: "\u5024\u6BB5",
+        nounRuby: [
+            {
+                text: "\u5024",
+                rt: "\u306D"
+            },
+            {
+                text: "\u6BB5",
+                rt: "\u3060\u3093"
+            }
+        ],
+        verbPrompt: "\u4E0B",
+        verbRuby: [
+            {
+                text: "\u4E0B",
+                rt: "\u3055"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E0B",
+                rt: "\u3055"
+            },
+            {
+                text: "\u3052",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Tag),
+        color: "text-green-800"
+    },
+    {
+        id: 51,
+        level: 3,
+        politeSentence: "\u4ED5\u4E8B\u304C\u5897\u3048\u307E\u3059",
+        politeKana: "\u3057\u3054\u3068\u304C\u3075\u3048\u307E\u3059",
+        plainSentence: "\u4ED5\u4E8B\u304C\u5897\u3048\u308B",
+        plainKana: "\u3057\u3054\u3068\u304C\u3075\u3048\u308B",
+        type: "Intransitive",
+        english: "Work increases",
+        noun: "\u4ED5\u4E8B",
+        nounRuby: [
+            {
+                text: "\u4ED5",
+                rt: "\u3057"
+            },
+            {
+                text: "\u4E8B",
+                rt: "\u3054\u3068"
+            }
+        ],
+        verbPrompt: "\u5897",
+        verbRuby: [
+            {
+                text: "\u5897",
+                rt: "\u3075"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5897",
+                rt: "\u3075"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Briefcase),
+        color: "text-purple-500"
+    },
+    {
+        id: 52,
+        level: 3,
+        politeSentence: "\u4ED5\u4E8B\u3092\u5897\u3084\u3057\u307E\u3059",
+        politeKana: "\u3057\u3054\u3068\u3092\u3075\u3084\u3057\u307E\u3059",
+        plainSentence: "\u4ED5\u4E8B\u3092\u5897\u3084\u3059",
+        plainKana: "\u3057\u3054\u3068\u3092\u3075\u3084\u3059",
+        type: "Transitive",
+        english: "I increase the work",
+        noun: "\u4ED5\u4E8B",
+        nounRuby: [
+            {
+                text: "\u4ED5",
+                rt: "\u3057"
+            },
+            {
+                text: "\u4E8B",
+                rt: "\u3054\u3068"
+            }
+        ],
+        verbPrompt: "\u5897",
+        verbRuby: [
+            {
+                text: "\u5897",
+                rt: "\u3075"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5897",
+                rt: "\u3075"
+            },
+            {
+                text: "\u3084",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Briefcase),
+        color: "text-pink-500"
+    },
+    {
+        id: 53,
+        level: 3,
+        politeSentence: "\u4F53\u91CD\u304C\u6E1B\u308A\u307E\u3059",
+        politeKana: "\u305F\u3044\u3058\u3085\u3046\u304C\u3078\u308A\u307E\u3059",
+        plainSentence: "\u4F53\u91CD\u304C\u6E1B\u308B",
+        plainKana: "\u305F\u3044\u3058\u3085\u3046\u304C\u3078\u308B",
+        type: "Intransitive",
+        english: "Weight decreases",
+        noun: "\u4F53\u91CD",
+        nounRuby: [
+            {
+                text: "\u4F53",
+                rt: "\u305F\u3044"
+            },
+            {
+                text: "\u91CD",
+                rt: "\u3058\u3085\u3046"
+            }
+        ],
+        verbPrompt: "\u6E1B",
+        verbRuby: [
+            {
+                text: "\u6E1B",
+                rt: "\u3078"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E1B",
+                rt: "\u3078"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Scale),
+        color: "text-teal-500"
+    },
+    {
+        id: 54,
+        level: 3,
+        politeSentence: "\u4F53\u91CD\u3092\u6E1B\u3089\u3057\u307E\u3059",
+        politeKana: "\u305F\u3044\u3058\u3085\u3046\u3092\u3078\u3089\u3057\u307E\u3059",
+        plainSentence: "\u4F53\u91CD\u3092\u6E1B\u3089\u3059",
+        plainKana: "\u305F\u3044\u3058\u3085\u3046\u3092\u3078\u3089\u3059",
+        type: "Transitive",
+        english: "I reduce the weight",
+        noun: "\u4F53\u91CD",
+        nounRuby: [
+            {
+                text: "\u4F53",
+                rt: "\u305F\u3044"
+            },
+            {
+                text: "\u91CD",
+                rt: "\u3058\u3085\u3046"
+            }
+        ],
+        verbPrompt: "\u6E1B",
+        verbRuby: [
+            {
+                text: "\u6E1B",
+                rt: "\u3078"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E1B",
+                rt: "\u3078"
+            },
+            {
+                text: "\u3089",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Scale),
+        color: "text-teal-700"
+    },
+    {
+        id: 55,
+        level: 3,
+        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u7D9A\u304D\u307E\u3059",
+        politeKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u3064\u3065\u304D\u307E\u3059",
+        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u7D9A\u304F",
+        plainKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u3064\u3065\u304F",
+        type: "Intransitive",
+        english: "The lesson continues",
+        noun: "\u30EC\u30C3\u30B9\u30F3",
+        nounRuby: [
+            {
+                text: "\u30EC\u30C3\u30B9\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u7D9A",
+        verbRuby: [
+            {
+                text: "\u7D9A",
+                rt: "\u3064\u3065"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u7D9A",
+                rt: "\u3064\u3065"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.GraduationCap),
+        color: "text-indigo-400"
+    },
+    {
+        id: 56,
+        level: 3,
+        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u7D9A\u3051\u307E\u3059",
+        politeKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u3064\u3065\u3051\u307E\u3059",
+        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u7D9A\u3051\u308B",
+        plainKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u3064\u3065\u3051\u308B",
+        type: "Transitive",
+        english: "I continue the lesson",
+        noun: "\u30EC\u30C3\u30B9\u30F3",
+        nounRuby: [
+            {
+                text: "\u30EC\u30C3\u30B9\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u7D9A",
+        verbRuby: [
+            {
+                text: "\u7D9A",
+                rt: "\u3064\u3065"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u7D9A",
+                rt: "\u3064\u3065"
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.GraduationCap),
+        color: "text-indigo-600"
+    },
+    {
+        id: 57,
+        level: 3,
+        politeSentence: "\u5B50\u3069\u3082\u304C\u52A9\u304B\u308A\u307E\u3059",
+        politeKana: "\u3053\u3069\u3082\u304C\u305F\u3059\u304B\u308A\u307E\u3059",
+        plainSentence: "\u5B50\u3069\u3082\u304C\u52A9\u304B\u308B",
+        plainKana: "\u3053\u3069\u3082\u304C\u305F\u3059\u304B\u308B",
+        type: "Intransitive",
+        english: "The child is saved",
+        noun: "\u5B50\u3069\u3082",
+        nounRuby: [
+            {
+                text: "\u5B50",
+                rt: "\u3053"
+            },
+            {
+                text: "\u3069\u3082",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u52A9",
+        verbRuby: [
+            {
+                text: "\u52A9",
+                rt: "\u305F\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u52A9",
+                rt: "\u305F\u3059"
+            },
+            {
+                text: "\u304B",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Baby),
+        color: "text-pink-300"
+    },
+    {
+        id: 58,
+        level: 3,
+        politeSentence: "\u5B50\u3069\u3082\u3092\u52A9\u3051\u307E\u3059",
+        politeKana: "\u3053\u3069\u3082\u3092\u305F\u3059\u3051\u307E\u3059",
+        plainSentence: "\u5B50\u3069\u3082\u3092\u52A9\u3051\u308B",
+        plainKana: "\u3053\u3069\u3082\u3092\u305F\u3059\u3051\u308B",
+        type: "Transitive",
+        english: "I save the child",
+        noun: "\u5B50\u3069\u3082",
+        nounRuby: [
+            {
+                text: "\u5B50",
+                rt: "\u3053"
+            },
+            {
+                text: "\u3069\u3082",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u52A9",
+        verbRuby: [
+            {
+                text: "\u52A9",
+                rt: "\u305F\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u52A9",
+                rt: "\u305F\u3059"
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Baby),
+        color: "text-pink-500"
+    },
+    {
+        id: 59,
+        level: 3,
+        politeSentence: "\u30C6\u30FC\u30D6\u30EB\u304C\u56DE\u308A\u307E\u3059",
+        politeKana: "\u30C6\u30FC\u30D6\u30EB\u304C\u307E\u308F\u308A\u307E\u3059",
+        plainSentence: "\u30C6\u30FC\u30D6\u30EB\u304C\u56DE\u308B",
+        plainKana: "\u30C6\u30FC\u30D6\u30EB\u304C\u307E\u308F\u308B",
+        type: "Intransitive",
+        english: "The table turns",
+        noun: "\u30C6\u30FC\u30D6\u30EB",
+        nounRuby: [
+            {
+                text: "\u30C6\u30FC\u30D6\u30EB",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u56DE",
+        verbRuby: [
+            {
+                text: "\u56DE",
+                rt: "\u307E\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u56DE",
+                rt: "\u307E\u308F"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.RotateCw),
+        color: "text-gray-400"
+    },
+    {
+        id: 60,
+        level: 3,
+        politeSentence: "\u30C6\u30FC\u30D6\u30EB\u3092\u56DE\u3057\u307E\u3059",
+        politeKana: "\u30C6\u30FC\u30D6\u30EB\u3092\u307E\u308F\u3057\u307E\u3059",
+        plainSentence: "\u30C6\u30FC\u30D6\u30EB\u3092\u56DE\u3059",
+        plainKana: "\u30C6\u30FC\u30D6\u30EB\u3092\u307E\u308F\u3059",
+        type: "Transitive",
+        english: "I turn the table",
+        noun: "\u30C6\u30FC\u30D6\u30EB",
+        nounRuby: [
+            {
+                text: "\u30C6\u30FC\u30D6\u30EB",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u56DE",
+        verbRuby: [
+            {
+                text: "\u56DE",
+                rt: "\u307E\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u56DE",
+                rt: "\u307E\u308F"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.RotateCw),
+        color: "text-gray-600"
+    },
+    // --- LEVEL 4 (IDs 61-80) ---
+    {
+        id: 61,
+        level: 4,
+        politeSentence: "\u8155\u304C\u66F2\u304C\u308A\u307E\u3059",
+        politeKana: "\u3046\u3067\u304C\u307E\u304C\u308A\u307E\u3059",
+        plainSentence: "\u8155\u304C\u66F2\u304C\u308B",
+        plainKana: "\u3046\u3067\u304C\u307E\u304C\u308B",
+        type: "Intransitive",
+        english: "The arm bends",
+        noun: "\u8155",
+        nounRuby: [
+            {
+                text: "\u8155",
+                rt: "\u3046\u3067"
+            }
+        ],
+        verbPrompt: "\u66F2",
+        verbRuby: [
+            {
+                text: "\u66F2",
+                rt: "\u307E"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u66F2",
+                rt: "\u307E"
+            },
+            {
+                text: "\u304C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.User),
+        color: "text-orange-300"
+    },
+    {
+        id: 62,
+        level: 4,
+        politeSentence: "\u8155\u3092\u66F2\u3052\u307E\u3059",
+        politeKana: "\u3046\u3067\u3092\u307E\u3052\u307E\u3059",
+        plainSentence: "\u8155\u3092\u66F2\u3052\u308B",
+        plainKana: "\u3046\u3067\u3092\u307E\u3052\u308B",
+        type: "Transitive",
+        english: "I bend my arm",
+        noun: "\u8155",
+        nounRuby: [
+            {
+                text: "\u8155",
+                rt: "\u3046\u3067"
+            }
+        ],
+        verbPrompt: "\u66F2",
+        verbRuby: [
+            {
+                text: "\u66F2",
+                rt: "\u307E"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u66F2",
+                rt: "\u307E"
+            },
+            {
+                text: "\u3052",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.User),
+        color: "text-orange-500"
+    },
+    {
+        id: 63,
+        level: 4,
+        politeSentence: "\u9AA8\u304C\u6298\u308C\u307E\u3059",
+        politeKana: "\u307B\u306D\u304C\u304A\u308C\u307E\u3059",
+        plainSentence: "\u9AA8\u304C\u6298\u308C\u308B",
+        plainKana: "\u307B\u306D\u304C\u304A\u308C\u308B",
+        type: "Intransitive",
+        english: "The bone breaks",
+        noun: "\u9AA8",
+        nounRuby: [
+            {
+                text: "\u9AA8",
+                rt: "\u307B\u306D"
+            }
+        ],
+        verbPrompt: "\u6298",
+        verbRuby: [
+            {
+                text: "\u6298",
+                rt: "\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6298",
+                rt: "\u304A"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Bone),
+        color: "text-gray-300"
+    },
+    {
+        id: 64,
+        level: 4,
+        politeSentence: "\u9AA8\u3092\u6298\u308A\u307E\u3059",
+        politeKana: "\u307B\u306D\u3092\u304A\u308A\u307E\u3059",
+        plainSentence: "\u9AA8\u3092\u6298\u308B",
+        plainKana: "\u307B\u306D\u3092\u304A\u308B",
+        type: "Transitive",
+        english: "I break a bone",
+        noun: "\u9AA8",
+        nounRuby: [
+            {
+                text: "\u9AA8",
+                rt: "\u307B\u306D"
+            }
+        ],
+        verbPrompt: "\u6298",
+        verbRuby: [
+            {
+                text: "\u6298",
+                rt: "\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6298",
+                rt: "\u304A"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Bone),
+        color: "text-gray-500"
+    },
+    {
+        id: 65,
+        level: 4,
+        politeSentence: "\u4EBA\u304C\u96C6\u307E\u308A\u307E\u3059",
+        politeKana: "\u3072\u3068\u304C\u3042\u3064\u307E\u308A\u307E\u3059",
+        plainSentence: "\u4EBA\u304C\u96C6\u307E\u308B",
+        plainKana: "\u3072\u3068\u304C\u3042\u3064\u307E\u308B",
+        type: "Intransitive",
+        english: "People gather",
+        noun: "\u4EBA",
+        nounRuby: [
+            {
+                text: "\u4EBA",
+                rt: "\u3072\u3068"
+            }
+        ],
+        verbPrompt: "\u96C6",
+        verbRuby: [
+            {
+                text: "\u96C6",
+                rt: "\u3042\u3064"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u96C6",
+                rt: "\u3042\u3064"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Users),
+        color: "text-blue-400"
+    },
+    {
+        id: 66,
+        level: 4,
+        politeSentence: "\u4EBA\u3092\u96C6\u3081\u307E\u3059",
+        politeKana: "\u3072\u3068\u3092\u3042\u3064\u3081\u307E\u3059",
+        plainSentence: "\u4EBA\u3092\u96C6\u3081\u308B",
+        plainKana: "\u3072\u3068\u3092\u3042\u3064\u3081\u308B",
+        type: "Transitive",
+        english: "I gather people",
+        noun: "\u4EBA",
+        nounRuby: [
+            {
+                text: "\u4EBA",
+                rt: "\u3072\u3068"
+            }
+        ],
+        verbPrompt: "\u96C6",
+        verbRuby: [
+            {
+                text: "\u96C6",
+                rt: "\u3042\u3064"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u96C6",
+                rt: "\u3042\u3064"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Users),
+        color: "text-green-400"
+    },
+    {
+        id: 67,
+        level: 4,
+        politeSentence: "\u4EBA\u304C\u4E26\u3073\u307E\u3059",
+        politeKana: "\u3072\u3068\u304C\u306A\u3089\u3073\u307E\u3059",
+        plainSentence: "\u4EBA\u304C\u4E26\u3076",
+        plainKana: "\u3072\u3068\u304C\u306A\u3089\u3076",
+        type: "Intransitive",
+        english: "People line up",
+        noun: "\u4EBA",
+        nounRuby: [
+            {
+                text: "\u4EBA",
+                rt: "\u3072\u3068"
+            }
+        ],
+        verbPrompt: "\u4E26",
+        verbRuby: [
+            {
+                text: "\u4E26",
+                rt: "\u306A\u3089"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E26",
+                rt: "\u306A\u3089"
+            },
+            {
+                text: "\u3076",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Users),
+        color: "text-indigo-400"
+    },
+    {
+        id: 68,
+        level: 4,
+        politeSentence: "\u4EBA\u3092\u4E26\u3079\u307E\u3059",
+        politeKana: "\u3072\u3068\u3092\u306A\u3089\u3079\u307E\u3059",
+        plainSentence: "\u4EBA\u3092\u4E26\u3079\u308B",
+        plainKana: "\u3072\u3068\u3092\u306A\u3089\u3079\u308B",
+        type: "Transitive",
+        english: "I line people up",
+        noun: "\u4EBA",
+        nounRuby: [
+            {
+                text: "\u4EBA",
+                rt: "\u3072\u3068"
+            }
+        ],
+        verbPrompt: "\u4E26",
+        verbRuby: [
+            {
+                text: "\u4E26",
+                rt: "\u306A\u3089"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E26",
+                rt: "\u306A\u3089"
+            },
+            {
+                text: "\u3079",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Users),
+        color: "text-indigo-600"
+    },
+    {
+        id: 69,
+        level: 4,
+        politeSentence: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u307E\u3059",
+        politeKana: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u307E\u3059",
+        plainSentence: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u308B",
+        plainKana: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u308B",
+        type: "Intransitive",
+        english: "The coffee spills",
+        noun: "\u30B3\u30FC\u30D2\u30FC",
+        nounRuby: [
+            {
+                text: "\u30B3\u30FC\u30D2\u30FC",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u3053\u307C",
+        verbRuby: [
+            {
+                text: "\u3053\u307C",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u3053\u307C",
+                rt: ""
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Coffee),
+        color: "text-amber-700"
+    },
+    {
+        id: 70,
+        level: 4,
+        politeSentence: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3057\u307E\u3059",
+        politeKana: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3057\u307E\u3059",
+        plainSentence: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3059",
+        plainKana: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3059",
+        type: "Transitive",
+        english: "I spill the coffee",
+        noun: "\u30B3\u30FC\u30D2\u30FC",
+        nounRuby: [
+            {
+                text: "\u30B3\u30FC\u30D2\u30FC",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u3053\u307C",
+        verbRuby: [
+            {
+                text: "\u3053\u307C",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u3053\u307C",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Coffee),
+        color: "text-amber-900"
+    },
+    {
+        id: 71,
+        level: 4,
+        politeSentence: "\u5375\u304C\u5272\u308C\u307E\u3059",
+        politeKana: "\u305F\u307E\u3054\u304C\u308F\u308C\u307E\u3059",
+        plainSentence: "\u5375\u304C\u5272\u308C\u308B",
+        plainKana: "\u305F\u307E\u3054\u304C\u308F\u308C\u308B",
+        type: "Intransitive",
+        english: "The egg breaks",
+        noun: "\u5375",
+        nounRuby: [
+            {
+                text: "\u5375",
+                rt: "\u305F\u307E\u3054"
+            }
+        ],
+        verbPrompt: "\u5272",
+        verbRuby: [
+            {
+                text: "\u5272",
+                rt: "\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5272",
+                rt: "\u308F"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Egg),
+        color: "text-yellow-200"
+    },
+    {
+        id: 72,
+        level: 4,
+        politeSentence: "\u5375\u3092\u5272\u308A\u307E\u3059",
+        politeKana: "\u305F\u307E\u3054\u3092\u308F\u308A\u307E\u3059",
+        plainSentence: "\u5375\u3092\u5272\u308B",
+        plainKana: "\u305F\u307E\u3054\u3092\u308F\u308B",
+        type: "Transitive",
+        english: "I break the egg",
+        noun: "\u5375",
+        nounRuby: [
+            {
+                text: "\u5375",
+                rt: "\u305F\u307E\u3054"
+            }
+        ],
+        verbPrompt: "\u5272",
+        verbRuby: [
+            {
+                text: "\u5272",
+                rt: "\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5272",
+                rt: "\u308F"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Egg),
+        color: "text-yellow-400"
+    },
+    {
+        id: 73,
+        level: 4,
+        politeSentence: "\u30ED\u30FC\u30D7\u304C\u5207\u308C\u307E\u3059",
+        politeKana: "\u30ED\u30FC\u30D7\u304C\u304D\u308C\u307E\u3059",
+        plainSentence: "\u30ED\u30FC\u30D7\u304C\u5207\u308C\u308B",
+        plainKana: "\u30ED\u30FC\u30D7\u304C\u304D\u308C\u308B",
+        type: "Intransitive",
+        english: "The rope snaps",
+        noun: "\u30ED\u30FC\u30D7",
+        nounRuby: [
+            {
+                text: "\u30ED\u30FC\u30D7",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u5207",
+        verbRuby: [
+            {
+                text: "\u5207",
+                rt: "\u304D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5207",
+                rt: "\u304D"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Scissors),
+        color: "text-red-400"
+    },
+    {
+        id: 74,
+        level: 4,
+        politeSentence: "\u30ED\u30FC\u30D7\u3092\u5207\u308A\u307E\u3059",
+        politeKana: "\u30ED\u30FC\u30D7\u3092\u304D\u308A\u307E\u3059",
+        plainSentence: "\u30ED\u30FC\u30D7\u3092\u5207\u308B",
+        plainKana: "\u30ED\u30FC\u30D7\u3092\u304D\u308B",
+        type: "Transitive",
+        english: "I cut the rope",
+        noun: "\u30ED\u30FC\u30D7",
+        nounRuby: [
+            {
+                text: "\u30ED\u30FC\u30D7",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u5207",
+        verbRuby: [
+            {
+                text: "\u5207",
+                rt: "\u304D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5207",
+                rt: "\u304D"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Scissors),
+        color: "text-red-600"
+    },
+    {
+        id: 75,
+        level: 4,
+        politeSentence: "\u3054\u307F\u304C\u71C3\u3048\u307E\u3059",
+        politeKana: "\u3054\u307F\u304C\u3082\u3048\u307E\u3059",
+        plainSentence: "\u3054\u307F\u304C\u71C3\u3048\u308B",
+        plainKana: "\u3054\u307F\u304C\u3082\u3048\u308B",
+        type: "Intransitive",
+        english: "The trash burns",
+        noun: "\u3054\u307F",
+        nounRuby: [
+            {
+                text: "\u3054\u307F",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u71C3",
+        verbRuby: [
+            {
+                text: "\u71C3",
+                rt: "\u3082"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u71C3",
+                rt: "\u3082"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Trash2),
+        color: "text-orange-500"
+    },
+    {
+        id: 76,
+        level: 4,
+        politeSentence: "\u3054\u307F\u3092\u71C3\u3084\u3057\u307E\u3059",
+        politeKana: "\u3054\u307F\u3092\u3082\u3084\u3057\u307E\u3059",
+        plainSentence: "\u3054\u307F\u3092\u71C3\u3084\u3059",
+        plainKana: "\u3054\u307F\u3092\u3082\u3084\u3059",
+        type: "Transitive",
+        english: "I burn the trash",
+        noun: "\u3054\u307F",
+        nounRuby: [
+            {
+                text: "\u3054\u307F",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u71C3",
+        verbRuby: [
+            {
+                text: "\u71C3",
+                rt: "\u3082"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u71C3",
+                rt: "\u3082"
+            },
+            {
+                text: "\u3084",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Trash2),
+        color: "text-orange-700"
+    },
+    {
+        id: 77,
+        level: 4,
+        politeSentence: "\u30DC\u30BF\u30F3\u304C\u53D6\u308C\u307E\u3059",
+        politeKana: "\u30DC\u30BF\u30F3\u304C\u3068\u308C\u307E\u3059",
+        plainSentence: "\u30DC\u30BF\u30F3\u304C\u53D6\u308C\u308B",
+        plainKana: "\u30DC\u30BF\u30F3\u304C\u3068\u308C\u308B",
+        type: "Intransitive",
+        english: "The button comes off",
+        noun: "\u30DC\u30BF\u30F3",
+        nounRuby: [
+            {
+                text: "\u30DC\u30BF\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u53D6",
+        verbRuby: [
+            {
+                text: "\u53D6",
+                rt: "\u3068"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u53D6",
+                rt: "\u3068"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CircleDot),
+        color: "text-purple-400"
+    },
+    {
+        id: 78,
+        level: 4,
+        politeSentence: "\u30DC\u30BF\u30F3\u3092\u53D6\u308A\u307E\u3059",
+        politeKana: "\u30DC\u30BF\u30F3\u3092\u3068\u308A\u307E\u3059",
+        plainSentence: "\u30DC\u30BF\u30F3\u3092\u53D6\u308B",
+        plainKana: "\u30DC\u30BF\u30F3\u3092\u3068\u308B",
+        type: "Transitive",
+        english: "I take the button",
+        noun: "\u30DC\u30BF\u30F3",
+        nounRuby: [
+            {
+                text: "\u30DC\u30BF\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u53D6",
+        verbRuby: [
+            {
+                text: "\u53D6",
+                rt: "\u3068"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u53D6",
+                rt: "\u3068"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CircleDot),
+        color: "text-purple-600"
+    },
+    {
+        id: 79,
+        level: 4,
+        politeSentence: "\u30DC\u30BF\u30F3\u304C\u5916\u308C\u307E\u3059",
+        politeKana: "\u30DC\u30BF\u30F3\u304C\u306F\u305A\u308C\u307E\u3059",
+        plainSentence: "\u30DC\u30BF\u30F3\u304C\u5916\u308C\u308B",
+        plainKana: "\u30DC\u30BF\u30F3\u304C\u306F\u305A\u308C\u308B",
+        type: "Intransitive",
+        english: "The button gets undone",
+        noun: "\u30DC\u30BF\u30F3",
+        nounRuby: [
+            {
+                text: "\u30DC\u30BF\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u5916",
+        verbRuby: [
+            {
+                text: "\u5916",
+                rt: "\u306F\u305A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5916",
+                rt: "\u306F\u305A"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CircleDot),
+        color: "text-blue-400"
+    },
+    {
+        id: 80,
+        level: 4,
+        politeSentence: "\u30DC\u30BF\u30F3\u3092\u5916\u3057\u307E\u3059",
+        politeKana: "\u30DC\u30BF\u30F3\u3092\u306F\u305A\u3057\u307E\u3059",
+        plainSentence: "\u30DC\u30BF\u30F3\u3092\u5916\u3059",
+        plainKana: "\u30DC\u30BF\u30F3\u3092\u306F\u305A\u3059",
+        type: "Transitive",
+        english: "I undo the button",
+        noun: "\u30DC\u30BF\u30F3",
+        nounRuby: [
+            {
+                text: "\u30DC\u30BF\u30F3",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u5916",
+        verbRuby: [
+            {
+                text: "\u5916",
+                rt: "\u306F\u305A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5916",
+                rt: "\u306F\u305A"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CircleDot),
+        color: "text-blue-600"
+    },
+    // --- LEVEL 5 (IDs 81-100) ---
+    {
+        id: 81,
+        level: 5,
+        politeSentence: "\u30D3\u30FC\u30EB\u304C\u58F2\u308C\u307E\u3059",
+        politeKana: "\u30D3\u30FC\u30EB\u304C\u3046\u308C\u307E\u3059",
+        plainSentence: "\u30D3\u30FC\u30EB\u304C\u58F2\u308C\u308B",
+        plainKana: "\u30D3\u30FC\u30EB\u304C\u3046\u308C\u308B",
+        type: "Intransitive",
+        english: "The beer sells (well)",
+        noun: "\u30D3\u30FC\u30EB",
+        nounRuby: [
+            {
+                text: "\u30D3\u30FC\u30EB",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u58F2",
+        verbRuby: [
+            {
+                text: "\u58F2",
+                rt: "\u3046"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u58F2",
+                rt: "\u3046"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Beer),
+        color: "text-yellow-500"
+    },
+    {
+        id: 82,
+        level: 5,
+        politeSentence: "\u30D3\u30FC\u30EB\u3092\u58F2\u308A\u307E\u3059",
+        politeKana: "\u30D3\u30FC\u30EB\u3092\u3046\u308A\u307E\u3059",
+        plainSentence: "\u30D3\u30FC\u30EB\u3092\u58F2\u308B",
+        plainKana: "\u30D3\u30FC\u30EB\u3092\u3046\u308B",
+        type: "Transitive",
+        english: "I sell beer",
+        noun: "\u30D3\u30FC\u30EB",
+        nounRuby: [
+            {
+                text: "\u30D3\u30FC\u30EB",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u58F2",
+        verbRuby: [
+            {
+                text: "\u58F2",
+                rt: "\u3046"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u58F2",
+                rt: "\u3046"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Beer),
+        color: "text-yellow-700"
+    },
+    {
+        id: 83,
+        level: 5,
+        politeSentence: "\u66F8\u985E\u304C\u63C3\u3044\u307E\u3059",
+        politeKana: "\u3057\u3087\u308B\u3044\u304C\u305D\u308D\u3044\u307E\u3059",
+        plainSentence: "\u66F8\u985E\u304C\u63C3\u3046",
+        plainKana: "\u3057\u3087\u308B\u3044\u304C\u305D\u308D\u3046",
+        type: "Intransitive",
+        english: "The documents are gathered",
+        noun: "\u66F8\u985E",
+        nounRuby: [
+            {
+                text: "\u66F8",
+                rt: "\u3057\u3087"
+            },
+            {
+                text: "\u985E",
+                rt: "\u308B\u3044"
+            }
+        ],
+        verbPrompt: "\u63C3",
+        verbRuby: [
+            {
+                text: "\u63C3",
+                rt: "\u305D\u308D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u63C3",
+                rt: "\u305D\u308D"
+            },
+            {
+                text: "\u3046",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Files),
+        color: "text-gray-400"
+    },
+    {
+        id: 84,
+        level: 5,
+        politeSentence: "\u66F8\u985E\u3092\u63C3\u3048\u307E\u3059",
+        politeKana: "\u3057\u3087\u308B\u3044\u3092\u305D\u308D\u3048\u307E\u3059",
+        plainSentence: "\u66F8\u985E\u3092\u63C3\u3048\u308B",
+        plainKana: "\u3057\u3087\u308B\u3044\u3092\u305D\u308D\u3048\u308B",
+        type: "Transitive",
+        english: "I gather/arrange the documents",
+        noun: "\u66F8\u985E",
+        nounRuby: [
+            {
+                text: "\u66F8",
+                rt: "\u3057\u3087"
+            },
+            {
+                text: "\u985E",
+                rt: "\u308B\u3044"
+            }
+        ],
+        verbPrompt: "\u63C3",
+        verbRuby: [
+            {
+                text: "\u63C3",
+                rt: "\u305D\u308D"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u63C3",
+                rt: "\u305D\u308D"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Files),
+        color: "text-gray-600"
+    },
+    {
+        id: 85,
+        level: 5,
+        politeSentence: "\u4ED5\u4E8B\u304C\u9032\u307F\u307E\u3059",
+        politeKana: "\u3057\u3054\u3068\u304C\u3059\u3059\u307F\u307E\u3059",
+        plainSentence: "\u4ED5\u4E8B\u304C\u9032\u3080",
+        plainKana: "\u3057\u3054\u3068\u304C\u3059\u3059\u3080",
+        type: "Intransitive",
+        english: "The work progresses",
+        noun: "\u4ED5\u4E8B",
+        nounRuby: [
+            {
+                text: "\u4ED5",
+                rt: "\u3057"
+            },
+            {
+                text: "\u4E8B",
+                rt: "\u3054\u3068"
+            }
+        ],
+        verbPrompt: "\u9032",
+        verbRuby: [
+            {
+                text: "\u9032",
+                rt: "\u3059\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u9032",
+                rt: "\u3059\u3059"
+            },
+            {
+                text: "\u3080",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.ArrowRight),
+        color: "text-blue-400"
+    },
+    {
+        id: 86,
+        level: 5,
+        politeSentence: "\u4ED5\u4E8B\u3092\u9032\u3081\u307E\u3059",
+        politeKana: "\u3057\u3054\u3068\u3092\u3059\u3059\u3081\u307E\u3059",
+        plainSentence: "\u4ED5\u4E8B\u3092\u9032\u3081\u308B",
+        plainKana: "\u3057\u3054\u3068\u3092\u3059\u3059\u3081\u308B",
+        type: "Transitive",
+        english: "I advance the work",
+        noun: "\u4ED5\u4E8B",
+        nounRuby: [
+            {
+                text: "\u4ED5",
+                rt: "\u3057"
+            },
+            {
+                text: "\u4E8B",
+                rt: "\u3054\u3068"
+            }
+        ],
+        verbPrompt: "\u9032",
+        verbRuby: [
+            {
+                text: "\u9032",
+                rt: "\u3059\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u9032",
+                rt: "\u3059\u3059"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.ArrowRight),
+        color: "text-green-400"
+    },
+    {
+        id: 87,
+        level: 5,
+        politeSentence: "\u4ED5\u4E8B\u304C\u6E08\u307F\u307E\u3059",
+        politeKana: "\u3057\u3054\u3068\u304C\u3059\u307F\u307E\u3059",
+        plainSentence: "\u4ED5\u4E8B\u304C\u6E08\u3080",
+        plainKana: "\u3057\u3054\u3068\u304C\u3059\u3080",
+        type: "Intransitive",
+        english: "The work is finished",
+        noun: "\u4ED5\u4E8B",
+        nounRuby: [
+            {
+                text: "\u4ED5",
+                rt: "\u3057"
+            },
+            {
+                text: "\u4E8B",
+                rt: "\u3054\u3068"
+            }
+        ],
+        verbPrompt: "\u6E08",
+        verbRuby: [
+            {
+                text: "\u6E08",
+                rt: "\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E08",
+                rt: "\u3059"
+            },
+            {
+                text: "\u3080",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CheckCheck),
+        color: "text-green-500"
+    },
+    {
+        id: 88,
+        level: 5,
+        politeSentence: "\u4ED5\u4E8B\u3092\u6E08\u307E\u305B\u307E\u3059",
+        politeKana: "\u3057\u3054\u3068\u3092\u3059\u307E\u305B\u307E\u3059",
+        plainSentence: "\u4ED5\u4E8B\u3092\u6E08\u307E\u305B\u308B",
+        plainKana: "\u3057\u3054\u3068\u3092\u3059\u307E\u305B\u308B",
+        type: "Transitive",
+        english: "I finish the work",
+        noun: "\u4ED5\u4E8B",
+        nounRuby: [
+            {
+                text: "\u4ED5",
+                rt: "\u3057"
+            },
+            {
+                text: "\u4E8B",
+                rt: "\u3054\u3068"
+            }
+        ],
+        verbPrompt: "\u6E08",
+        verbRuby: [
+            {
+                text: "\u6E08",
+                rt: "\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E08",
+                rt: "\u3059"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u305B",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.CheckCheck),
+        color: "text-green-700"
+    },
+    {
+        id: 89,
+        level: 5,
+        politeSentence: "\u6642\u9593\u304C\u904E\u304E\u307E\u3059",
+        politeKana: "\u3058\u304B\u3093\u304C\u3059\u304E\u307E\u3059",
+        plainSentence: "\u6642\u9593\u304C\u904E\u304E\u308B",
+        plainKana: "\u3058\u304B\u3093\u304C\u3059\u304E\u308B",
+        type: "Intransitive",
+        english: "Time passes",
+        noun: "\u6642\u9593",
+        nounRuby: [
+            {
+                text: "\u6642",
+                rt: "\u3058"
+            },
+            {
+                text: "\u9593",
+                rt: "\u304B\u3093"
+            }
+        ],
+        verbPrompt: "\u904E",
+        verbRuby: [
+            {
+                text: "\u904E",
+                rt: "\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u904E",
+                rt: "\u3059"
+            },
+            {
+                text: "\u304E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Clock),
+        color: "text-purple-400"
+    },
+    {
+        id: 90,
+        level: 5,
+        politeSentence: "\u6642\u9593\u3092\u904E\u3054\u3057\u307E\u3059",
+        politeKana: "\u3058\u304B\u3093\u3092\u3059\u3054\u3057\u307E\u3059",
+        plainSentence: "\u6642\u9593\u3092\u904E\u3054\u3059",
+        plainKana: "\u3058\u304B\u3093\u3092\u3059\u3054\u3059",
+        type: "Transitive",
+        english: "I spend time",
+        noun: "\u6642\u9593",
+        nounRuby: [
+            {
+                text: "\u6642",
+                rt: "\u3058"
+            },
+            {
+                text: "\u9593",
+                rt: "\u304B\u3093"
+            }
+        ],
+        verbPrompt: "\u904E",
+        verbRuby: [
+            {
+                text: "\u904E",
+                rt: "\u3059"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u904E",
+                rt: "\u3059"
+            },
+            {
+                text: "\u3054",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Clock),
+        color: "text-purple-600"
+    },
+    {
+        id: 91,
+        level: 5,
+        politeSentence: "\u30B9\u30C8\u30EC\u30B9\u304C\u6E9C\u307E\u308A\u307E\u3059",
+        politeKana: "\u30B9\u30C8\u30EC\u30B9\u304C\u305F\u307E\u308A\u307E\u3059",
+        plainSentence: "\u30B9\u30C8\u30EC\u30B9\u304C\u6E9C\u307E\u308B",
+        plainKana: "\u30B9\u30C8\u30EC\u30B9\u304C\u305F\u307E\u308B",
+        type: "Intransitive",
+        english: "Stress accumulates",
+        noun: "\u30B9\u30C8\u30EC\u30B9",
+        nounRuby: [
+            {
+                text: "\u30B9\u30C8\u30EC\u30B9",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u6E9C",
+        verbRuby: [
+            {
+                text: "\u6E9C",
+                rt: "\u305F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E9C",
+                rt: "\u305F"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Brain),
+        color: "text-red-400"
+    },
+    {
+        id: 92,
+        level: 5,
+        politeSentence: "\u30B9\u30C8\u30EC\u30B9\u3092\u6E9C\u3081\u307E\u3059",
+        politeKana: "\u30B9\u30C8\u30EC\u30B9\u3092\u305F\u3081\u307E\u3059",
+        plainSentence: "\u30B9\u30C8\u30EC\u30B9\u3092\u6E9C\u3081\u308B",
+        plainKana: "\u30B9\u30C8\u30EC\u30B9\u3092\u305F\u3081\u308B",
+        type: "Transitive",
+        english: "I build up stress",
+        noun: "\u30B9\u30C8\u30EC\u30B9",
+        nounRuby: [
+            {
+                text: "\u30B9\u30C8\u30EC\u30B9",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u6E9C",
+        verbRuby: [
+            {
+                text: "\u6E9C",
+                rt: "\u305F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E9C",
+                rt: "\u305F"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Brain),
+        color: "text-red-600"
+    },
+    {
+        id: 93,
+        level: 5,
+        politeSentence: "\u304A\u91D1\u304C\u8CAF\u307E\u308A\u307E\u3059",
+        politeKana: "\u304A\u304B\u306D\u304C\u305F\u307E\u308A\u307E\u3059",
+        plainSentence: "\u304A\u91D1\u304C\u8CAF\u307E\u308B",
+        plainKana: "\u304A\u304B\u306D\u304C\u305F\u307E\u308B",
+        type: "Intransitive",
+        english: "Money is saved",
+        noun: "\u304A\u91D1",
+        nounRuby: [
+            {
+                text: "\u304A",
+                rt: ""
+            },
+            {
+                text: "\u91D1",
+                rt: "\u304B\u306D"
+            }
+        ],
+        verbPrompt: "\u8CAF",
+        verbRuby: [
+            {
+                text: "\u8CAF",
+                rt: "\u305F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u8CAF",
+                rt: "\u305F"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Coins),
+        color: "text-yellow-400"
+    },
+    {
+        id: 94,
+        level: 5,
+        politeSentence: "\u304A\u91D1\u3092\u8CAF\u3081\u307E\u3059",
+        politeKana: "\u304A\u304B\u306D\u3092\u305F\u3081\u307E\u3059",
+        plainSentence: "\u304A\u91D1\u3092\u8CAF\u3081\u308B",
+        plainKana: "\u304A\u304B\u306D\u3092\u305F\u3081\u308B",
+        type: "Transitive",
+        english: "I save money",
+        noun: "\u304A\u91D1",
+        nounRuby: [
+            {
+                text: "\u304A",
+                rt: ""
+            },
+            {
+                text: "\u91D1",
+                rt: "\u304B\u306D"
+            }
+        ],
+        verbPrompt: "\u8CAF",
+        verbRuby: [
+            {
+                text: "\u8CAF",
+                rt: "\u305F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u8CAF",
+                rt: "\u305F"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Coins),
+        color: "text-yellow-600"
+    },
+    {
+        id: 95,
+        level: 5,
+        politeSentence: "\u6C34\u304C\u6D41\u308C\u307E\u3059",
+        politeKana: "\u307F\u305A\u304C\u306A\u304C\u308C\u307E\u3059",
+        plainSentence: "\u6C34\u304C\u6D41\u308C\u308B",
+        plainKana: "\u307F\u305A\u304C\u306A\u304C\u308C\u308B",
+        type: "Intransitive",
+        english: "Water flows",
+        noun: "\u6C34",
+        nounRuby: [
+            {
+                text: "\u6C34",
+                rt: "\u307F\u305A"
+            }
+        ],
+        verbPrompt: "\u6D41",
+        verbRuby: [
+            {
+                text: "\u6D41",
+                rt: "\u306A\u304C"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6D41",
+                rt: "\u306A\u304C"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Waves),
+        color: "text-blue-300"
+    },
+    {
+        id: 96,
+        level: 5,
+        politeSentence: "\u6C34\u3092\u6D41\u3057\u307E\u3059",
+        politeKana: "\u307F\u305A\u3092\u306A\u304C\u3057\u307E\u3059",
+        plainSentence: "\u6C34\u3092\u6D41\u3059",
+        plainKana: "\u307F\u305A\u3092\u306A\u304C\u3059",
+        type: "Transitive",
+        english: "I let the water flow",
+        noun: "\u6C34",
+        nounRuby: [
+            {
+                text: "\u6C34",
+                rt: "\u307F\u305A"
+            }
+        ],
+        verbPrompt: "\u6D41",
+        verbRuby: [
+            {
+                text: "\u6D41",
+                rt: "\u306A\u304C"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6D41",
+                rt: "\u306A\u304C"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Waves),
+        color: "text-blue-500"
+    },
+    {
+        id: 97,
+        level: 5,
+        politeSentence: "\u6728\u304C\u5012\u308C\u307E\u3059",
+        politeKana: "\u304D\u304C\u305F\u304A\u308C\u307E\u3059",
+        plainSentence: "\u6728\u304C\u5012\u308C\u308B",
+        plainKana: "\u304D\u304C\u305F\u304A\u308C\u308B",
+        type: "Intransitive",
+        english: "The tree falls down",
+        noun: "\u6728",
+        nounRuby: [
+            {
+                text: "\u6728",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u5012",
+        verbRuby: [
+            {
+                text: "\u5012",
+                rt: "\u305F\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5012",
+                rt: "\u305F\u304A"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Trees),
+        color: "text-green-800"
+    },
+    {
+        id: 98,
+        level: 5,
+        politeSentence: "\u6728\u3092\u5012\u3057\u307E\u3059",
+        politeKana: "\u304D\u3092\u305F\u304A\u3057\u307E\u3059",
+        plainSentence: "\u6728\u3092\u5012\u3059",
+        plainKana: "\u304D\u3092\u305F\u304A\u3059",
+        type: "Transitive",
+        english: "I knock down the tree",
+        noun: "\u6728",
+        nounRuby: [
+            {
+                text: "\u6728",
+                rt: "\u304D"
+            }
+        ],
+        verbPrompt: "\u5012",
+        verbRuby: [
+            {
+                text: "\u5012",
+                rt: "\u305F\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5012",
+                rt: "\u305F\u304A"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Trees),
+        color: "text-green-900"
+    },
+    {
+        id: 99,
+        level: 5,
+        politeSentence: "\u7D19\u304C\u7834\u308C\u307E\u3059",
+        politeKana: "\u304B\u307F\u304C\u3084\u3076\u308C\u307E\u3059",
+        plainSentence: "\u7D19\u304C\u7834\u308C\u308B",
+        plainKana: "\u304B\u307F\u304C\u3084\u3076\u308C\u308B",
+        type: "Intransitive",
+        english: "The paper tears",
+        noun: "\u7D19",
+        nounRuby: [
+            {
+                text: "\u7D19",
+                rt: "\u304B\u307F"
+            }
+        ],
+        verbPrompt: "\u7834",
+        verbRuby: [
+            {
+                text: "\u7834",
+                rt: "\u3084\u3076"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u7834",
+                rt: "\u3084\u3076"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.FileX),
+        color: "text-gray-300"
+    },
+    {
+        id: 100,
+        level: 5,
+        politeSentence: "\u7D19\u3092\u7834\u308A\u307E\u3059",
+        politeKana: "\u304B\u307F\u3092\u3084\u3076\u308A\u307E\u3059",
+        plainSentence: "\u7D19\u3092\u7834\u308B",
+        plainKana: "\u304B\u307F\u3092\u3084\u3076\u308B",
+        type: "Transitive",
+        english: "I tear the paper",
+        noun: "\u7D19",
+        nounRuby: [
+            {
+                text: "\u7D19",
+                rt: "\u304B\u307F"
+            }
+        ],
+        verbPrompt: "\u7834",
+        verbRuby: [
+            {
+                text: "\u7834",
+                rt: "\u3084\u3076"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u7834",
+                rt: "\u3084\u3076"
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.FileX),
+        color: "text-gray-500"
+    },
+    // --- LEVEL 6 (IDs 101-120) ---
+    {
+        id: 101,
+        level: 6,
+        politeSentence: "\u9AEA\u304C\u4E7E\u304D\u307E\u3059",
+        politeKana: "\u304B\u307F\u304C\u304B\u308F\u304D\u307E\u3059",
+        plainSentence: "\u9AEA\u304C\u4E7E\u304F",
+        plainKana: "\u304B\u307F\u304C\u304B\u308F\u304F",
+        type: "Intransitive",
+        english: "Hair dries",
+        noun: "\u9AEA",
+        nounRuby: [
+            {
+                text: "\u9AEA",
+                rt: "\u304B\u307F"
+            }
+        ],
+        verbPrompt: "\u4E7E",
+        verbRuby: [
+            {
+                text: "\u4E7E",
+                rt: "\u304B\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E7E",
+                rt: "\u304B\u308F"
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Wind),
+        color: "text-blue-200"
+    },
+    {
+        id: 102,
+        level: 6,
+        politeSentence: "\u9AEA\u3092\u4E7E\u304B\u3057\u307E\u3059",
+        politeKana: "\u304B\u307F\u3092\u304B\u308F\u304B\u3057\u307E\u3059",
+        plainSentence: "\u9AEA\u3092\u4E7E\u304B\u3059",
+        plainKana: "\u304B\u307F\u3092\u304B\u308F\u304B\u3059",
+        type: "Transitive",
+        english: "I dry my hair",
+        noun: "\u9AEA",
+        nounRuby: [
+            {
+                text: "\u9AEA",
+                rt: "\u304B\u307F"
+            }
+        ],
+        verbPrompt: "\u4E7E",
+        verbRuby: [
+            {
+                text: "\u4E7E",
+                rt: "\u304B\u308F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u4E7E",
+                rt: "\u304B\u308F"
+            },
+            {
+                text: "\u304B",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Wind),
+        color: "text-blue-400"
+    },
+    {
+        id: 103,
+        level: 6,
+        politeSentence: "\u4F53\u304C\u51B7\u3048\u307E\u3059",
+        politeKana: "\u304B\u3089\u3060\u304C\u3072\u3048\u307E\u3059",
+        plainSentence: "\u4F53\u304C\u51B7\u3048\u308B",
+        plainKana: "\u304B\u3089\u3060\u304C\u3072\u3048\u308B",
+        type: "Intransitive",
+        english: "Body cools down",
+        noun: "\u4F53",
+        nounRuby: [
+            {
+                text: "\u4F53",
+                rt: "\u304B\u3089\u3060"
+            }
+        ],
+        verbPrompt: "\u51B7",
+        verbRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3072"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3072"
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.ThermometerSnowflake),
+        color: "text-blue-300"
+    },
+    {
+        id: 104,
+        level: 6,
+        politeSentence: "\u4F53\u3092\u51B7\u3084\u3057\u307E\u3059",
+        politeKana: "\u304B\u3089\u3060\u3092\u3072\u3084\u3057\u307E\u3059",
+        plainSentence: "\u4F53\u3092\u51B7\u3084\u3059",
+        plainKana: "\u304B\u3089\u3060\u3092\u3072\u3084\u3059",
+        type: "Transitive",
+        english: "I cool my body",
+        noun: "\u4F53",
+        nounRuby: [
+            {
+                text: "\u4F53",
+                rt: "\u304B\u3089\u3060"
+            }
+        ],
+        verbPrompt: "\u51B7",
+        verbRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3072"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3072"
+            },
+            {
+                text: "\u3084",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.ThermometerSnowflake),
+        color: "text-blue-500"
+    },
+    {
+        id: 105,
+        level: 6,
+        politeSentence: "\u4F53\u304C\u6E29\u307E\u308A\u307E\u3059",
+        politeKana: "\u304B\u3089\u3060\u304C\u3042\u305F\u305F\u307E\u308A\u307E\u3059",
+        plainSentence: "\u4F53\u304C\u6E29\u307E\u308B",
+        plainKana: "\u304B\u3089\u3060\u304C\u3042\u305F\u305F\u307E\u308B",
+        type: "Intransitive",
+        english: "Body warms up",
+        noun: "\u4F53",
+        nounRuby: [
+            {
+                text: "\u4F53",
+                rt: "\u304B\u3089\u3060"
+            }
+        ],
+        verbPrompt: "\u6E29",
+        verbRuby: [
+            {
+                text: "\u6E29",
+                rt: "\u3042\u305F\u305F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E29",
+                rt: "\u3042\u305F\u305F"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.ThermometerSun),
+        color: "text-orange-300"
+    },
+    {
+        id: 106,
+        level: 6,
+        politeSentence: "\u4F53\u3092\u6E29\u3081\u307E\u3059",
+        politeKana: "\u304B\u3089\u3060\u3092\u3042\u305F\u305F\u3081\u307E\u3059",
+        plainSentence: "\u4F53\u3092\u6E29\u3081\u308B",
+        plainKana: "\u304B\u3089\u3060\u3092\u3042\u305F\u305F\u3081\u308B",
+        type: "Transitive",
+        english: "I warm my body",
+        noun: "\u4F53",
+        nounRuby: [
+            {
+                text: "\u4F53",
+                rt: "\u304B\u3089\u3060"
+            }
+        ],
+        verbPrompt: "\u6E29",
+        verbRuby: [
+            {
+                text: "\u6E29",
+                rt: "\u3042\u305F\u305F"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6E29",
+                rt: "\u3042\u305F\u305F"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.ThermometerSun),
+        color: "text-orange-500"
+    },
+    {
+        id: 107,
+        level: 6,
+        politeSentence: "\u30B9\u30FC\u30D7\u304C\u51B7\u3081\u307E\u3059",
+        politeKana: "\u30B9\u30FC\u30D7\u304C\u3055\u3081\u307E\u3059",
+        plainSentence: "\u30B9\u30FC\u30D7\u304C\u51B7\u3081\u308B",
+        plainKana: "\u30B9\u30FC\u30D7\u304C\u3055\u3081\u308B",
+        type: "Intransitive",
+        english: "The soup cools down",
+        noun: "\u30B9\u30FC\u30D7",
+        nounRuby: [
+            {
+                text: "\u30B9\u30FC\u30D7",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u51B7",
+        verbRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3055"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3055"
+            },
+            {
+                text: "\u3081",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Soup),
+        color: "text-blue-200"
+    },
+    {
+        id: 108,
+        level: 6,
+        politeSentence: "\u30B9\u30FC\u30D7\u3092\u51B7\u307E\u3057\u307E\u3059",
+        politeKana: "\u30B9\u30FC\u30D7\u3092\u3055\u307E\u3057\u307E\u3059",
+        plainSentence: "\u30B9\u30FC\u30D7\u3092\u51B7\u307E\u3059",
+        plainKana: "\u30B9\u30FC\u30D7\u3092\u3055\u307E\u3059",
+        type: "Transitive",
+        english: "I let the soup cool",
+        noun: "\u30B9\u30FC\u30D7",
+        nounRuby: [
+            {
+                text: "\u30B9\u30FC\u30D7",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u51B7",
+        verbRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3055"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u51B7",
+                rt: "\u3055"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Soup),
+        color: "text-blue-400"
+    },
+    {
+        id: 109,
+        level: 6,
+        politeSentence: "\u670D\u304C\u6C5A\u308C\u307E\u3059",
+        politeKana: "\u3075\u304F\u304C\u3088\u3054\u308C\u307E\u3059",
+        plainSentence: "\u670D\u304C\u6C5A\u308C\u308B",
+        plainKana: "\u3075\u304F\u304C\u3088\u3054\u308C\u308B",
+        type: "Intransitive",
+        english: "Clothes get dirty",
+        noun: "\u670D",
+        nounRuby: [
+            {
+                text: "\u670D",
+                rt: "\u3075\u304F"
+            }
+        ],
+        verbPrompt: "\u6C5A",
+        verbRuby: [
+            {
+                text: "\u6C5A",
+                rt: "\u3088\u3054"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6C5A",
+                rt: "\u3088\u3054"
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Shirt),
+        color: "text-gray-500"
+    },
+    {
+        id: 110,
+        level: 6,
+        politeSentence: "\u670D\u3092\u6C5A\u3057\u307E\u3059",
+        politeKana: "\u3075\u304F\u3092\u3088\u3054\u3057\u307E\u3059",
+        plainSentence: "\u670D\u3092\u6C5A\u3059",
+        plainKana: "\u3075\u304F\u3092\u3088\u3054\u3059",
+        type: "Transitive",
+        english: "I get clothes dirty",
+        noun: "\u670D",
+        nounRuby: [
+            {
+                text: "\u670D",
+                rt: "\u3075\u304F"
+            }
+        ],
+        verbPrompt: "\u6C5A",
+        verbRuby: [
+            {
+                text: "\u6C5A",
+                rt: "\u3088\u3054"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6C5A",
+                rt: "\u3088\u3054"
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Shirt),
+        color: "text-gray-700"
+    },
+    {
+        id: 111,
+        level: 6,
+        politeSentence: "\u5B50\u3069\u3082\u304C\u8D77\u304D\u307E\u3059",
+        politeKana: "\u3053\u3069\u3082\u304C\u304A\u304D\u307E\u3059",
+        plainSentence: "\u5B50\u3069\u3082\u304C\u8D77\u304D\u308B",
+        plainKana: "\u3053\u3069\u3082\u304C\u304A\u304D\u308B",
+        type: "Intransitive",
+        english: "The child wakes up",
+        noun: "\u5B50\u3069\u3082",
+        nounRuby: [
+            {
+                text: "\u5B50",
+                rt: "\u3053"
+            },
+            {
+                text: "\u3069\u3082",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u8D77",
+        verbRuby: [
+            {
+                text: "\u8D77",
+                rt: "\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u8D77",
+                rt: "\u304A"
+            },
+            {
+                text: "\u304D",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Sun),
+        color: "text-yellow-400"
+    },
+    {
+        id: 112,
+        level: 6,
+        politeSentence: "\u5B50\u3069\u3082\u3092\u8D77\u3053\u3057\u307E\u3059",
+        politeKana: "\u3053\u3069\u3082\u3092\u304A\u3053\u3057\u307E\u3059",
+        plainSentence: "\u5B50\u3069\u3082\u3092\u8D77\u3053\u3059",
+        plainKana: "\u3053\u3069\u3082\u3092\u304A\u3053\u3059",
+        type: "Transitive",
+        english: "I wake the child up",
+        noun: "\u5B50\u3069\u3082",
+        nounRuby: [
+            {
+                text: "\u5B50",
+                rt: "\u3053"
+            },
+            {
+                text: "\u3069\u3082",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u8D77",
+        verbRuby: [
+            {
+                text: "\u8D77",
+                rt: "\u304A"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u8D77",
+                rt: "\u304A"
+            },
+            {
+                text: "\u3053",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Sun),
+        color: "text-yellow-600"
+    },
+    {
+        id: 113,
+        level: 6,
+        politeSentence: "\u76AE\u304C\u3080\u3051\u307E\u3059",
+        politeKana: "\u304B\u308F\u304C\u3080\u3051\u307E\u3059",
+        plainSentence: "\u76AE\u304C\u3080\u3051\u308B",
+        plainKana: "\u304B\u308F\u304C\u3080\u3051\u308B",
+        type: "Intransitive",
+        english: "The skin peels",
+        noun: "\u76AE",
+        nounRuby: [
+            {
+                text: "\u76AE",
+                rt: "\u304B\u308F"
+            }
+        ],
+        verbPrompt: "\u3080",
+        verbRuby: [
+            {
+                text: "\u3080",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u3080",
+                rt: ""
+            },
+            {
+                text: "\u3051",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Banana),
+        color: "text-yellow-300"
+    },
+    {
+        id: 114,
+        level: 6,
+        politeSentence: "\u76AE\u3092\u3080\u304D\u307E\u3059",
+        politeKana: "\u304B\u308F\u3092\u3080\u304D\u307E\u3059",
+        plainSentence: "\u76AE\u3092\u3080\u304F",
+        plainKana: "\u304B\u308F\u3092\u3080\u304F",
+        type: "Transitive",
+        english: "I peel the skin",
+        noun: "\u76AE",
+        nounRuby: [
+            {
+                text: "\u76AE",
+                rt: "\u304B\u308F"
+            }
+        ],
+        verbPrompt: "\u3080",
+        verbRuby: [
+            {
+                text: "\u3080",
+                rt: ""
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u3080",
+                rt: ""
+            },
+            {
+                text: "\u304F",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Banana),
+        color: "text-yellow-500"
+    },
+    {
+        id: 115,
+        level: 6,
+        politeSentence: "\u8D64\u3061\u3083\u3093\u304C\u751F\u307E\u308C\u307E\u3059",
+        politeKana: "\u3042\u304B\u3061\u3083\u3093\u304C\u3046\u307E\u308C\u307E\u3059",
+        plainSentence: "\u8D64\u3061\u3083\u3093\u304C\u751F\u307E\u308C\u308B",
+        plainKana: "\u3042\u304B\u3061\u3083\u3093\u304C\u3046\u307E\u308C\u308B",
+        type: "Intransitive",
+        english: "The baby is born",
+        noun: "\u8D64\u3061\u3083\u3093",
+        nounRuby: [
+            {
+                text: "\u8D64",
+                rt: "\u3042\u304B"
+            },
+            {
+                text: "\u3061\u3083\u3093",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u751F",
+        verbRuby: [
+            {
+                text: "\u751F",
+                rt: "\u3046"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u751F",
+                rt: "\u3046"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308C",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Baby),
+        color: "text-pink-200"
+    },
+    {
+        id: 116,
+        level: 6,
+        politeSentence: "\u8D64\u3061\u3083\u3093\u3092\u751F\u307F\u307E\u3059",
+        politeKana: "\u3042\u304B\u3061\u3083\u3093\u3092\u3046\u307F\u307E\u3059",
+        plainSentence: "\u8D64\u3061\u3083\u3093\u3092\u751F\u3080",
+        plainKana: "\u3042\u304B\u3061\u3083\u3093\u3092\u3046\u3080",
+        type: "Transitive",
+        english: "I give birth to a baby",
+        noun: "\u8D64\u3061\u3083\u3093",
+        nounRuby: [
+            {
+                text: "\u8D64",
+                rt: "\u3042\u304B"
+            },
+            {
+                text: "\u3061\u3083\u3093",
+                rt: ""
+            }
+        ],
+        verbPrompt: "\u751F",
+        verbRuby: [
+            {
+                text: "\u751F",
+                rt: "\u3046"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u751F",
+                rt: "\u3046"
+            },
+            {
+                text: "\u3080",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Baby),
+        color: "text-pink-400"
+    },
+    {
+        id: 117,
+        level: 6,
+        politeSentence: "\u4E88\u5B9A\u304C\u5EF6\u3073\u307E\u3059",
+        politeKana: "\u3088\u3066\u3044\u304C\u306E\u3073\u307E\u3059",
+        plainSentence: "\u4E88\u5B9A\u304C\u5EF6\u3073\u308B",
+        plainKana: "\u3088\u3066\u3044\u304C\u306E\u3073\u308B",
+        type: "Intransitive",
+        english: "The schedule is extended",
+        noun: "\u4E88\u5B9A",
+        nounRuby: [
+            {
+                text: "\u4E88",
+                rt: "\u3088"
+            },
+            {
+                text: "\u5B9A",
+                rt: "\u3066\u3044"
+            }
+        ],
+        verbPrompt: "\u5EF6",
+        verbRuby: [
+            {
+                text: "\u5EF6",
+                rt: "\u306E"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5EF6",
+                rt: "\u306E"
+            },
+            {
+                text: "\u3073",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Calendar),
+        color: "text-blue-300"
+    },
+    {
+        id: 118,
+        level: 6,
+        politeSentence: "\u4E88\u5B9A\u3092\u5EF6\u3070\u3057\u307E\u3059",
+        politeKana: "\u3088\u3066\u3044\u3092\u306E\u3070\u3057\u307E\u3059",
+        plainSentence: "\u4E88\u5B9A\u3092\u5EF6\u3070\u3059",
+        plainKana: "\u3088\u3066\u3044\u3092\u306E\u3070\u3059",
+        type: "Transitive",
+        english: "I extend the schedule",
+        noun: "\u4E88\u5B9A",
+        nounRuby: [
+            {
+                text: "\u4E88",
+                rt: "\u3088"
+            },
+            {
+                text: "\u5B9A",
+                rt: "\u3066\u3044"
+            }
+        ],
+        verbPrompt: "\u5EF6",
+        verbRuby: [
+            {
+                text: "\u5EF6",
+                rt: "\u306E"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u5EF6",
+                rt: "\u306E"
+            },
+            {
+                text: "\u3070",
+                rt: ""
+            },
+            {
+                text: "\u3059",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Calendar),
+        color: "text-blue-500"
+    },
+    {
+        id: 119,
+        level: 6,
+        politeSentence: "\u72AF\u4EBA\u304C\u6355\u307E\u308A\u307E\u3059",
+        politeKana: "\u306F\u3093\u306B\u3093\u304C\u3064\u304B\u307E\u308A\u307E\u3059",
+        plainSentence: "\u72AF\u4EBA\u304C\u6355\u307E\u308B",
+        plainKana: "\u306F\u3093\u306B\u3093\u304C\u3064\u304B\u307E\u308B",
+        type: "Intransitive",
+        english: "The criminal is caught",
+        noun: "\u72AF\u4EBA",
+        nounRuby: [
+            {
+                text: "\u72AF",
+                rt: "\u306F\u3093"
+            },
+            {
+                text: "\u4EBA",
+                rt: "\u306B\u3093"
+            }
+        ],
+        verbPrompt: "\u6355",
+        verbRuby: [
+            {
+                text: "\u6355",
+                rt: "\u3064\u304B"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6355",
+                rt: "\u3064\u304B"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Fingerprint),
+        color: "text-gray-600"
+    },
+    {
+        id: 120,
+        level: 6,
+        politeSentence: "\u72AF\u4EBA\u3092\u6355\u307E\u3048\u307E\u3059",
+        politeKana: "\u306F\u3093\u306B\u3093\u3092\u3064\u304B\u307E\u3048\u307E\u3059",
+        plainSentence: "\u72AF\u4EBA\u3092\u6355\u307E\u3048\u308B",
+        plainKana: "\u306F\u3093\u306B\u3093\u3092\u3064\u304B\u307E\u3048\u308B",
+        type: "Transitive",
+        english: "I catch the criminal",
+        noun: "\u72AF\u4EBA",
+        nounRuby: [
+            {
+                text: "\u72AF",
+                rt: "\u306F\u3093"
+            },
+            {
+                text: "\u4EBA",
+                rt: "\u306B\u3093"
+            }
+        ],
+        verbPrompt: "\u6355",
+        verbRuby: [
+            {
+                text: "\u6355",
+                rt: "\u3064\u304B"
+            }
+        ],
+        dictionaryRuby: [
+            {
+                text: "\u6355",
+                rt: "\u3064\u304B"
+            },
+            {
+                text: "\u307E",
+                rt: ""
+            },
+            {
+                text: "\u3048",
+                rt: ""
+            },
+            {
+                text: "\u308B",
+                rt: ""
+            }
+        ],
+        icon: (0, _iconsJs.Fingerprint),
+        color: "text-gray-800"
+    }
+];
+
+},{"../components/ui/icons.js":"5p7MZ","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"5p7MZ":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "CheckCircle", ()=>(0, _lucideReact.CheckCircle));
@@ -36054,37 +42180,7 @@ const mergeClasses = (...classes)=>classes.filter((className, index, array)=>{
         return Boolean(className) && className.trim() !== "" && array.indexOf(className) === index;
     }).join(" ").trim();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"jnFvT":[function(require,module,exports,__globalThis) {
-exports.interopDefault = function(a) {
-    return a && a.__esModule ? a : {
-        default: a
-    };
-};
-exports.defineInteropFlag = function(a) {
-    Object.defineProperty(a, '__esModule', {
-        value: true
-    });
-};
-exports.exportAll = function(source, dest) {
-    Object.keys(source).forEach(function(key) {
-        if (key === 'default' || key === '__esModule' || Object.prototype.hasOwnProperty.call(dest, key)) return;
-        Object.defineProperty(dest, key, {
-            enumerable: true,
-            get: function() {
-                return source[key];
-            }
-        });
-    });
-    return dest;
-};
-exports.export = function(dest, destName, get) {
-    Object.defineProperty(dest, destName, {
-        enumerable: true,
-        get: get
-    });
-};
-
-},{}],"lKG5W":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"lKG5W":[function(require,module,exports,__globalThis) {
 /**
  * @license lucide-react v0.563.0 - ISC
  *
@@ -38428,12 +44524,12 @@ const __iconNode = [
 ];
 const Wind = (0, _createLucideIconJsDefault.default)("wind", __iconNode);
 
-},{"../createLucideIcon.js":"c2nE9","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"5vOEC":[function(require,module,exports,__globalThis) {
+},{"../createLucideIcon.js":"c2nE9","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"5pW0g":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "romajiToHiragana", ()=>romajiToHiragana);
 parcelHelpers.export(exports, "toHiragana", ()=>toHiragana);
-var _hiraganaDataJs = require("./hiraganaData.js");
+var _hiraganaDataJs = require("../data/hiraganaData.js");
 // Helper to escape regex characters
 const escapeRegExp = (string)=>{
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -38468,7 +44564,7 @@ var _c, _c1;
 $RefreshReg$(_c, "MAP_KEYS$Object.keys(HIRAGANA_MAP).sort");
 $RefreshReg$(_c1, "MAP_KEYS");
 
-},{"./hiraganaData.js":"hDB48","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"hDB48":[function(require,module,exports,__globalThis) {
+},{"../data/hiraganaData.js":"7nKqf","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7nKqf":[function(require,module,exports,__globalThis) {
 // --- UTILS: Romaji to Hiragana Converter ---
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -38625,7225 +44721,1943 @@ const HIRAGANA_MAP = {
     '!': "\uFF01"
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"smgc1":[function(require,module,exports,__globalThis) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"8i9i2":[function(require,module,exports,__globalThis) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "VERB_SUFFIX_RULES", ()=>VERB_SUFFIX_RULES);
-/**
- * Determines the suffix type of a verb based on its dictionaryRuby
- * @param {Array} dictionaryRuby - Array of {text, rt} objects representing the dictionary form
- * @returns {string|null} - 'suffix-su', 'suffix-aru', or null if no pattern matches
- */ parcelHelpers.export(exports, "getVerbSuffixType", ()=>getVerbSuffixType);
-parcelHelpers.export(exports, "VERB_DATA", ()=>VERB_DATA);
-var _iconsJs = require("./icons.js");
-const VERB_SUFFIX_RULES = {
-    su: {
-        pattern: 'suffix-su',
-        explanationJa: "\u2026\u3059 \u27F9 \u5916\u5411\u7684 (\u2248 \u3059\u308B)",
-        explanationEn: 'Outward-Directed (\u2248 "To do")',
-        type: 'Transitive'
-    },
-    aru: {
-        pattern: 'suffix-aru',
-        explanationJa: "\u2026\u3042 + \u308B \u27F9 \u5185\u5411\u7684 (\u2248 \u3042\u308B)",
-        explanationEn: 'Inward-Directed (\u2248 "To be")',
-        type: 'Intransitive'
-    }
-};
-// "A" column hiragana characters that precede る in the aru pattern
-const A_COLUMN_HIRAGANA = [
-    "\u3042",
-    "\u304B",
-    "\u3055",
-    "\u305F",
-    "\u306A",
-    "\u306F",
-    "\u307E",
-    "\u3084",
-    "\u3089",
-    "\u308F",
-    "\u304C",
-    "\u3056",
-    "\u3060",
-    "\u3070",
-    "\u3071"
-];
-function getVerbSuffixType(dictionaryRuby) {
-    if (!dictionaryRuby || dictionaryRuby.length === 0) return null;
-    // Get the reading of the verb (combine all rt values, falling back to text for kana)
-    const reading = dictionaryRuby.map((r)=>r.rt || r.text).join('');
-    // Check for suffix -su: ends in す
-    if (reading.endsWith("\u3059")) return 'suffix-su';
-    // Check for suffix -aru: ends in [a-column hiragana] + る
-    if (reading.endsWith("\u308B") && reading.length >= 2) {
-        const secondToLast = reading[reading.length - 2];
-        if (A_COLUMN_HIRAGANA.includes(secondToLast)) return 'suffix-aru';
-    }
-    return null;
-}
-const VERB_DATA = [
-    // --- LEVEL 1 (IDs 1-20) ---
-    {
-        id: 1,
-        level: 1,
-        politeSentence: "\u30C9\u30A2\u304C\u958B\u304D\u307E\u3059",
-        politeKana: "\u30C9\u30A2\u304C\u3042\u304D\u307E\u3059",
-        plainSentence: "\u30C9\u30A2\u304C\u958B\u304F",
-        plainKana: "\u30C9\u30A2\u304C\u3042\u304F",
-        type: "Intransitive",
-        english: "The door opens",
-        noun: "\u30C9\u30A2",
-        nounRuby: [
-            {
-                text: "\u30C9\u30A2",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u958B",
-        verbRuby: [
-            {
-                text: "\u958B",
-                rt: "\u3042"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u958B",
-                rt: "\u3042"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.DoorOpen),
-        color: "text-blue-400"
-    },
-    {
-        id: 2,
-        level: 1,
-        politeSentence: "\u30C9\u30A2\u3092\u958B\u3051\u307E\u3059",
-        politeKana: "\u30C9\u30A2\u3092\u3042\u3051\u307E\u3059",
-        plainSentence: "\u30C9\u30A2\u3092\u958B\u3051\u308B",
-        plainKana: "\u30C9\u30A2\u3092\u3042\u3051\u308B",
-        type: "Transitive",
-        english: "I open the door",
-        noun: "\u30C9\u30A2",
-        nounRuby: [
-            {
-                text: "\u30C9\u30A2",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u958B",
-        verbRuby: [
-            {
-                text: "\u958B",
-                rt: "\u3042"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u958B",
-                rt: "\u3042"
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.DoorOpen),
-        color: "text-green-400"
-    },
-    {
-        id: 3,
-        level: 1,
-        politeSentence: "\u30C9\u30A2\u304C\u9589\u307E\u308A\u307E\u3059",
-        politeKana: "\u30C9\u30A2\u304C\u3057\u307E\u308A\u307E\u3059",
-        plainSentence: "\u30C9\u30A2\u304C\u9589\u307E\u308B",
-        plainKana: "\u30C9\u30A2\u304C\u3057\u307E\u308B",
-        type: "Intransitive",
-        english: "The door closes",
-        noun: "\u30C9\u30A2",
-        nounRuby: [
-            {
-                text: "\u30C9\u30A2",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u9589",
-        verbRuby: [
-            {
-                text: "\u9589",
-                rt: "\u3057"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u9589",
-                rt: "\u3057"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.DoorClosed),
-        color: "text-blue-400"
-    },
-    {
-        id: 4,
-        level: 1,
-        politeSentence: "\u30C9\u30A2\u3092\u9589\u3081\u307E\u3059",
-        politeKana: "\u30C9\u30A2\u3092\u3057\u3081\u307E\u3059",
-        plainSentence: "\u30C9\u30A2\u3092\u9589\u3081\u308B",
-        plainKana: "\u30C9\u30A2\u3092\u3057\u3081\u308B",
-        type: "Transitive",
-        english: "I close the door",
-        noun: "\u30C9\u30A2",
-        nounRuby: [
-            {
-                text: "\u30C9\u30A2",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u9589",
-        verbRuby: [
-            {
-                text: "\u9589",
-                rt: "\u3057"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u9589",
-                rt: "\u3057"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.DoorClosed),
-        color: "text-green-400"
-    },
-    {
-        id: 5,
-        level: 1,
-        politeSentence: "\u72AC\u304C\u51FA\u307E\u3059",
-        politeKana: "\u3044\u306C\u304C\u3067\u307E\u3059",
-        plainSentence: "\u72AC\u304C\u51FA\u308B",
-        plainKana: "\u3044\u306C\u304C\u3067\u308B",
-        type: "Intransitive",
-        english: "The dog leaves / goes out",
-        noun: "\u72AC",
-        nounRuby: [
-            {
-                text: "\u72AC",
-                rt: "\u3044\u306C"
-            }
-        ],
-        verbPrompt: "\u51FA",
-        verbRuby: [
-            {
-                text: "\u51FA",
-                rt: "\u3067"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u51FA",
-                rt: "\u3067"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Dog),
-        color: "text-blue-400"
-    },
-    {
-        id: 6,
-        level: 1,
-        politeSentence: "\u72AC\u3092\u51FA\u3057\u307E\u3059",
-        politeKana: "\u3044\u306C\u3092\u3060\u3057\u307E\u3059",
-        plainSentence: "\u72AC\u3092\u51FA\u3059",
-        plainKana: "\u3044\u306C\u3092\u3060\u3059",
-        type: "Transitive",
-        english: "I let the dog out",
-        noun: "\u72AC",
-        nounRuby: [
-            {
-                text: "\u72AC",
-                rt: "\u3044\u306C"
-            }
-        ],
-        verbPrompt: "\u51FA",
-        verbRuby: [
-            {
-                text: "\u51FA",
-                rt: "\u3060"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u51FA",
-                rt: "\u3060"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Dog),
-        color: "text-green-400"
-    },
-    {
-        id: 7,
-        level: 1,
-        politeSentence: "\u8033\u304C\u52D5\u304D\u307E\u3059",
-        politeKana: "\u307F\u307F\u304C\u3046\u3054\u304D\u307E\u3059",
-        plainSentence: "\u8033\u304C\u52D5\u304F",
-        plainKana: "\u307F\u307F\u304C\u3046\u3054\u304F",
-        type: "Intransitive",
-        english: "The ears move",
-        noun: "\u8033",
-        nounRuby: [
-            {
-                text: "\u8033",
-                rt: "\u307F\u307F"
-            }
-        ],
-        verbPrompt: "\u52D5",
-        verbRuby: [
-            {
-                text: "\u52D5",
-                rt: "\u3046\u3054"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u52D5",
-                rt: "\u3046\u3054"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Ear),
-        color: "text-blue-400"
-    },
-    {
-        id: 8,
-        level: 1,
-        politeSentence: "\u8033\u3092\u52D5\u304B\u3057\u307E\u3059",
-        politeKana: "\u307F\u307F\u3092\u3046\u3054\u304B\u3057\u307E\u3059",
-        plainSentence: "\u8033\u3092\u52D5\u304B\u3059",
-        plainKana: "\u307F\u307F\u3092\u3046\u3054\u304B\u3059",
-        type: "Transitive",
-        english: "I move my ears",
-        noun: "\u8033",
-        nounRuby: [
-            {
-                text: "\u8033",
-                rt: "\u307F\u307F"
-            }
-        ],
-        verbPrompt: "\u52D5",
-        verbRuby: [
-            {
-                text: "\u52D5",
-                rt: "\u3046\u3054"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u52D5",
-                rt: "\u3046\u3054"
-            },
-            {
-                text: "\u304B",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Ear),
-        color: "text-green-400"
-    },
-    {
-        id: 9,
-        level: 1,
-        politeSentence: "\u8ECA\u304C\u6B62\u307E\u308A\u307E\u3059",
-        politeKana: "\u304F\u308B\u30DE\u30AC\u3068\u307E\u308A\u307E\u3059",
-        plainSentence: "\u8ECA\u304C\u6B62\u307E\u308B",
-        plainKana: "\u304F\u308B\u307E\u304C\u3068\u307E\u308B",
-        type: "Intransitive",
-        english: "The car stops",
-        noun: "\u8ECA",
-        nounRuby: [
-            {
-                text: "\u8ECA",
-                rt: "\u304F\u308B\u307E"
-            }
-        ],
-        verbPrompt: "\u6B62",
-        verbRuby: [
-            {
-                text: "\u6B62",
-                rt: "\u3068"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6B62",
-                rt: "\u3068"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CarFront),
-        color: "text-blue-400"
-    },
-    {
-        id: 10,
-        level: 1,
-        politeSentence: "\u8ECA\u3092\u6B62\u3081\u307E\u3059",
-        politeKana: "\u304F\u308B\u307E\u3092\u3068\u3081\u307E\u3059",
-        plainSentence: "\u8ECA\u3092\u6B62\u3081\u308B",
-        plainKana: "\u304F\u308B\u307E\u3092\u3068\u3081\u308B",
-        type: "Transitive",
-        english: "I stop the car",
-        noun: "\u8ECA",
-        nounRuby: [
-            {
-                text: "\u8ECA",
-                rt: "\u304F\u308B\u307E"
-            }
-        ],
-        verbPrompt: "\u6B62",
-        verbRuby: [
-            {
-                text: "\u6B62",
-                rt: "\u3068"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6B62",
-                rt: "\u3068"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CarFront),
-        color: "text-green-400"
-    },
-    {
-        id: 11,
-        level: 1,
-        politeSentence: "\u96FB\u6C17\u304C\u3064\u304D\u307E\u3059",
-        politeKana: "\u3067\u3093\u304D\u304C\u3064\u304D\u307E\u3059",
-        plainSentence: "\u96FB\u6C17\u304C\u3064\u304F",
-        plainKana: "\u3067\u3093\u304D\u304C\u3064\u304F",
-        type: "Intransitive",
-        english: "The light comes on",
-        noun: "\u96FB\u6C17",
-        nounRuby: [
-            {
-                text: "\u96FB",
-                rt: "\u3067\u3093"
-            },
-            {
-                text: "\u6C17",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u3064",
-        verbRuby: [
-            {
-                text: "\u3064",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u3064",
-                rt: ""
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Lightbulb),
-        color: "text-yellow-400"
-    },
-    {
-        id: 12,
-        level: 1,
-        politeSentence: "\u96FB\u6C17\u3092\u3064\u3051\u307E\u3059",
-        politeKana: "\u3067\u3093\u304D\u3092\u3064\u3051\u307E\u3059",
-        plainSentence: "\u96FB\u6C17\u3092\u3064\u3051\u308B",
-        plainKana: "\u3067\u3093\u304D\u3092\u3064\u3051\u308B",
-        type: "Transitive",
-        english: "I turn on the light",
-        noun: "\u96FB\u6C17",
-        nounRuby: [
-            {
-                text: "\u96FB",
-                rt: "\u3067\u3093"
-            },
-            {
-                text: "\u6C17",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u3064",
-        verbRuby: [
-            {
-                text: "\u3064",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u3064",
-                rt: ""
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Lightbulb),
-        color: "text-yellow-400"
-    },
-    {
-        id: 13,
-        level: 1,
-        politeSentence: "\u96FB\u6C17\u304C\u6D88\u3048\u307E\u3059",
-        politeKana: "\u3067\u3093\u304D\u304C\u304D\u3048\u307E\u3059",
-        plainSentence: "\u96FB\u6C17\u304C\u6D88\u3048\u308B",
-        plainKana: "\u3067\u3093\u304D\u304C\u304D\u3048\u308B",
-        type: "Intransitive",
-        english: "The light goes off",
-        noun: "\u96FB\u6C17",
-        nounRuby: [
-            {
-                text: "\u96FB",
-                rt: "\u3067\u3093"
-            },
-            {
-                text: "\u6C17",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u6D88",
-        verbRuby: [
-            {
-                text: "\u6D88",
-                rt: "\u304D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6D88",
-                rt: "\u304D"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.LightbulbOff),
-        color: "text-gray-400"
-    },
-    {
-        id: 14,
-        level: 1,
-        politeSentence: "\u96FB\u6C17\u3092\u6D88\u3057\u307E\u3059",
-        politeKana: "\u3067\u3093\u304D\u3092\u3051\u3057\u307E\u3059",
-        plainSentence: "\u96FB\u6C17\u3092\u6D88\u3059",
-        plainKana: "\u3067\u3093\u304D\u3092\u3051\u3059",
-        type: "Transitive",
-        english: "I turn off the light",
-        noun: "\u96FB\u6C17",
-        nounRuby: [
-            {
-                text: "\u96FB",
-                rt: "\u3067\u3093"
-            },
-            {
-                text: "\u6C17",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u6D88",
-        verbRuby: [
-            {
-                text: "\u6D88",
-                rt: "\u3051"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6D88",
-                rt: "\u3051"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.LightbulbOff),
-        color: "text-gray-400"
-    },
-    {
-        id: 15,
-        level: 1,
-        politeSentence: "\u4E88\u5B9A\u304C\u5909\u308F\u308A\u307E\u3059",
-        politeKana: "\u3088\u3066\u3044\u304C\u304B\u308F\u308A",
-        plainSentence: "\u4E88\u5B9A\u304C\u5909\u308F\u308B",
-        plainKana: "\u3088\u3066\u3044\u304C\u304B\u308F\u308B",
-        type: "Intransitive",
-        english: "The plan changes",
-        noun: "\u4E88\u5B9A",
-        nounRuby: [
-            {
-                text: "\u4E88",
-                rt: "\u3088"
-            },
-            {
-                text: "\u5B9A",
-                rt: "\u3066\u3044"
-            }
-        ],
-        verbPrompt: "\u5909",
-        verbRuby: [
-            {
-                text: "\u5909",
-                rt: "\u304B"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5909",
-                rt: "\u304B"
-            },
-            {
-                text: "\u308F",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Calendar),
-        color: "text-blue-400"
-    },
-    {
-        id: 16,
-        level: 1,
-        politeSentence: "\u4E88\u5B9A\u3092\u5909\u3048\u307E\u3059",
-        politeKana: "\u3088\u3066\u3044\u3092\u304B\u3048\u307E\u3059",
-        plainSentence: "\u4E88\u5B9A\u3092\u5909\u3048\u308B",
-        plainKana: "\u3088\u3066\u3044\u3092\u304B\u3048\u308B",
-        type: "Transitive",
-        english: "I change the plan",
-        noun: "\u4E88\u5B9A",
-        nounRuby: [
-            {
-                text: "\u4E88",
-                rt: "\u3088"
-            },
-            {
-                text: "\u5B9A",
-                rt: "\u3066\u3044"
-            }
-        ],
-        verbPrompt: "\u5909",
-        verbRuby: [
-            {
-                text: "\u5909",
-                rt: "\u304B"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5909",
-                rt: "\u304B"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Calendar),
-        color: "text-green-400"
-    },
-    {
-        id: 17,
-        level: 1,
-        politeSentence: "\u75C5\u6C17\u304C\u6CBB\u308A\u307E\u3059",
-        politeKana: "\u3073\u3087\u3046\u304D\u304C\u306A\u304A\u308A\u307E\u3059",
-        plainSentence: "\u75C5\u6C17\u304C\u6CBB\u308B",
-        plainKana: "\u3073\u3087\u3046\u304D\u304C\u306A\u304A\u308B",
-        type: "Intransitive",
-        english: "The illness is cured",
-        noun: "\u75C5\u6C17",
-        nounRuby: [
-            {
-                text: "\u75C5",
-                rt: "\u3073\u3087\u3046"
-            },
-            {
-                text: "\u6C17",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u6CBB",
-        verbRuby: [
-            {
-                text: "\u6CBB",
-                rt: "\u306A\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6CBB",
-                rt: "\u306A\u304A"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.HeartPulse),
-        color: "text-red-400"
-    },
-    {
-        id: 18,
-        level: 1,
-        politeSentence: "\u75C5\u6C17\u3092\u6CBB\u3057\u307E\u3059",
-        politeKana: "\u3073\u3087\u3046\u304D\u3092\u306A\u304A\u3057\u307E\u3059",
-        plainSentence: "\u75C5\u6C17\u3092\u6CBB\u3059",
-        plainKana: "\u3073\u3087\u3046\u304D\u3092\u306A\u304A\u3059",
-        type: "Transitive",
-        english: "I cure the illness",
-        noun: "\u75C5\u6C17",
-        nounRuby: [
-            {
-                text: "\u75C5",
-                rt: "\u3073\u3087\u3046"
-            },
-            {
-                text: "\u6C17",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u6CBB",
-        verbRuby: [
-            {
-                text: "\u6CBB",
-                rt: "\u306A\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6CBB",
-                rt: "\u306A\u304A"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.HeartPulse),
-        color: "text-red-400"
-    },
-    {
-        id: 19,
-        level: 1,
-        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u59CB\u307E\u308A\u307E\u3059",
-        politeKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u306F\u3058\u307E\u308A\u307E\u3059",
-        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u59CB\u307E\u308B",
-        plainKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u306F\u3058\u307E\u308B",
-        type: "Intransitive",
-        english: "The lesson begins",
-        noun: "\u30EC\u30C3\u30B9\u30F3",
-        nounRuby: [
-            {
-                text: "\u30EC\u30C3\u30B9\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u59CB",
-        verbRuby: [
-            {
-                text: "\u59CB",
-                rt: "\u306F\u3058"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u59CB",
-                rt: "\u306F\u3058"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.GraduationCap),
-        color: "text-blue-400"
-    },
-    {
-        id: 20,
-        level: 1,
-        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u59CB\u3081\u307E\u3059",
-        politeKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u306F\u3058\u3081\u307E\u3059",
-        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u59CB\u3081\u308B",
-        plainKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u306F\u3058\u3081\u308B",
-        type: "Transitive",
-        english: "I begin the lesson",
-        noun: "\u30EC\u30C3\u30B9\u30F3",
-        nounRuby: [
-            {
-                text: "\u30EC\u30C3\u30B9\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u59CB",
-        verbRuby: [
-            {
-                text: "\u59CB",
-                rt: "\u306F\u3058"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u59CB",
-                rt: "\u306F\u3058"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.GraduationCap),
-        color: "text-green-400"
-    },
-    // --- LEVEL 2 (IDs 21-40) ---
-    {
-        id: 21,
-        level: 2,
-        politeSentence: "\u30DA\u30F3\u304C\u843D\u3061\u307E\u3059",
-        politeKana: "\u30DA\u30F3\u304C\u304A\u3061\u307E\u3059",
-        plainSentence: "\u30DA\u30F3\u304C\u843D\u3061\u308B",
-        plainKana: "\u30DA\u30F3\u304C\u304A\u3061\u308B",
-        type: "Intransitive",
-        english: "The pen falls",
-        noun: "\u30DA\u30F3",
-        nounRuby: [
-            {
-                text: "\u30DA\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u843D",
-        verbRuby: [
-            {
-                text: "\u843D",
-                rt: "\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u843D",
-                rt: "\u304A"
-            },
-            {
-                text: "\u3061",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Pen),
-        color: "text-blue-400"
-    },
-    {
-        id: 22,
-        level: 2,
-        politeSentence: "\u30DA\u30F3\u3092\u843D\u3068\u3057\u307E\u3059",
-        politeKana: "\u30DA\u30F3\u3092\u304A\u3068\u3057\u307E\u3059",
-        plainSentence: "\u30DA\u30F3\u3092\u843D\u3068\u3059",
-        plainKana: "\u30DA\u30F3\u3092\u304A\u3068\u3059",
-        type: "Transitive",
-        english: "I drop the pen",
-        noun: "\u30DA\u30F3",
-        nounRuby: [
-            {
-                text: "\u30DA\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u843D",
-        verbRuby: [
-            {
-                text: "\u843D",
-                rt: "\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u843D",
-                rt: "\u304A"
-            },
-            {
-                text: "\u3068",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Pen),
-        color: "text-green-400"
-    },
-    {
-        id: 23,
-        level: 2,
-        politeSentence: "\u97F3\u697D\u304C\u805E\u3053\u3048\u307E\u3059",
-        politeKana: "\u304A\u3093\u304C\u304F\u304C\u304D\u3053\u3048\u307E\u3059",
-        plainSentence: "\u97F3\u697D\u304C\u805E\u3053\u3048\u308B",
-        plainKana: "\u304A\u3093\u304C\u304F\u304C\u304D\u3053\u3048\u308B",
-        type: "Intransitive",
-        english: "The music can be heard",
-        noun: "\u97F3\u697D",
-        nounRuby: [
-            {
-                text: "\u97F3",
-                rt: "\u304A\u3093"
-            },
-            {
-                text: "\u697D",
-                rt: "\u304C\u304F"
-            }
-        ],
-        verbPrompt: "\u805E",
-        verbRuby: [
-            {
-                text: "\u805E",
-                rt: "\u304D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u805E",
-                rt: "\u304D"
-            },
-            {
-                text: "\u3053",
-                rt: ""
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Music),
-        color: "text-purple-400"
-    },
-    {
-        id: 24,
-        level: 2,
-        politeSentence: "\u97F3\u697D\u3092\u805E\u304D\u307E\u3059",
-        politeKana: "\u304A\u3093\u304C\u304F\u3092\u304D\u304D\u307E\u3059",
-        plainSentence: "\u97F3\u697D\u3092\u805E\u304F",
-        plainKana: "\u304A\u3093\u304C\u304F\u3092\u304D\u304F",
-        type: "Transitive",
-        english: "I listen to music",
-        noun: "\u97F3\u697D",
-        nounRuby: [
-            {
-                text: "\u97F3",
-                rt: "\u304A\u3093"
-            },
-            {
-                text: "\u697D",
-                rt: "\u304C\u304F"
-            }
-        ],
-        verbPrompt: "\u805E",
-        verbRuby: [
-            {
-                text: "\u805E",
-                rt: "\u304D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u805E",
-                rt: "\u304D"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Music),
-        color: "text-purple-400"
-    },
-    {
-        id: 25,
-        level: 2,
-        politeSentence: "\u5BCC\u58EB\u5C71\u304C\u898B\u3048\u307E\u3059",
-        politeKana: "\u3075\u3058\u3055\u3093\u304C\u307F\u3048\u307E\u3059",
-        plainSentence: "\u5BCC\u58EB\u5C71\u304C\u898B\u3048\u308B",
-        plainKana: "\u3075\u3058\u3055\u3093\u304C\u307F\u3048\u308B",
-        type: "Intransitive",
-        english: "Mt. Fuji can be seen",
-        noun: "\u5BCC\u58EB\u5C71",
-        nounRuby: [
-            {
-                text: "\u5BCC",
-                rt: "\u3075"
-            },
-            {
-                text: "\u58EB",
-                rt: "\u3058"
-            },
-            {
-                text: "\u5C71",
-                rt: "\u3055\u3093"
-            }
-        ],
-        verbPrompt: "\u898B",
-        verbRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Mountain),
-        color: "text-blue-400"
-    },
-    {
-        id: 26,
-        level: 2,
-        politeSentence: "\u5BCC\u58EB\u5C71\u3092\u898B\u307E\u3059",
-        politeKana: "\u3075\u3058\u3055\u3093\u3092\u307F\u307E\u3059",
-        plainSentence: "\u5BCC\u58EB\u5C71\u3092\u898B\u308B",
-        plainKana: "\u3075\u3058\u3055\u3093\u3092\u307F\u308B",
-        type: "Transitive",
-        english: "I look at Mt. Fuji",
-        noun: "\u5BCC\u58EB\u5C71",
-        nounRuby: [
-            {
-                text: "\u5BCC",
-                rt: "\u3075"
-            },
-            {
-                text: "\u58EB",
-                rt: "\u3058"
-            },
-            {
-                text: "\u5C71",
-                rt: "\u3055\u3093"
-            }
-        ],
-        verbPrompt: "\u898B",
-        verbRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Mountain),
-        color: "text-green-400"
-    },
-    {
-        id: 27,
-        level: 2,
-        politeSentence: "\u8CA1\u5E03\u304C\u306A\u304F\u306A\u308A\u307E\u3059",
-        politeKana: "\u3055\u3044\u3075\u304C\u306A\u304F\u306A\u308A\u307E\u3059",
-        plainSentence: "\u8CA1\u5E03\u304C\u306A\u304F\u306A\u308B",
-        plainKana: "\u3055\u3044\u3075\u304C\u306A\u304F\u306A\u308B",
-        type: "Intransitive",
-        english: "The wallet gets lost",
-        noun: "\u8CA1\u5E03",
-        nounRuby: [
-            {
-                text: "\u8CA1",
-                rt: "\u3055\u3044"
-            },
-            {
-                text: "\u5E03",
-                rt: "\u3075"
-            }
-        ],
-        verbPrompt: "\u306A",
-        verbRuby: [
-            {
-                text: "\u306A",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u306A",
-                rt: ""
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            },
-            {
-                text: "\u306A",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Wallet),
-        color: "text-yellow-600"
-    },
-    {
-        id: 28,
-        level: 2,
-        politeSentence: "\u8CA1\u5E03\u3092\u306A\u304F\u3057\u307E\u3059",
-        politeKana: "\u3055\u3044\u3075\u3092\u306A\u304F\u3057\u307E\u3059",
-        plainSentence: "\u8CA1\u5E03\u3092\u306A\u304F\u3059",
-        plainKana: "\u3055\u3044\u3075\u3092\u306A\u304F\u3059",
-        type: "Transitive",
-        english: "I lose the wallet",
-        noun: "\u8CA1\u5E03",
-        nounRuby: [
-            {
-                text: "\u8CA1",
-                rt: "\u3055\u3044"
-            },
-            {
-                text: "\u5E03",
-                rt: "\u3075"
-            }
-        ],
-        verbPrompt: "\u306A",
-        verbRuby: [
-            {
-                text: "\u306A",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u306A",
-                rt: ""
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Wallet),
-        color: "text-yellow-600"
-    },
-    {
-        id: 29,
-        level: 2,
-        politeSentence: "\u8CA1\u5E03\u304C\u898B\u3064\u304B\u308A\u307E\u3059",
-        politeKana: "\u3055\u3044\u3075\u304C\u307F\u3064\u304B\u308A\u307E\u3059",
-        plainSentence: "\u8CA1\u5E03\u304C\u898B\u3064\u304B\u308B",
-        plainKana: "\u3055\u3044\u3075\u304C\u307F\u3064\u304B\u308B",
-        type: "Intransitive",
-        english: "The wallet is found",
-        noun: "\u8CA1\u5E03",
-        nounRuby: [
-            {
-                text: "\u8CA1",
-                rt: "\u3055\u3044"
-            },
-            {
-                text: "\u5E03",
-                rt: "\u3075"
-            }
-        ],
-        verbPrompt: "\u898B",
-        verbRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            },
-            {
-                text: "\u3064",
-                rt: ""
-            },
-            {
-                text: "\u304B",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Search),
-        color: "text-blue-400"
-    },
-    {
-        id: 30,
-        level: 2,
-        politeSentence: "\u8CA1\u5E03\u3092\u898B\u3064\u3051\u307E\u3059",
-        politeKana: "\u3055\u3044\u3075\u3092\u307F\u3064\u3051\u307E\u3059",
-        plainSentence: "\u8CA1\u5E03\u3092\u898B\u3064\u3051\u308B",
-        plainKana: "\u3055\u3044\u3075\u3092\u307F\u3064\u3051\u308B",
-        type: "Transitive",
-        english: "I find the wallet",
-        noun: "\u8CA1\u5E03",
-        nounRuby: [
-            {
-                text: "\u8CA1",
-                rt: "\u3055\u3044"
-            },
-            {
-                text: "\u5E03",
-                rt: "\u3075"
-            }
-        ],
-        verbPrompt: "\u898B",
-        verbRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u898B",
-                rt: "\u307F"
-            },
-            {
-                text: "\u3064",
-                rt: ""
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Search),
-        color: "text-green-400"
-    },
-    {
-        id: 31,
-        level: 2,
-        politeSentence: "\u4E88\u5B9A\u304C\u6C7A\u307E\u308A\u307E\u3059",
-        politeKana: "\u3088\u3066\u3044\u304C\u304D\u307E\u308A\u307E\u3059",
-        plainSentence: "\u4E88\u5B9A\u304C\u6C7A\u307E\u308B",
-        plainKana: "\u3088\u3066\u3044\u304C\u304D\u307E\u308B",
-        type: "Intransitive",
-        english: "The plan is decided",
-        noun: "\u4E88\u5B9A",
-        nounRuby: [
-            {
-                text: "\u4E88",
-                rt: "\u3088"
-            },
-            {
-                text: "\u5B9A",
-                rt: "\u3066\u3044"
-            }
-        ],
-        verbPrompt: "\u6C7A",
-        verbRuby: [
-            {
-                text: "\u6C7A",
-                rt: "\u304D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6C7A",
-                rt: "\u304D"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CheckSquare),
-        color: "text-blue-400"
-    },
-    {
-        id: 32,
-        level: 2,
-        politeSentence: "\u4E88\u5B9A\u3092\u6C7A\u3081\u307E\u3059",
-        politeKana: "\u3088\u3066\u3044\u3092\u304D\u3081\u307E\u3059",
-        plainSentence: "\u4E88\u5B9A\u3092\u6C7A\u3081\u308B",
-        plainKana: "\u3088\u3066\u3044\u3092\u304D\u3081\u308B",
-        type: "Transitive",
-        english: "I decide the plan",
-        noun: "\u4E88\u5B9A",
-        nounRuby: [
-            {
-                text: "\u4E88",
-                rt: "\u3088"
-            },
-            {
-                text: "\u5B9A",
-                rt: "\u3066\u3044"
-            }
-        ],
-        verbPrompt: "\u6C7A",
-        verbRuby: [
-            {
-                text: "\u6C7A",
-                rt: "\u304D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6C7A",
-                rt: "\u304D"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CheckSquare),
-        color: "text-green-400"
-    },
-    {
-        id: 33,
-        level: 2,
-        politeSentence: "\u98A8\u304C\u5165\u308A\u307E\u3059",
-        politeKana: "\u304B\u305C\u304C\u306F\u3044\u308A\u307E\u3059",
-        plainSentence: "\u98A8\u304C\u5165\u308B",
-        plainKana: "\u304B\u305C\u304C\u306F\u3044\u308B",
-        type: "Intransitive",
-        english: "The wind comes in",
-        noun: "\u98A8",
-        nounRuby: [
-            {
-                text: "\u98A8",
-                rt: "\u304B\u305C"
-            }
-        ],
-        verbPrompt: "\u5165",
-        verbRuby: [
-            {
-                text: "\u5165",
-                rt: "\u306F\u3044"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5165",
-                rt: "\u306F\u3044"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Wind),
-        color: "text-cyan-400"
-    },
-    {
-        id: 34,
-        level: 2,
-        politeSentence: "\u98A8\u3092\u5165\u308C\u307E\u3059",
-        politeKana: "\u304B\u305C\u3092\u3044\u308C\u307E\u3059",
-        plainSentence: "\u98A8\u3092\u5165\u308C\u308B",
-        plainKana: "\u304B\u305C\u3092\u3044\u308C\u308B",
-        type: "Transitive",
-        english: "I let the wind in",
-        noun: "\u98A8",
-        nounRuby: [
-            {
-                text: "\u98A8",
-                rt: "\u304B\u305C"
-            }
-        ],
-        verbPrompt: "\u5165",
-        verbRuby: [
-            {
-                text: "\u5165",
-                rt: "\u3044"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5165",
-                rt: "\u3044"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Wind),
-        color: "text-cyan-400"
-    },
-    {
-        id: 35,
-        level: 2,
-        politeSentence: "\u304A\u6E6F\u304C\u6CB8\u304D\u307E\u3059",
-        politeKana: "\u304A\u3086\u304C\u308F\u304D\u307E\u3059",
-        plainSentence: "\u304A\u6E6F\u304C\u6CB8\u304F",
-        plainKana: "\u304A\u3086\u304C\u308F\u304F",
-        type: "Intransitive",
-        english: "The water boils",
-        noun: "\u304A\u6E6F",
-        nounRuby: [
-            {
-                text: "\u304A",
-                rt: ""
-            },
-            {
-                text: "\u6E6F",
-                rt: "\u3086"
-            }
-        ],
-        verbPrompt: "\u6CB8",
-        verbRuby: [
-            {
-                text: "\u6CB8",
-                rt: "\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6CB8",
-                rt: "\u308F"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Flame),
-        color: "text-orange-400"
-    },
-    {
-        id: 36,
-        level: 2,
-        politeSentence: "\u304A\u6E6F\u3092\u6CB8\u304B\u3057\u307E\u3059",
-        politeKana: "\u304A\u3086\u3092\u308F\u304B\u3057\u307E\u3059",
-        plainSentence: "\u304A\u6E6F\u3092\u6CB8\u304B\u3059",
-        plainKana: "\u304A\u3086\u3092\u308F\u304B\u3059",
-        type: "Transitive",
-        english: "I boil the water",
-        noun: "\u304A\u6E6F",
-        nounRuby: [
-            {
-                text: "\u304A",
-                rt: ""
-            },
-            {
-                text: "\u6E6F",
-                rt: "\u3086"
-            }
-        ],
-        verbPrompt: "\u6CB8",
-        verbRuby: [
-            {
-                text: "\u6CB8",
-                rt: "\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6CB8",
-                rt: "\u308F"
-            },
-            {
-                text: "\u304B",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Flame),
-        color: "text-orange-400"
-    },
-    {
-        id: 37,
-        level: 2,
-        politeSentence: "\u30D1\u30F3\u304C\u713C\u3051\u307E\u3059",
-        politeKana: "\u30D1\u30F3\u304C\u3084\u3051\u307E\u3059",
-        plainSentence: "\u30D1\u30F3\u304C\u713C\u3051\u308B",
-        plainKana: "\u30D1\u30F3\u304C\u3084\u3051\u308B",
-        type: "Intransitive",
-        english: "The bread bakes",
-        noun: "\u30D1\u30F3",
-        nounRuby: [
-            {
-                text: "\u30D1\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u713C",
-        verbRuby: [
-            {
-                text: "\u713C",
-                rt: "\u3084"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u713C",
-                rt: "\u3084"
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Croissant),
-        color: "text-yellow-700"
-    },
-    {
-        id: 38,
-        level: 2,
-        politeSentence: "\u30D1\u30F3\u3092\u713C\u304D\u307E\u3059",
-        politeKana: "\u30D1\u30F3\u3092\u3084\u304D\u307E\u3059",
-        plainSentence: "\u30D1\u30F3\u3092\u713C\u304F",
-        plainKana: "\u30D1\u30F3\u3092\u3084\u304F",
-        type: "Transitive",
-        english: "I bake bread",
-        noun: "\u30D1\u30F3",
-        nounRuby: [
-            {
-                text: "\u30D1\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u713C",
-        verbRuby: [
-            {
-                text: "\u713C",
-                rt: "\u3084"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u713C",
-                rt: "\u3084"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Croissant),
-        color: "text-yellow-700"
-    },
-    {
-        id: 39,
-        level: 2,
-        politeSentence: "\u8089\u304C\u716E\u3048\u307E\u3059",
-        politeKana: "\u306B\u304F\u304C\u306B\u3048\u307E\u3059",
-        plainSentence: "\u8089\u304C\u716E\u3048\u308B",
-        plainKana: "\u306B\u304F\u304C\u306B\u3048\u308B",
-        type: "Intransitive",
-        english: "The meat cooks / boils",
-        noun: "\u8089",
-        nounRuby: [
-            {
-                text: "\u8089",
-                rt: "\u306B\u304F"
-            }
-        ],
-        verbPrompt: "\u716E",
-        verbRuby: [
-            {
-                text: "\u716E",
-                rt: "\u306B"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u716E",
-                rt: "\u306B"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Soup),
-        color: "text-red-700"
-    },
-    {
-        id: 40,
-        level: 2,
-        politeSentence: "\u8089\u3092\u716E\u307E\u3059",
-        politeKana: "\u306B\u304F\u3092\u306B\u307E\u3059",
-        plainSentence: "\u8089\u3092\u716E\u308B",
-        plainKana: "\u306B\u304F\u3092\u306B\u308B",
-        type: "Transitive",
-        english: "I cook / boil the meat",
-        noun: "\u8089",
-        nounRuby: [
-            {
-                text: "\u8089",
-                rt: "\u306B\u304F"
-            }
-        ],
-        verbPrompt: "\u716E",
-        verbRuby: [
-            {
-                text: "\u716E",
-                rt: "\u306B"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u716E",
-                rt: "\u306B"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Soup),
-        color: "text-red-700"
-    },
-    // --- LEVEL 3 (IDs 41-60) ---
-    {
-        id: 41,
-        level: 3,
-        politeSentence: "\u30AB\u30E1\u30E9\u304C\u58CA\u308C\u307E\u3059",
-        politeKana: "\u30AB\u30E1\u30E9\u304C\u3053\u308F\u308C\u307E\u3059",
-        plainSentence: "\u30AB\u30E1\u30E9\u304C\u58CA\u308C\u308B",
-        plainKana: "\u30AB\u30E1\u30E9\u304C\u3053\u308F\u308C\u308B",
-        type: "Intransitive",
-        english: "The camera breaks",
-        noun: "\u30AB\u30E1\u30E9",
-        nounRuby: [
-            {
-                text: "\u30AB\u30E1\u30E9",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u58CA",
-        verbRuby: [
-            {
-                text: "\u58CA",
-                rt: "\u3053\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u58CA",
-                rt: "\u3053\u308F"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Camera),
-        color: "text-red-500"
-    },
-    {
-        id: 42,
-        level: 3,
-        politeSentence: "\u30AB\u30E1\u30E9\u3092\u58CA\u3057\u307E\u3059",
-        politeKana: "\u30AB\u30E1\u30E9\u3092\u3053\u308F\u3057\u307E\u3059",
-        plainSentence: "\u30AB\u30E1\u30E9\u3092\u58CA\u3059",
-        plainKana: "\u30AB\u30E1\u30E9\u3092\u3053\u308F\u3059",
-        type: "Transitive",
-        english: "I break the camera",
-        noun: "\u30AB\u30E1\u30E9",
-        nounRuby: [
-            {
-                text: "\u30AB\u30E1\u30E9",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u58CA",
-        verbRuby: [
-            {
-                text: "\u58CA",
-                rt: "\u3053\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u58CA",
-                rt: "\u3053\u308F"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Camera),
-        color: "text-orange-500"
-    },
-    {
-        id: 43,
-        level: 3,
-        politeSentence: "\u30D1\u30BD\u30B3\u30F3\u304C\u76F4\u308A\u307E\u3059",
-        politeKana: "\u30D1\u30BD\u30B3\u30F3\u304C\u306A\u304A\u308A\u307E\u3059",
-        plainSentence: "\u30D1\u30BD\u30B3\u30F3\u304C\u76F4\u308B",
-        plainKana: "\u30D1\u30BD\u30B3\u30F3\u304C\u306A\u304A\u308B",
-        type: "Intransitive",
-        english: "The PC gets fixed",
-        noun: "\u30D1\u30BD\u30B3\u30F3",
-        nounRuby: [
-            {
-                text: "\u30D1\u30BD\u30B3\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u76F4",
-        verbRuby: [
-            {
-                text: "\u76F4",
-                rt: "\u306A\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u76F4",
-                rt: "\u306A\u304A"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Monitor),
-        color: "text-blue-500"
-    },
-    {
-        id: 44,
-        level: 3,
-        politeSentence: "\u30D1\u30BD\u30B3\u30F3\u3092\u76F4\u3057\u307E\u3059",
-        politeKana: "\u30D1\u30BD\u30B3\u30F3\u3092\u306A\u304A\u3057\u307E\u3059",
-        plainSentence: "\u30D1\u30BD\u30B3\u30F3\u3092\u76F4\u3059",
-        plainKana: "\u30D1\u30BD\u30B3\u30F3\u3092\u306A\u304A\u3059",
-        type: "Transitive",
-        english: "I fix the PC",
-        noun: "\u30D1\u30BD\u30B3\u30F3",
-        nounRuby: [
-            {
-                text: "\u30D1\u30BD\u30B3\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u76F4",
-        verbRuby: [
-            {
-                text: "\u76F4",
-                rt: "\u306A\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u76F4",
-                rt: "\u306A\u304A"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Monitor),
-        color: "text-green-500"
-    },
-    {
-        id: 45,
-        level: 3,
-        politeSentence: "\u8377\u7269\u304C\u5C4A\u304D\u307E\u3059",
-        politeKana: "\u306B\u3082\u3064\u304C\u3068\u3069\u304D\u307E\u3059",
-        plainSentence: "\u8377\u7269\u304C\u5C4A\u304F",
-        plainKana: "\u306B\u3082\u3064\u304C\u3068\u3069\u304F",
-        type: "Intransitive",
-        english: "The package arrives",
-        noun: "\u8377\u7269",
-        nounRuby: [
-            {
-                text: "\u8377",
-                rt: "\u306B"
-            },
-            {
-                text: "\u7269",
-                rt: "\u3082\u3064"
-            }
-        ],
-        verbPrompt: "\u5C4A",
-        verbRuby: [
-            {
-                text: "\u5C4A",
-                rt: "\u3068\u3069"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5C4A",
-                rt: "\u3068\u3069"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Package),
-        color: "text-yellow-600"
-    },
-    {
-        id: 46,
-        level: 3,
-        politeSentence: "\u8377\u7269\u3092\u5C4A\u3051\u307E\u3059",
-        politeKana: "\u306B\u3082\u3064\u3092\u3068\u3069\u3051\u307E\u3059",
-        plainSentence: "\u8377\u7269\u3092\u5C4A\u3051\u308B",
-        plainKana: "\u306B\u3082\u3064\u3092\u3068\u3069\u3051\u308B",
-        type: "Transitive",
-        english: "I deliver the package",
-        noun: "\u8377\u7269",
-        nounRuby: [
-            {
-                text: "\u8377",
-                rt: "\u306B"
-            },
-            {
-                text: "\u7269",
-                rt: "\u3082\u3064"
-            }
-        ],
-        verbPrompt: "\u5C4A",
-        verbRuby: [
-            {
-                text: "\u5C4A",
-                rt: "\u3068\u3069"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5C4A",
-                rt: "\u3068\u3069"
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Package),
-        color: "text-green-600"
-    },
-    {
-        id: 47,
-        level: 3,
-        politeSentence: "\u5024\u6BB5\u304C\u4E0A\u304C\u308A\u307E\u3059",
-        politeKana: "\u306D\u3060\u3093\u304C\u3042\u304C\u308A\u307E\u3059",
-        plainSentence: "\u5024\u6BB5\u304C\u4E0A\u304C\u308B",
-        plainKana: "\u306D\u3060\u3093\u304C\u3042\u304C\u308B",
-        type: "Intransitive",
-        english: "The price goes up",
-        noun: "\u5024\u6BB5",
-        nounRuby: [
-            {
-                text: "\u5024",
-                rt: "\u306D"
-            },
-            {
-                text: "\u6BB5",
-                rt: "\u3060\u3093"
-            }
-        ],
-        verbPrompt: "\u4E0A",
-        verbRuby: [
-            {
-                text: "\u4E0A",
-                rt: "\u3042"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E0A",
-                rt: "\u3042"
-            },
-            {
-                text: "\u304C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Tag),
-        color: "text-red-600"
-    },
-    {
-        id: 48,
-        level: 3,
-        politeSentence: "\u5024\u6BB5\u3092\u4E0A\u3052\u307E\u3059",
-        politeKana: "\u306D\u3060\u3093\u3092\u3042\u3052\u307E\u3059",
-        plainSentence: "\u5024\u6BB5\u3092\u4E0A\u3052\u308B",
-        plainKana: "\u306D\u3060\u3093\u3092\u3042\u3052\u308B",
-        type: "Transitive",
-        english: "I raise the price",
-        noun: "\u5024\u6BB5",
-        nounRuby: [
-            {
-                text: "\u5024",
-                rt: "\u306D"
-            },
-            {
-                text: "\u6BB5",
-                rt: "\u3060\u3093"
-            }
-        ],
-        verbPrompt: "\u4E0A",
-        verbRuby: [
-            {
-                text: "\u4E0A",
-                rt: "\u3042"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E0A",
-                rt: "\u3042"
-            },
-            {
-                text: "\u3052",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Tag),
-        color: "text-green-600"
-    },
-    {
-        id: 49,
-        level: 3,
-        politeSentence: "\u5024\u6BB5\u304C\u4E0B\u304C\u308A\u307E\u3059",
-        politeKana: "\u306D\u3060\u3093\u304C\u3055\u304C\u308A\u307E\u3059",
-        plainSentence: "\u5024\u6BB5\u304C\u4E0B\u304C\u308B",
-        plainKana: "\u306D\u3060\u3093\u304C\u3055\u304C\u308B",
-        type: "Intransitive",
-        english: "The price goes down",
-        noun: "\u5024\u6BB5",
-        nounRuby: [
-            {
-                text: "\u5024",
-                rt: "\u306D"
-            },
-            {
-                text: "\u6BB5",
-                rt: "\u3060\u3093"
-            }
-        ],
-        verbPrompt: "\u4E0B",
-        verbRuby: [
-            {
-                text: "\u4E0B",
-                rt: "\u3055"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E0B",
-                rt: "\u3055"
-            },
-            {
-                text: "\u304C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Tag),
-        color: "text-blue-600"
-    },
-    {
-        id: 50,
-        level: 3,
-        politeSentence: "\u5024\u6BB5\u3092\u4E0B\u3052\u307E\u3059",
-        politeKana: "\u306D\u3060\u3093\u3092\u3055\u3052\u307E\u3059",
-        plainSentence: "\u5024\u6BB5\u3092\u4E0B\u3052\u308B",
-        plainKana: "\u306D\u3060\u3093\u3092\u3055\u3052\u308B",
-        type: "Transitive",
-        english: "I lower the price",
-        noun: "\u5024\u6BB5",
-        nounRuby: [
-            {
-                text: "\u5024",
-                rt: "\u306D"
-            },
-            {
-                text: "\u6BB5",
-                rt: "\u3060\u3093"
-            }
-        ],
-        verbPrompt: "\u4E0B",
-        verbRuby: [
-            {
-                text: "\u4E0B",
-                rt: "\u3055"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E0B",
-                rt: "\u3055"
-            },
-            {
-                text: "\u3052",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Tag),
-        color: "text-green-800"
-    },
-    {
-        id: 51,
-        level: 3,
-        politeSentence: "\u4ED5\u4E8B\u304C\u5897\u3048\u307E\u3059",
-        politeKana: "\u3057\u3054\u3068\u304C\u3075\u3048\u307E\u3059",
-        plainSentence: "\u4ED5\u4E8B\u304C\u5897\u3048\u308B",
-        plainKana: "\u3057\u3054\u3068\u304C\u3075\u3048\u308B",
-        type: "Intransitive",
-        english: "Work increases",
-        noun: "\u4ED5\u4E8B",
-        nounRuby: [
-            {
-                text: "\u4ED5",
-                rt: "\u3057"
-            },
-            {
-                text: "\u4E8B",
-                rt: "\u3054\u3068"
-            }
-        ],
-        verbPrompt: "\u5897",
-        verbRuby: [
-            {
-                text: "\u5897",
-                rt: "\u3075"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5897",
-                rt: "\u3075"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Briefcase),
-        color: "text-purple-500"
-    },
-    {
-        id: 52,
-        level: 3,
-        politeSentence: "\u4ED5\u4E8B\u3092\u5897\u3084\u3057\u307E\u3059",
-        politeKana: "\u3057\u3054\u3068\u3092\u3075\u3084\u3057\u307E\u3059",
-        plainSentence: "\u4ED5\u4E8B\u3092\u5897\u3084\u3059",
-        plainKana: "\u3057\u3054\u3068\u3092\u3075\u3084\u3059",
-        type: "Transitive",
-        english: "I increase the work",
-        noun: "\u4ED5\u4E8B",
-        nounRuby: [
-            {
-                text: "\u4ED5",
-                rt: "\u3057"
-            },
-            {
-                text: "\u4E8B",
-                rt: "\u3054\u3068"
-            }
-        ],
-        verbPrompt: "\u5897",
-        verbRuby: [
-            {
-                text: "\u5897",
-                rt: "\u3075"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5897",
-                rt: "\u3075"
-            },
-            {
-                text: "\u3084",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Briefcase),
-        color: "text-pink-500"
-    },
-    {
-        id: 53,
-        level: 3,
-        politeSentence: "\u4F53\u91CD\u304C\u6E1B\u308A\u307E\u3059",
-        politeKana: "\u305F\u3044\u3058\u3085\u3046\u304C\u3078\u308A\u307E\u3059",
-        plainSentence: "\u4F53\u91CD\u304C\u6E1B\u308B",
-        plainKana: "\u305F\u3044\u3058\u3085\u3046\u304C\u3078\u308B",
-        type: "Intransitive",
-        english: "Weight decreases",
-        noun: "\u4F53\u91CD",
-        nounRuby: [
-            {
-                text: "\u4F53",
-                rt: "\u305F\u3044"
-            },
-            {
-                text: "\u91CD",
-                rt: "\u3058\u3085\u3046"
-            }
-        ],
-        verbPrompt: "\u6E1B",
-        verbRuby: [
-            {
-                text: "\u6E1B",
-                rt: "\u3078"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E1B",
-                rt: "\u3078"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Scale),
-        color: "text-teal-500"
-    },
-    {
-        id: 54,
-        level: 3,
-        politeSentence: "\u4F53\u91CD\u3092\u6E1B\u3089\u3057\u307E\u3059",
-        politeKana: "\u305F\u3044\u3058\u3085\u3046\u3092\u3078\u3089\u3057\u307E\u3059",
-        plainSentence: "\u4F53\u91CD\u3092\u6E1B\u3089\u3059",
-        plainKana: "\u305F\u3044\u3058\u3085\u3046\u3092\u3078\u3089\u3059",
-        type: "Transitive",
-        english: "I reduce the weight",
-        noun: "\u4F53\u91CD",
-        nounRuby: [
-            {
-                text: "\u4F53",
-                rt: "\u305F\u3044"
-            },
-            {
-                text: "\u91CD",
-                rt: "\u3058\u3085\u3046"
-            }
-        ],
-        verbPrompt: "\u6E1B",
-        verbRuby: [
-            {
-                text: "\u6E1B",
-                rt: "\u3078"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E1B",
-                rt: "\u3078"
-            },
-            {
-                text: "\u3089",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Scale),
-        color: "text-teal-700"
-    },
-    {
-        id: 55,
-        level: 3,
-        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u7D9A\u304D\u307E\u3059",
-        politeKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u3064\u3065\u304D\u307E\u3059",
-        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u304C\u7D9A\u304F",
-        plainKana: "\u30EC\u30C3\u30B9\u30F3\u304C\u3064\u3065\u304F",
-        type: "Intransitive",
-        english: "The lesson continues",
-        noun: "\u30EC\u30C3\u30B9\u30F3",
-        nounRuby: [
-            {
-                text: "\u30EC\u30C3\u30B9\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u7D9A",
-        verbRuby: [
-            {
-                text: "\u7D9A",
-                rt: "\u3064\u3065"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u7D9A",
-                rt: "\u3064\u3065"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.GraduationCap),
-        color: "text-indigo-400"
-    },
-    {
-        id: 56,
-        level: 3,
-        politeSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u7D9A\u3051\u307E\u3059",
-        politeKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u3064\u3065\u3051\u307E\u3059",
-        plainSentence: "\u30EC\u30C3\u30B9\u30F3\u3092\u7D9A\u3051\u308B",
-        plainKana: "\u30EC\u30C3\u30B9\u30F3\u3092\u3064\u3065\u3051\u308B",
-        type: "Transitive",
-        english: "I continue the lesson",
-        noun: "\u30EC\u30C3\u30B9\u30F3",
-        nounRuby: [
-            {
-                text: "\u30EC\u30C3\u30B9\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u7D9A",
-        verbRuby: [
-            {
-                text: "\u7D9A",
-                rt: "\u3064\u3065"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u7D9A",
-                rt: "\u3064\u3065"
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.GraduationCap),
-        color: "text-indigo-600"
-    },
-    {
-        id: 57,
-        level: 3,
-        politeSentence: "\u5B50\u3069\u3082\u304C\u52A9\u304B\u308A\u307E\u3059",
-        politeKana: "\u3053\u3069\u3082\u304C\u305F\u3059\u304B\u308A\u307E\u3059",
-        plainSentence: "\u5B50\u3069\u3082\u304C\u52A9\u304B\u308B",
-        plainKana: "\u3053\u3069\u3082\u304C\u305F\u3059\u304B\u308B",
-        type: "Intransitive",
-        english: "The child is saved",
-        noun: "\u5B50\u3069\u3082",
-        nounRuby: [
-            {
-                text: "\u5B50",
-                rt: "\u3053"
-            },
-            {
-                text: "\u3069\u3082",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u52A9",
-        verbRuby: [
-            {
-                text: "\u52A9",
-                rt: "\u305F\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u52A9",
-                rt: "\u305F\u3059"
-            },
-            {
-                text: "\u304B",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Baby),
-        color: "text-pink-300"
-    },
-    {
-        id: 58,
-        level: 3,
-        politeSentence: "\u5B50\u3069\u3082\u3092\u52A9\u3051\u307E\u3059",
-        politeKana: "\u3053\u3069\u3082\u3092\u305F\u3059\u3051\u307E\u3059",
-        plainSentence: "\u5B50\u3069\u3082\u3092\u52A9\u3051\u308B",
-        plainKana: "\u3053\u3069\u3082\u3092\u305F\u3059\u3051\u308B",
-        type: "Transitive",
-        english: "I save the child",
-        noun: "\u5B50\u3069\u3082",
-        nounRuby: [
-            {
-                text: "\u5B50",
-                rt: "\u3053"
-            },
-            {
-                text: "\u3069\u3082",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u52A9",
-        verbRuby: [
-            {
-                text: "\u52A9",
-                rt: "\u305F\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u52A9",
-                rt: "\u305F\u3059"
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Baby),
-        color: "text-pink-500"
-    },
-    {
-        id: 59,
-        level: 3,
-        politeSentence: "\u30C6\u30FC\u30D6\u30EB\u304C\u56DE\u308A\u307E\u3059",
-        politeKana: "\u30C6\u30FC\u30D6\u30EB\u304C\u307E\u308F\u308A\u307E\u3059",
-        plainSentence: "\u30C6\u30FC\u30D6\u30EB\u304C\u56DE\u308B",
-        plainKana: "\u30C6\u30FC\u30D6\u30EB\u304C\u307E\u308F\u308B",
-        type: "Intransitive",
-        english: "The table turns",
-        noun: "\u30C6\u30FC\u30D6\u30EB",
-        nounRuby: [
-            {
-                text: "\u30C6\u30FC\u30D6\u30EB",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u56DE",
-        verbRuby: [
-            {
-                text: "\u56DE",
-                rt: "\u307E\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u56DE",
-                rt: "\u307E\u308F"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.RotateCw),
-        color: "text-gray-400"
-    },
-    {
-        id: 60,
-        level: 3,
-        politeSentence: "\u30C6\u30FC\u30D6\u30EB\u3092\u56DE\u3057\u307E\u3059",
-        politeKana: "\u30C6\u30FC\u30D6\u30EB\u3092\u307E\u308F\u3057\u307E\u3059",
-        plainSentence: "\u30C6\u30FC\u30D6\u30EB\u3092\u56DE\u3059",
-        plainKana: "\u30C6\u30FC\u30D6\u30EB\u3092\u307E\u308F\u3059",
-        type: "Transitive",
-        english: "I turn the table",
-        noun: "\u30C6\u30FC\u30D6\u30EB",
-        nounRuby: [
-            {
-                text: "\u30C6\u30FC\u30D6\u30EB",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u56DE",
-        verbRuby: [
-            {
-                text: "\u56DE",
-                rt: "\u307E\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u56DE",
-                rt: "\u307E\u308F"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.RotateCw),
-        color: "text-gray-600"
-    },
-    // --- LEVEL 4 (IDs 61-80) ---
-    {
-        id: 61,
-        level: 4,
-        politeSentence: "\u8155\u304C\u66F2\u304C\u308A\u307E\u3059",
-        politeKana: "\u3046\u3067\u304C\u307E\u304C\u308A\u307E\u3059",
-        plainSentence: "\u8155\u304C\u66F2\u304C\u308B",
-        plainKana: "\u3046\u3067\u304C\u307E\u304C\u308B",
-        type: "Intransitive",
-        english: "The arm bends",
-        noun: "\u8155",
-        nounRuby: [
-            {
-                text: "\u8155",
-                rt: "\u3046\u3067"
-            }
-        ],
-        verbPrompt: "\u66F2",
-        verbRuby: [
-            {
-                text: "\u66F2",
-                rt: "\u307E"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u66F2",
-                rt: "\u307E"
-            },
-            {
-                text: "\u304C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.User),
-        color: "text-orange-300"
-    },
-    {
-        id: 62,
-        level: 4,
-        politeSentence: "\u8155\u3092\u66F2\u3052\u307E\u3059",
-        politeKana: "\u3046\u3067\u3092\u307E\u3052\u307E\u3059",
-        plainSentence: "\u8155\u3092\u66F2\u3052\u308B",
-        plainKana: "\u3046\u3067\u3092\u307E\u3052\u308B",
-        type: "Transitive",
-        english: "I bend my arm",
-        noun: "\u8155",
-        nounRuby: [
-            {
-                text: "\u8155",
-                rt: "\u3046\u3067"
-            }
-        ],
-        verbPrompt: "\u66F2",
-        verbRuby: [
-            {
-                text: "\u66F2",
-                rt: "\u307E"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u66F2",
-                rt: "\u307E"
-            },
-            {
-                text: "\u3052",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.User),
-        color: "text-orange-500"
-    },
-    {
-        id: 63,
-        level: 4,
-        politeSentence: "\u9AA8\u304C\u6298\u308C\u307E\u3059",
-        politeKana: "\u307B\u306D\u304C\u304A\u308C\u307E\u3059",
-        plainSentence: "\u9AA8\u304C\u6298\u308C\u308B",
-        plainKana: "\u307B\u306D\u304C\u304A\u308C\u308B",
-        type: "Intransitive",
-        english: "The bone breaks",
-        noun: "\u9AA8",
-        nounRuby: [
-            {
-                text: "\u9AA8",
-                rt: "\u307B\u306D"
-            }
-        ],
-        verbPrompt: "\u6298",
-        verbRuby: [
-            {
-                text: "\u6298",
-                rt: "\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6298",
-                rt: "\u304A"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Bone),
-        color: "text-gray-300"
-    },
-    {
-        id: 64,
-        level: 4,
-        politeSentence: "\u9AA8\u3092\u6298\u308A\u307E\u3059",
-        politeKana: "\u307B\u306D\u3092\u304A\u308A\u307E\u3059",
-        plainSentence: "\u9AA8\u3092\u6298\u308B",
-        plainKana: "\u307B\u306D\u3092\u304A\u308B",
-        type: "Transitive",
-        english: "I break a bone",
-        noun: "\u9AA8",
-        nounRuby: [
-            {
-                text: "\u9AA8",
-                rt: "\u307B\u306D"
-            }
-        ],
-        verbPrompt: "\u6298",
-        verbRuby: [
-            {
-                text: "\u6298",
-                rt: "\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6298",
-                rt: "\u304A"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Bone),
-        color: "text-gray-500"
-    },
-    {
-        id: 65,
-        level: 4,
-        politeSentence: "\u4EBA\u304C\u96C6\u307E\u308A\u307E\u3059",
-        politeKana: "\u3072\u3068\u304C\u3042\u3064\u307E\u308A\u307E\u3059",
-        plainSentence: "\u4EBA\u304C\u96C6\u307E\u308B",
-        plainKana: "\u3072\u3068\u304C\u3042\u3064\u307E\u308B",
-        type: "Intransitive",
-        english: "People gather",
-        noun: "\u4EBA",
-        nounRuby: [
-            {
-                text: "\u4EBA",
-                rt: "\u3072\u3068"
-            }
-        ],
-        verbPrompt: "\u96C6",
-        verbRuby: [
-            {
-                text: "\u96C6",
-                rt: "\u3042\u3064"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u96C6",
-                rt: "\u3042\u3064"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Users),
-        color: "text-blue-400"
-    },
-    {
-        id: 66,
-        level: 4,
-        politeSentence: "\u4EBA\u3092\u96C6\u3081\u307E\u3059",
-        politeKana: "\u3072\u3068\u3092\u3042\u3064\u3081\u307E\u3059",
-        plainSentence: "\u4EBA\u3092\u96C6\u3081\u308B",
-        plainKana: "\u3072\u3068\u3092\u3042\u3064\u3081\u308B",
-        type: "Transitive",
-        english: "I gather people",
-        noun: "\u4EBA",
-        nounRuby: [
-            {
-                text: "\u4EBA",
-                rt: "\u3072\u3068"
-            }
-        ],
-        verbPrompt: "\u96C6",
-        verbRuby: [
-            {
-                text: "\u96C6",
-                rt: "\u3042\u3064"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u96C6",
-                rt: "\u3042\u3064"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Users),
-        color: "text-green-400"
-    },
-    {
-        id: 67,
-        level: 4,
-        politeSentence: "\u4EBA\u304C\u4E26\u3073\u307E\u3059",
-        politeKana: "\u3072\u3068\u304C\u306A\u3089\u3073\u307E\u3059",
-        plainSentence: "\u4EBA\u304C\u4E26\u3076",
-        plainKana: "\u3072\u3068\u304C\u306A\u3089\u3076",
-        type: "Intransitive",
-        english: "People line up",
-        noun: "\u4EBA",
-        nounRuby: [
-            {
-                text: "\u4EBA",
-                rt: "\u3072\u3068"
-            }
-        ],
-        verbPrompt: "\u4E26",
-        verbRuby: [
-            {
-                text: "\u4E26",
-                rt: "\u306A\u3089"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E26",
-                rt: "\u306A\u3089"
-            },
-            {
-                text: "\u3076",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Users),
-        color: "text-indigo-400"
-    },
-    {
-        id: 68,
-        level: 4,
-        politeSentence: "\u4EBA\u3092\u4E26\u3079\u307E\u3059",
-        politeKana: "\u3072\u3068\u3092\u306A\u3089\u3079\u307E\u3059",
-        plainSentence: "\u4EBA\u3092\u4E26\u3079\u308B",
-        plainKana: "\u3072\u3068\u3092\u306A\u3089\u3079\u308B",
-        type: "Transitive",
-        english: "I line people up",
-        noun: "\u4EBA",
-        nounRuby: [
-            {
-                text: "\u4EBA",
-                rt: "\u3072\u3068"
-            }
-        ],
-        verbPrompt: "\u4E26",
-        verbRuby: [
-            {
-                text: "\u4E26",
-                rt: "\u306A\u3089"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E26",
-                rt: "\u306A\u3089"
-            },
-            {
-                text: "\u3079",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Users),
-        color: "text-indigo-600"
-    },
-    {
-        id: 69,
-        level: 4,
-        politeSentence: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u307E\u3059",
-        politeKana: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u307E\u3059",
-        plainSentence: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u308B",
-        plainKana: "\u30B3\u30FC\u30D2\u30FC\u304C\u3053\u307C\u308C\u308B",
-        type: "Intransitive",
-        english: "The coffee spills",
-        noun: "\u30B3\u30FC\u30D2\u30FC",
-        nounRuby: [
-            {
-                text: "\u30B3\u30FC\u30D2\u30FC",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u3053\u307C",
-        verbRuby: [
-            {
-                text: "\u3053\u307C",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u3053\u307C",
-                rt: ""
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Coffee),
-        color: "text-amber-700"
-    },
-    {
-        id: 70,
-        level: 4,
-        politeSentence: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3057\u307E\u3059",
-        politeKana: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3057\u307E\u3059",
-        plainSentence: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3059",
-        plainKana: "\u30B3\u30FC\u30D2\u30FC\u3092\u3053\u307C\u3059",
-        type: "Transitive",
-        english: "I spill the coffee",
-        noun: "\u30B3\u30FC\u30D2\u30FC",
-        nounRuby: [
-            {
-                text: "\u30B3\u30FC\u30D2\u30FC",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u3053\u307C",
-        verbRuby: [
-            {
-                text: "\u3053\u307C",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u3053\u307C",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Coffee),
-        color: "text-amber-900"
-    },
-    {
-        id: 71,
-        level: 4,
-        politeSentence: "\u5375\u304C\u5272\u308C\u307E\u3059",
-        politeKana: "\u305F\u307E\u3054\u304C\u308F\u308C\u307E\u3059",
-        plainSentence: "\u5375\u304C\u5272\u308C\u308B",
-        plainKana: "\u305F\u307E\u3054\u304C\u308F\u308C\u308B",
-        type: "Intransitive",
-        english: "The egg breaks",
-        noun: "\u5375",
-        nounRuby: [
-            {
-                text: "\u5375",
-                rt: "\u305F\u307E\u3054"
-            }
-        ],
-        verbPrompt: "\u5272",
-        verbRuby: [
-            {
-                text: "\u5272",
-                rt: "\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5272",
-                rt: "\u308F"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Egg),
-        color: "text-yellow-200"
-    },
-    {
-        id: 72,
-        level: 4,
-        politeSentence: "\u5375\u3092\u5272\u308A\u307E\u3059",
-        politeKana: "\u305F\u307E\u3054\u3092\u308F\u308A\u307E\u3059",
-        plainSentence: "\u5375\u3092\u5272\u308B",
-        plainKana: "\u305F\u307E\u3054\u3092\u308F\u308B",
-        type: "Transitive",
-        english: "I break the egg",
-        noun: "\u5375",
-        nounRuby: [
-            {
-                text: "\u5375",
-                rt: "\u305F\u307E\u3054"
-            }
-        ],
-        verbPrompt: "\u5272",
-        verbRuby: [
-            {
-                text: "\u5272",
-                rt: "\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5272",
-                rt: "\u308F"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Egg),
-        color: "text-yellow-400"
-    },
-    {
-        id: 73,
-        level: 4,
-        politeSentence: "\u30ED\u30FC\u30D7\u304C\u5207\u308C\u307E\u3059",
-        politeKana: "\u30ED\u30FC\u30D7\u304C\u304D\u308C\u307E\u3059",
-        plainSentence: "\u30ED\u30FC\u30D7\u304C\u5207\u308C\u308B",
-        plainKana: "\u30ED\u30FC\u30D7\u304C\u304D\u308C\u308B",
-        type: "Intransitive",
-        english: "The rope snaps",
-        noun: "\u30ED\u30FC\u30D7",
-        nounRuby: [
-            {
-                text: "\u30ED\u30FC\u30D7",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u5207",
-        verbRuby: [
-            {
-                text: "\u5207",
-                rt: "\u304D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5207",
-                rt: "\u304D"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Scissors),
-        color: "text-red-400"
-    },
-    {
-        id: 74,
-        level: 4,
-        politeSentence: "\u30ED\u30FC\u30D7\u3092\u5207\u308A\u307E\u3059",
-        politeKana: "\u30ED\u30FC\u30D7\u3092\u304D\u308A\u307E\u3059",
-        plainSentence: "\u30ED\u30FC\u30D7\u3092\u5207\u308B",
-        plainKana: "\u30ED\u30FC\u30D7\u3092\u304D\u308B",
-        type: "Transitive",
-        english: "I cut the rope",
-        noun: "\u30ED\u30FC\u30D7",
-        nounRuby: [
-            {
-                text: "\u30ED\u30FC\u30D7",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u5207",
-        verbRuby: [
-            {
-                text: "\u5207",
-                rt: "\u304D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5207",
-                rt: "\u304D"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Scissors),
-        color: "text-red-600"
-    },
-    {
-        id: 75,
-        level: 4,
-        politeSentence: "\u3054\u307F\u304C\u71C3\u3048\u307E\u3059",
-        politeKana: "\u3054\u307F\u304C\u3082\u3048\u307E\u3059",
-        plainSentence: "\u3054\u307F\u304C\u71C3\u3048\u308B",
-        plainKana: "\u3054\u307F\u304C\u3082\u3048\u308B",
-        type: "Intransitive",
-        english: "The trash burns",
-        noun: "\u3054\u307F",
-        nounRuby: [
-            {
-                text: "\u3054\u307F",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u71C3",
-        verbRuby: [
-            {
-                text: "\u71C3",
-                rt: "\u3082"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u71C3",
-                rt: "\u3082"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Trash2),
-        color: "text-orange-500"
-    },
-    {
-        id: 76,
-        level: 4,
-        politeSentence: "\u3054\u307F\u3092\u71C3\u3084\u3057\u307E\u3059",
-        politeKana: "\u3054\u307F\u3092\u3082\u3084\u3057\u307E\u3059",
-        plainSentence: "\u3054\u307F\u3092\u71C3\u3084\u3059",
-        plainKana: "\u3054\u307F\u3092\u3082\u3084\u3059",
-        type: "Transitive",
-        english: "I burn the trash",
-        noun: "\u3054\u307F",
-        nounRuby: [
-            {
-                text: "\u3054\u307F",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u71C3",
-        verbRuby: [
-            {
-                text: "\u71C3",
-                rt: "\u3082"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u71C3",
-                rt: "\u3082"
-            },
-            {
-                text: "\u3084",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Trash2),
-        color: "text-orange-700"
-    },
-    {
-        id: 77,
-        level: 4,
-        politeSentence: "\u30DC\u30BF\u30F3\u304C\u53D6\u308C\u307E\u3059",
-        politeKana: "\u30DC\u30BF\u30F3\u304C\u3068\u308C\u307E\u3059",
-        plainSentence: "\u30DC\u30BF\u30F3\u304C\u53D6\u308C\u308B",
-        plainKana: "\u30DC\u30BF\u30F3\u304C\u3068\u308C\u308B",
-        type: "Intransitive",
-        english: "The button comes off",
-        noun: "\u30DC\u30BF\u30F3",
-        nounRuby: [
-            {
-                text: "\u30DC\u30BF\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u53D6",
-        verbRuby: [
-            {
-                text: "\u53D6",
-                rt: "\u3068"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u53D6",
-                rt: "\u3068"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CircleDot),
-        color: "text-purple-400"
-    },
-    {
-        id: 78,
-        level: 4,
-        politeSentence: "\u30DC\u30BF\u30F3\u3092\u53D6\u308A\u307E\u3059",
-        politeKana: "\u30DC\u30BF\u30F3\u3092\u3068\u308A\u307E\u3059",
-        plainSentence: "\u30DC\u30BF\u30F3\u3092\u53D6\u308B",
-        plainKana: "\u30DC\u30BF\u30F3\u3092\u3068\u308B",
-        type: "Transitive",
-        english: "I take the button",
-        noun: "\u30DC\u30BF\u30F3",
-        nounRuby: [
-            {
-                text: "\u30DC\u30BF\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u53D6",
-        verbRuby: [
-            {
-                text: "\u53D6",
-                rt: "\u3068"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u53D6",
-                rt: "\u3068"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CircleDot),
-        color: "text-purple-600"
-    },
-    {
-        id: 79,
-        level: 4,
-        politeSentence: "\u30DC\u30BF\u30F3\u304C\u5916\u308C\u307E\u3059",
-        politeKana: "\u30DC\u30BF\u30F3\u304C\u306F\u305A\u308C\u307E\u3059",
-        plainSentence: "\u30DC\u30BF\u30F3\u304C\u5916\u308C\u308B",
-        plainKana: "\u30DC\u30BF\u30F3\u304C\u306F\u305A\u308C\u308B",
-        type: "Intransitive",
-        english: "The button gets undone",
-        noun: "\u30DC\u30BF\u30F3",
-        nounRuby: [
-            {
-                text: "\u30DC\u30BF\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u5916",
-        verbRuby: [
-            {
-                text: "\u5916",
-                rt: "\u306F\u305A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5916",
-                rt: "\u306F\u305A"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CircleDot),
-        color: "text-blue-400"
-    },
-    {
-        id: 80,
-        level: 4,
-        politeSentence: "\u30DC\u30BF\u30F3\u3092\u5916\u3057\u307E\u3059",
-        politeKana: "\u30DC\u30BF\u30F3\u3092\u306F\u305A\u3057\u307E\u3059",
-        plainSentence: "\u30DC\u30BF\u30F3\u3092\u5916\u3059",
-        plainKana: "\u30DC\u30BF\u30F3\u3092\u306F\u305A\u3059",
-        type: "Transitive",
-        english: "I undo the button",
-        noun: "\u30DC\u30BF\u30F3",
-        nounRuby: [
-            {
-                text: "\u30DC\u30BF\u30F3",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u5916",
-        verbRuby: [
-            {
-                text: "\u5916",
-                rt: "\u306F\u305A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5916",
-                rt: "\u306F\u305A"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CircleDot),
-        color: "text-blue-600"
-    },
-    // --- LEVEL 5 (IDs 81-100) ---
-    {
-        id: 81,
-        level: 5,
-        politeSentence: "\u30D3\u30FC\u30EB\u304C\u58F2\u308C\u307E\u3059",
-        politeKana: "\u30D3\u30FC\u30EB\u304C\u3046\u308C\u307E\u3059",
-        plainSentence: "\u30D3\u30FC\u30EB\u304C\u58F2\u308C\u308B",
-        plainKana: "\u30D3\u30FC\u30EB\u304C\u3046\u308C\u308B",
-        type: "Intransitive",
-        english: "The beer sells (well)",
-        noun: "\u30D3\u30FC\u30EB",
-        nounRuby: [
-            {
-                text: "\u30D3\u30FC\u30EB",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u58F2",
-        verbRuby: [
-            {
-                text: "\u58F2",
-                rt: "\u3046"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u58F2",
-                rt: "\u3046"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Beer),
-        color: "text-yellow-500"
-    },
-    {
-        id: 82,
-        level: 5,
-        politeSentence: "\u30D3\u30FC\u30EB\u3092\u58F2\u308A\u307E\u3059",
-        politeKana: "\u30D3\u30FC\u30EB\u3092\u3046\u308A\u307E\u3059",
-        plainSentence: "\u30D3\u30FC\u30EB\u3092\u58F2\u308B",
-        plainKana: "\u30D3\u30FC\u30EB\u3092\u3046\u308B",
-        type: "Transitive",
-        english: "I sell beer",
-        noun: "\u30D3\u30FC\u30EB",
-        nounRuby: [
-            {
-                text: "\u30D3\u30FC\u30EB",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u58F2",
-        verbRuby: [
-            {
-                text: "\u58F2",
-                rt: "\u3046"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u58F2",
-                rt: "\u3046"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Beer),
-        color: "text-yellow-700"
-    },
-    {
-        id: 83,
-        level: 5,
-        politeSentence: "\u66F8\u985E\u304C\u63C3\u3044\u307E\u3059",
-        politeKana: "\u3057\u3087\u308B\u3044\u304C\u305D\u308D\u3044\u307E\u3059",
-        plainSentence: "\u66F8\u985E\u304C\u63C3\u3046",
-        plainKana: "\u3057\u3087\u308B\u3044\u304C\u305D\u308D\u3046",
-        type: "Intransitive",
-        english: "The documents are gathered",
-        noun: "\u66F8\u985E",
-        nounRuby: [
-            {
-                text: "\u66F8",
-                rt: "\u3057\u3087"
-            },
-            {
-                text: "\u985E",
-                rt: "\u308B\u3044"
-            }
-        ],
-        verbPrompt: "\u63C3",
-        verbRuby: [
-            {
-                text: "\u63C3",
-                rt: "\u305D\u308D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u63C3",
-                rt: "\u305D\u308D"
-            },
-            {
-                text: "\u3046",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Files),
-        color: "text-gray-400"
-    },
-    {
-        id: 84,
-        level: 5,
-        politeSentence: "\u66F8\u985E\u3092\u63C3\u3048\u307E\u3059",
-        politeKana: "\u3057\u3087\u308B\u3044\u3092\u305D\u308D\u3048\u307E\u3059",
-        plainSentence: "\u66F8\u985E\u3092\u63C3\u3048\u308B",
-        plainKana: "\u3057\u3087\u308B\u3044\u3092\u305D\u308D\u3048\u308B",
-        type: "Transitive",
-        english: "I gather/arrange the documents",
-        noun: "\u66F8\u985E",
-        nounRuby: [
-            {
-                text: "\u66F8",
-                rt: "\u3057\u3087"
-            },
-            {
-                text: "\u985E",
-                rt: "\u308B\u3044"
-            }
-        ],
-        verbPrompt: "\u63C3",
-        verbRuby: [
-            {
-                text: "\u63C3",
-                rt: "\u305D\u308D"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u63C3",
-                rt: "\u305D\u308D"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Files),
-        color: "text-gray-600"
-    },
-    {
-        id: 85,
-        level: 5,
-        politeSentence: "\u4ED5\u4E8B\u304C\u9032\u307F\u307E\u3059",
-        politeKana: "\u3057\u3054\u3068\u304C\u3059\u3059\u307F\u307E\u3059",
-        plainSentence: "\u4ED5\u4E8B\u304C\u9032\u3080",
-        plainKana: "\u3057\u3054\u3068\u304C\u3059\u3059\u3080",
-        type: "Intransitive",
-        english: "The work progresses",
-        noun: "\u4ED5\u4E8B",
-        nounRuby: [
-            {
-                text: "\u4ED5",
-                rt: "\u3057"
-            },
-            {
-                text: "\u4E8B",
-                rt: "\u3054\u3068"
-            }
-        ],
-        verbPrompt: "\u9032",
-        verbRuby: [
-            {
-                text: "\u9032",
-                rt: "\u3059\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u9032",
-                rt: "\u3059\u3059"
-            },
-            {
-                text: "\u3080",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.ArrowRight),
-        color: "text-blue-400"
-    },
-    {
-        id: 86,
-        level: 5,
-        politeSentence: "\u4ED5\u4E8B\u3092\u9032\u3081\u307E\u3059",
-        politeKana: "\u3057\u3054\u3068\u3092\u3059\u3059\u3081\u307E\u3059",
-        plainSentence: "\u4ED5\u4E8B\u3092\u9032\u3081\u308B",
-        plainKana: "\u3057\u3054\u3068\u3092\u3059\u3059\u3081\u308B",
-        type: "Transitive",
-        english: "I advance the work",
-        noun: "\u4ED5\u4E8B",
-        nounRuby: [
-            {
-                text: "\u4ED5",
-                rt: "\u3057"
-            },
-            {
-                text: "\u4E8B",
-                rt: "\u3054\u3068"
-            }
-        ],
-        verbPrompt: "\u9032",
-        verbRuby: [
-            {
-                text: "\u9032",
-                rt: "\u3059\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u9032",
-                rt: "\u3059\u3059"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.ArrowRight),
-        color: "text-green-400"
-    },
-    {
-        id: 87,
-        level: 5,
-        politeSentence: "\u4ED5\u4E8B\u304C\u6E08\u307F\u307E\u3059",
-        politeKana: "\u3057\u3054\u3068\u304C\u3059\u307F\u307E\u3059",
-        plainSentence: "\u4ED5\u4E8B\u304C\u6E08\u3080",
-        plainKana: "\u3057\u3054\u3068\u304C\u3059\u3080",
-        type: "Intransitive",
-        english: "The work is finished",
-        noun: "\u4ED5\u4E8B",
-        nounRuby: [
-            {
-                text: "\u4ED5",
-                rt: "\u3057"
-            },
-            {
-                text: "\u4E8B",
-                rt: "\u3054\u3068"
-            }
-        ],
-        verbPrompt: "\u6E08",
-        verbRuby: [
-            {
-                text: "\u6E08",
-                rt: "\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E08",
-                rt: "\u3059"
-            },
-            {
-                text: "\u3080",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CheckCheck),
-        color: "text-green-500"
-    },
-    {
-        id: 88,
-        level: 5,
-        politeSentence: "\u4ED5\u4E8B\u3092\u6E08\u307E\u305B\u307E\u3059",
-        politeKana: "\u3057\u3054\u3068\u3092\u3059\u307E\u305B\u307E\u3059",
-        plainSentence: "\u4ED5\u4E8B\u3092\u6E08\u307E\u305B\u308B",
-        plainKana: "\u3057\u3054\u3068\u3092\u3059\u307E\u305B\u308B",
-        type: "Transitive",
-        english: "I finish the work",
-        noun: "\u4ED5\u4E8B",
-        nounRuby: [
-            {
-                text: "\u4ED5",
-                rt: "\u3057"
-            },
-            {
-                text: "\u4E8B",
-                rt: "\u3054\u3068"
-            }
-        ],
-        verbPrompt: "\u6E08",
-        verbRuby: [
-            {
-                text: "\u6E08",
-                rt: "\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E08",
-                rt: "\u3059"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u305B",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.CheckCheck),
-        color: "text-green-700"
-    },
-    {
-        id: 89,
-        level: 5,
-        politeSentence: "\u6642\u9593\u304C\u904E\u304E\u307E\u3059",
-        politeKana: "\u3058\u304B\u3093\u304C\u3059\u304E\u307E\u3059",
-        plainSentence: "\u6642\u9593\u304C\u904E\u304E\u308B",
-        plainKana: "\u3058\u304B\u3093\u304C\u3059\u304E\u308B",
-        type: "Intransitive",
-        english: "Time passes",
-        noun: "\u6642\u9593",
-        nounRuby: [
-            {
-                text: "\u6642",
-                rt: "\u3058"
-            },
-            {
-                text: "\u9593",
-                rt: "\u304B\u3093"
-            }
-        ],
-        verbPrompt: "\u904E",
-        verbRuby: [
-            {
-                text: "\u904E",
-                rt: "\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u904E",
-                rt: "\u3059"
-            },
-            {
-                text: "\u304E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Clock),
-        color: "text-purple-400"
-    },
-    {
-        id: 90,
-        level: 5,
-        politeSentence: "\u6642\u9593\u3092\u904E\u3054\u3057\u307E\u3059",
-        politeKana: "\u3058\u304B\u3093\u3092\u3059\u3054\u3057\u307E\u3059",
-        plainSentence: "\u6642\u9593\u3092\u904E\u3054\u3059",
-        plainKana: "\u3058\u304B\u3093\u3092\u3059\u3054\u3059",
-        type: "Transitive",
-        english: "I spend time",
-        noun: "\u6642\u9593",
-        nounRuby: [
-            {
-                text: "\u6642",
-                rt: "\u3058"
-            },
-            {
-                text: "\u9593",
-                rt: "\u304B\u3093"
-            }
-        ],
-        verbPrompt: "\u904E",
-        verbRuby: [
-            {
-                text: "\u904E",
-                rt: "\u3059"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u904E",
-                rt: "\u3059"
-            },
-            {
-                text: "\u3054",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Clock),
-        color: "text-purple-600"
-    },
-    {
-        id: 91,
-        level: 5,
-        politeSentence: "\u30B9\u30C8\u30EC\u30B9\u304C\u6E9C\u307E\u308A\u307E\u3059",
-        politeKana: "\u30B9\u30C8\u30EC\u30B9\u304C\u305F\u307E\u308A\u307E\u3059",
-        plainSentence: "\u30B9\u30C8\u30EC\u30B9\u304C\u6E9C\u307E\u308B",
-        plainKana: "\u30B9\u30C8\u30EC\u30B9\u304C\u305F\u307E\u308B",
-        type: "Intransitive",
-        english: "Stress accumulates",
-        noun: "\u30B9\u30C8\u30EC\u30B9",
-        nounRuby: [
-            {
-                text: "\u30B9\u30C8\u30EC\u30B9",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u6E9C",
-        verbRuby: [
-            {
-                text: "\u6E9C",
-                rt: "\u305F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E9C",
-                rt: "\u305F"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Brain),
-        color: "text-red-400"
-    },
-    {
-        id: 92,
-        level: 5,
-        politeSentence: "\u30B9\u30C8\u30EC\u30B9\u3092\u6E9C\u3081\u307E\u3059",
-        politeKana: "\u30B9\u30C8\u30EC\u30B9\u3092\u305F\u3081\u307E\u3059",
-        plainSentence: "\u30B9\u30C8\u30EC\u30B9\u3092\u6E9C\u3081\u308B",
-        plainKana: "\u30B9\u30C8\u30EC\u30B9\u3092\u305F\u3081\u308B",
-        type: "Transitive",
-        english: "I build up stress",
-        noun: "\u30B9\u30C8\u30EC\u30B9",
-        nounRuby: [
-            {
-                text: "\u30B9\u30C8\u30EC\u30B9",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u6E9C",
-        verbRuby: [
-            {
-                text: "\u6E9C",
-                rt: "\u305F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E9C",
-                rt: "\u305F"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Brain),
-        color: "text-red-600"
-    },
-    {
-        id: 93,
-        level: 5,
-        politeSentence: "\u304A\u91D1\u304C\u8CAF\u307E\u308A\u307E\u3059",
-        politeKana: "\u304A\u304B\u306D\u304C\u305F\u307E\u308A\u307E\u3059",
-        plainSentence: "\u304A\u91D1\u304C\u8CAF\u307E\u308B",
-        plainKana: "\u304A\u304B\u306D\u304C\u305F\u307E\u308B",
-        type: "Intransitive",
-        english: "Money is saved",
-        noun: "\u304A\u91D1",
-        nounRuby: [
-            {
-                text: "\u304A",
-                rt: ""
-            },
-            {
-                text: "\u91D1",
-                rt: "\u304B\u306D"
-            }
-        ],
-        verbPrompt: "\u8CAF",
-        verbRuby: [
-            {
-                text: "\u8CAF",
-                rt: "\u305F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u8CAF",
-                rt: "\u305F"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Coins),
-        color: "text-yellow-400"
-    },
-    {
-        id: 94,
-        level: 5,
-        politeSentence: "\u304A\u91D1\u3092\u8CAF\u3081\u307E\u3059",
-        politeKana: "\u304A\u304B\u306D\u3092\u305F\u3081\u307E\u3059",
-        plainSentence: "\u304A\u91D1\u3092\u8CAF\u3081\u308B",
-        plainKana: "\u304A\u304B\u306D\u3092\u305F\u3081\u308B",
-        type: "Transitive",
-        english: "I save money",
-        noun: "\u304A\u91D1",
-        nounRuby: [
-            {
-                text: "\u304A",
-                rt: ""
-            },
-            {
-                text: "\u91D1",
-                rt: "\u304B\u306D"
-            }
-        ],
-        verbPrompt: "\u8CAF",
-        verbRuby: [
-            {
-                text: "\u8CAF",
-                rt: "\u305F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u8CAF",
-                rt: "\u305F"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Coins),
-        color: "text-yellow-600"
-    },
-    {
-        id: 95,
-        level: 5,
-        politeSentence: "\u6C34\u304C\u6D41\u308C\u307E\u3059",
-        politeKana: "\u307F\u305A\u304C\u306A\u304C\u308C\u307E\u3059",
-        plainSentence: "\u6C34\u304C\u6D41\u308C\u308B",
-        plainKana: "\u307F\u305A\u304C\u306A\u304C\u308C\u308B",
-        type: "Intransitive",
-        english: "Water flows",
-        noun: "\u6C34",
-        nounRuby: [
-            {
-                text: "\u6C34",
-                rt: "\u307F\u305A"
-            }
-        ],
-        verbPrompt: "\u6D41",
-        verbRuby: [
-            {
-                text: "\u6D41",
-                rt: "\u306A\u304C"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6D41",
-                rt: "\u306A\u304C"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Waves),
-        color: "text-blue-300"
-    },
-    {
-        id: 96,
-        level: 5,
-        politeSentence: "\u6C34\u3092\u6D41\u3057\u307E\u3059",
-        politeKana: "\u307F\u305A\u3092\u306A\u304C\u3057\u307E\u3059",
-        plainSentence: "\u6C34\u3092\u6D41\u3059",
-        plainKana: "\u307F\u305A\u3092\u306A\u304C\u3059",
-        type: "Transitive",
-        english: "I let the water flow",
-        noun: "\u6C34",
-        nounRuby: [
-            {
-                text: "\u6C34",
-                rt: "\u307F\u305A"
-            }
-        ],
-        verbPrompt: "\u6D41",
-        verbRuby: [
-            {
-                text: "\u6D41",
-                rt: "\u306A\u304C"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6D41",
-                rt: "\u306A\u304C"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Waves),
-        color: "text-blue-500"
-    },
-    {
-        id: 97,
-        level: 5,
-        politeSentence: "\u6728\u304C\u5012\u308C\u307E\u3059",
-        politeKana: "\u304D\u304C\u305F\u304A\u308C\u307E\u3059",
-        plainSentence: "\u6728\u304C\u5012\u308C\u308B",
-        plainKana: "\u304D\u304C\u305F\u304A\u308C\u308B",
-        type: "Intransitive",
-        english: "The tree falls down",
-        noun: "\u6728",
-        nounRuby: [
-            {
-                text: "\u6728",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u5012",
-        verbRuby: [
-            {
-                text: "\u5012",
-                rt: "\u305F\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5012",
-                rt: "\u305F\u304A"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Trees),
-        color: "text-green-800"
-    },
-    {
-        id: 98,
-        level: 5,
-        politeSentence: "\u6728\u3092\u5012\u3057\u307E\u3059",
-        politeKana: "\u304D\u3092\u305F\u304A\u3057\u307E\u3059",
-        plainSentence: "\u6728\u3092\u5012\u3059",
-        plainKana: "\u304D\u3092\u305F\u304A\u3059",
-        type: "Transitive",
-        english: "I knock down the tree",
-        noun: "\u6728",
-        nounRuby: [
-            {
-                text: "\u6728",
-                rt: "\u304D"
-            }
-        ],
-        verbPrompt: "\u5012",
-        verbRuby: [
-            {
-                text: "\u5012",
-                rt: "\u305F\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5012",
-                rt: "\u305F\u304A"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Trees),
-        color: "text-green-900"
-    },
-    {
-        id: 99,
-        level: 5,
-        politeSentence: "\u7D19\u304C\u7834\u308C\u307E\u3059",
-        politeKana: "\u304B\u307F\u304C\u3084\u3076\u308C\u307E\u3059",
-        plainSentence: "\u7D19\u304C\u7834\u308C\u308B",
-        plainKana: "\u304B\u307F\u304C\u3084\u3076\u308C\u308B",
-        type: "Intransitive",
-        english: "The paper tears",
-        noun: "\u7D19",
-        nounRuby: [
-            {
-                text: "\u7D19",
-                rt: "\u304B\u307F"
-            }
-        ],
-        verbPrompt: "\u7834",
-        verbRuby: [
-            {
-                text: "\u7834",
-                rt: "\u3084\u3076"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u7834",
-                rt: "\u3084\u3076"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.FileX),
-        color: "text-gray-300"
-    },
-    {
-        id: 100,
-        level: 5,
-        politeSentence: "\u7D19\u3092\u7834\u308A\u307E\u3059",
-        politeKana: "\u304B\u307F\u3092\u3084\u3076\u308A\u307E\u3059",
-        plainSentence: "\u7D19\u3092\u7834\u308B",
-        plainKana: "\u304B\u307F\u3092\u3084\u3076\u308B",
-        type: "Transitive",
-        english: "I tear the paper",
-        noun: "\u7D19",
-        nounRuby: [
-            {
-                text: "\u7D19",
-                rt: "\u304B\u307F"
-            }
-        ],
-        verbPrompt: "\u7834",
-        verbRuby: [
-            {
-                text: "\u7834",
-                rt: "\u3084\u3076"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u7834",
-                rt: "\u3084\u3076"
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.FileX),
-        color: "text-gray-500"
-    },
-    // --- LEVEL 6 (IDs 101-120) ---
-    {
-        id: 101,
-        level: 6,
-        politeSentence: "\u9AEA\u304C\u4E7E\u304D\u307E\u3059",
-        politeKana: "\u304B\u307F\u304C\u304B\u308F\u304D\u307E\u3059",
-        plainSentence: "\u9AEA\u304C\u4E7E\u304F",
-        plainKana: "\u304B\u307F\u304C\u304B\u308F\u304F",
-        type: "Intransitive",
-        english: "Hair dries",
-        noun: "\u9AEA",
-        nounRuby: [
-            {
-                text: "\u9AEA",
-                rt: "\u304B\u307F"
-            }
-        ],
-        verbPrompt: "\u4E7E",
-        verbRuby: [
-            {
-                text: "\u4E7E",
-                rt: "\u304B\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E7E",
-                rt: "\u304B\u308F"
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Wind),
-        color: "text-blue-200"
-    },
-    {
-        id: 102,
-        level: 6,
-        politeSentence: "\u9AEA\u3092\u4E7E\u304B\u3057\u307E\u3059",
-        politeKana: "\u304B\u307F\u3092\u304B\u308F\u304B\u3057\u307E\u3059",
-        plainSentence: "\u9AEA\u3092\u4E7E\u304B\u3059",
-        plainKana: "\u304B\u307F\u3092\u304B\u308F\u304B\u3059",
-        type: "Transitive",
-        english: "I dry my hair",
-        noun: "\u9AEA",
-        nounRuby: [
-            {
-                text: "\u9AEA",
-                rt: "\u304B\u307F"
-            }
-        ],
-        verbPrompt: "\u4E7E",
-        verbRuby: [
-            {
-                text: "\u4E7E",
-                rt: "\u304B\u308F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u4E7E",
-                rt: "\u304B\u308F"
-            },
-            {
-                text: "\u304B",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Wind),
-        color: "text-blue-400"
-    },
-    {
-        id: 103,
-        level: 6,
-        politeSentence: "\u4F53\u304C\u51B7\u3048\u307E\u3059",
-        politeKana: "\u304B\u3089\u3060\u304C\u3072\u3048\u307E\u3059",
-        plainSentence: "\u4F53\u304C\u51B7\u3048\u308B",
-        plainKana: "\u304B\u3089\u3060\u304C\u3072\u3048\u308B",
-        type: "Intransitive",
-        english: "Body cools down",
-        noun: "\u4F53",
-        nounRuby: [
-            {
-                text: "\u4F53",
-                rt: "\u304B\u3089\u3060"
-            }
-        ],
-        verbPrompt: "\u51B7",
-        verbRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3072"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3072"
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.ThermometerSnowflake),
-        color: "text-blue-300"
-    },
-    {
-        id: 104,
-        level: 6,
-        politeSentence: "\u4F53\u3092\u51B7\u3084\u3057\u307E\u3059",
-        politeKana: "\u304B\u3089\u3060\u3092\u3072\u3084\u3057\u307E\u3059",
-        plainSentence: "\u4F53\u3092\u51B7\u3084\u3059",
-        plainKana: "\u304B\u3089\u3060\u3092\u3072\u3084\u3059",
-        type: "Transitive",
-        english: "I cool my body",
-        noun: "\u4F53",
-        nounRuby: [
-            {
-                text: "\u4F53",
-                rt: "\u304B\u3089\u3060"
-            }
-        ],
-        verbPrompt: "\u51B7",
-        verbRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3072"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3072"
-            },
-            {
-                text: "\u3084",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.ThermometerSnowflake),
-        color: "text-blue-500"
-    },
-    {
-        id: 105,
-        level: 6,
-        politeSentence: "\u4F53\u304C\u6E29\u307E\u308A\u307E\u3059",
-        politeKana: "\u304B\u3089\u3060\u304C\u3042\u305F\u305F\u307E\u308A\u307E\u3059",
-        plainSentence: "\u4F53\u304C\u6E29\u307E\u308B",
-        plainKana: "\u304B\u3089\u3060\u304C\u3042\u305F\u305F\u307E\u308B",
-        type: "Intransitive",
-        english: "Body warms up",
-        noun: "\u4F53",
-        nounRuby: [
-            {
-                text: "\u4F53",
-                rt: "\u304B\u3089\u3060"
-            }
-        ],
-        verbPrompt: "\u6E29",
-        verbRuby: [
-            {
-                text: "\u6E29",
-                rt: "\u3042\u305F\u305F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E29",
-                rt: "\u3042\u305F\u305F"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.ThermometerSun),
-        color: "text-orange-300"
-    },
-    {
-        id: 106,
-        level: 6,
-        politeSentence: "\u4F53\u3092\u6E29\u3081\u307E\u3059",
-        politeKana: "\u304B\u3089\u3060\u3092\u3042\u305F\u305F\u3081\u307E\u3059",
-        plainSentence: "\u4F53\u3092\u6E29\u3081\u308B",
-        plainKana: "\u304B\u3089\u3060\u3092\u3042\u305F\u305F\u3081\u308B",
-        type: "Transitive",
-        english: "I warm my body",
-        noun: "\u4F53",
-        nounRuby: [
-            {
-                text: "\u4F53",
-                rt: "\u304B\u3089\u3060"
-            }
-        ],
-        verbPrompt: "\u6E29",
-        verbRuby: [
-            {
-                text: "\u6E29",
-                rt: "\u3042\u305F\u305F"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6E29",
-                rt: "\u3042\u305F\u305F"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.ThermometerSun),
-        color: "text-orange-500"
-    },
-    {
-        id: 107,
-        level: 6,
-        politeSentence: "\u30B9\u30FC\u30D7\u304C\u51B7\u3081\u307E\u3059",
-        politeKana: "\u30B9\u30FC\u30D7\u304C\u3055\u3081\u307E\u3059",
-        plainSentence: "\u30B9\u30FC\u30D7\u304C\u51B7\u3081\u308B",
-        plainKana: "\u30B9\u30FC\u30D7\u304C\u3055\u3081\u308B",
-        type: "Intransitive",
-        english: "The soup cools down",
-        noun: "\u30B9\u30FC\u30D7",
-        nounRuby: [
-            {
-                text: "\u30B9\u30FC\u30D7",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u51B7",
-        verbRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3055"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3055"
-            },
-            {
-                text: "\u3081",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Soup),
-        color: "text-blue-200"
-    },
-    {
-        id: 108,
-        level: 6,
-        politeSentence: "\u30B9\u30FC\u30D7\u3092\u51B7\u307E\u3057\u307E\u3059",
-        politeKana: "\u30B9\u30FC\u30D7\u3092\u3055\u307E\u3057\u307E\u3059",
-        plainSentence: "\u30B9\u30FC\u30D7\u3092\u51B7\u307E\u3059",
-        plainKana: "\u30B9\u30FC\u30D7\u3092\u3055\u307E\u3059",
-        type: "Transitive",
-        english: "I let the soup cool",
-        noun: "\u30B9\u30FC\u30D7",
-        nounRuby: [
-            {
-                text: "\u30B9\u30FC\u30D7",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u51B7",
-        verbRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3055"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u51B7",
-                rt: "\u3055"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Soup),
-        color: "text-blue-400"
-    },
-    {
-        id: 109,
-        level: 6,
-        politeSentence: "\u670D\u304C\u6C5A\u308C\u307E\u3059",
-        politeKana: "\u3075\u304F\u304C\u3088\u3054\u308C\u307E\u3059",
-        plainSentence: "\u670D\u304C\u6C5A\u308C\u308B",
-        plainKana: "\u3075\u304F\u304C\u3088\u3054\u308C\u308B",
-        type: "Intransitive",
-        english: "Clothes get dirty",
-        noun: "\u670D",
-        nounRuby: [
-            {
-                text: "\u670D",
-                rt: "\u3075\u304F"
-            }
-        ],
-        verbPrompt: "\u6C5A",
-        verbRuby: [
-            {
-                text: "\u6C5A",
-                rt: "\u3088\u3054"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6C5A",
-                rt: "\u3088\u3054"
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Shirt),
-        color: "text-gray-500"
-    },
-    {
-        id: 110,
-        level: 6,
-        politeSentence: "\u670D\u3092\u6C5A\u3057\u307E\u3059",
-        politeKana: "\u3075\u304F\u3092\u3088\u3054\u3057\u307E\u3059",
-        plainSentence: "\u670D\u3092\u6C5A\u3059",
-        plainKana: "\u3075\u304F\u3092\u3088\u3054\u3059",
-        type: "Transitive",
-        english: "I get clothes dirty",
-        noun: "\u670D",
-        nounRuby: [
-            {
-                text: "\u670D",
-                rt: "\u3075\u304F"
-            }
-        ],
-        verbPrompt: "\u6C5A",
-        verbRuby: [
-            {
-                text: "\u6C5A",
-                rt: "\u3088\u3054"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6C5A",
-                rt: "\u3088\u3054"
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Shirt),
-        color: "text-gray-700"
-    },
-    {
-        id: 111,
-        level: 6,
-        politeSentence: "\u5B50\u3069\u3082\u304C\u8D77\u304D\u307E\u3059",
-        politeKana: "\u3053\u3069\u3082\u304C\u304A\u304D\u307E\u3059",
-        plainSentence: "\u5B50\u3069\u3082\u304C\u8D77\u304D\u308B",
-        plainKana: "\u3053\u3069\u3082\u304C\u304A\u304D\u308B",
-        type: "Intransitive",
-        english: "The child wakes up",
-        noun: "\u5B50\u3069\u3082",
-        nounRuby: [
-            {
-                text: "\u5B50",
-                rt: "\u3053"
-            },
-            {
-                text: "\u3069\u3082",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u8D77",
-        verbRuby: [
-            {
-                text: "\u8D77",
-                rt: "\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u8D77",
-                rt: "\u304A"
-            },
-            {
-                text: "\u304D",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Sun),
-        color: "text-yellow-400"
-    },
-    {
-        id: 112,
-        level: 6,
-        politeSentence: "\u5B50\u3069\u3082\u3092\u8D77\u3053\u3057\u307E\u3059",
-        politeKana: "\u3053\u3069\u3082\u3092\u304A\u3053\u3057\u307E\u3059",
-        plainSentence: "\u5B50\u3069\u3082\u3092\u8D77\u3053\u3059",
-        plainKana: "\u3053\u3069\u3082\u3092\u304A\u3053\u3059",
-        type: "Transitive",
-        english: "I wake the child up",
-        noun: "\u5B50\u3069\u3082",
-        nounRuby: [
-            {
-                text: "\u5B50",
-                rt: "\u3053"
-            },
-            {
-                text: "\u3069\u3082",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u8D77",
-        verbRuby: [
-            {
-                text: "\u8D77",
-                rt: "\u304A"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u8D77",
-                rt: "\u304A"
-            },
-            {
-                text: "\u3053",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Sun),
-        color: "text-yellow-600"
-    },
-    {
-        id: 113,
-        level: 6,
-        politeSentence: "\u76AE\u304C\u3080\u3051\u307E\u3059",
-        politeKana: "\u304B\u308F\u304C\u3080\u3051\u307E\u3059",
-        plainSentence: "\u76AE\u304C\u3080\u3051\u308B",
-        plainKana: "\u304B\u308F\u304C\u3080\u3051\u308B",
-        type: "Intransitive",
-        english: "The skin peels",
-        noun: "\u76AE",
-        nounRuby: [
-            {
-                text: "\u76AE",
-                rt: "\u304B\u308F"
-            }
-        ],
-        verbPrompt: "\u3080",
-        verbRuby: [
-            {
-                text: "\u3080",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u3080",
-                rt: ""
-            },
-            {
-                text: "\u3051",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Banana),
-        color: "text-yellow-300"
-    },
-    {
-        id: 114,
-        level: 6,
-        politeSentence: "\u76AE\u3092\u3080\u304D\u307E\u3059",
-        politeKana: "\u304B\u308F\u3092\u3080\u304D\u307E\u3059",
-        plainSentence: "\u76AE\u3092\u3080\u304F",
-        plainKana: "\u304B\u308F\u3092\u3080\u304F",
-        type: "Transitive",
-        english: "I peel the skin",
-        noun: "\u76AE",
-        nounRuby: [
-            {
-                text: "\u76AE",
-                rt: "\u304B\u308F"
-            }
-        ],
-        verbPrompt: "\u3080",
-        verbRuby: [
-            {
-                text: "\u3080",
-                rt: ""
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u3080",
-                rt: ""
-            },
-            {
-                text: "\u304F",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Banana),
-        color: "text-yellow-500"
-    },
-    {
-        id: 115,
-        level: 6,
-        politeSentence: "\u8D64\u3061\u3083\u3093\u304C\u751F\u307E\u308C\u307E\u3059",
-        politeKana: "\u3042\u304B\u3061\u3083\u3093\u304C\u3046\u307E\u308C\u307E\u3059",
-        plainSentence: "\u8D64\u3061\u3083\u3093\u304C\u751F\u307E\u308C\u308B",
-        plainKana: "\u3042\u304B\u3061\u3083\u3093\u304C\u3046\u307E\u308C\u308B",
-        type: "Intransitive",
-        english: "The baby is born",
-        noun: "\u8D64\u3061\u3083\u3093",
-        nounRuby: [
-            {
-                text: "\u8D64",
-                rt: "\u3042\u304B"
-            },
-            {
-                text: "\u3061\u3083\u3093",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u751F",
-        verbRuby: [
-            {
-                text: "\u751F",
-                rt: "\u3046"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u751F",
-                rt: "\u3046"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308C",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Baby),
-        color: "text-pink-200"
-    },
-    {
-        id: 116,
-        level: 6,
-        politeSentence: "\u8D64\u3061\u3083\u3093\u3092\u751F\u307F\u307E\u3059",
-        politeKana: "\u3042\u304B\u3061\u3083\u3093\u3092\u3046\u307F\u307E\u3059",
-        plainSentence: "\u8D64\u3061\u3083\u3093\u3092\u751F\u3080",
-        plainKana: "\u3042\u304B\u3061\u3083\u3093\u3092\u3046\u3080",
-        type: "Transitive",
-        english: "I give birth to a baby",
-        noun: "\u8D64\u3061\u3083\u3093",
-        nounRuby: [
-            {
-                text: "\u8D64",
-                rt: "\u3042\u304B"
-            },
-            {
-                text: "\u3061\u3083\u3093",
-                rt: ""
-            }
-        ],
-        verbPrompt: "\u751F",
-        verbRuby: [
-            {
-                text: "\u751F",
-                rt: "\u3046"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u751F",
-                rt: "\u3046"
-            },
-            {
-                text: "\u3080",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Baby),
-        color: "text-pink-400"
-    },
-    {
-        id: 117,
-        level: 6,
-        politeSentence: "\u4E88\u5B9A\u304C\u5EF6\u3073\u307E\u3059",
-        politeKana: "\u3088\u3066\u3044\u304C\u306E\u3073\u307E\u3059",
-        plainSentence: "\u4E88\u5B9A\u304C\u5EF6\u3073\u308B",
-        plainKana: "\u3088\u3066\u3044\u304C\u306E\u3073\u308B",
-        type: "Intransitive",
-        english: "The schedule is extended",
-        noun: "\u4E88\u5B9A",
-        nounRuby: [
-            {
-                text: "\u4E88",
-                rt: "\u3088"
-            },
-            {
-                text: "\u5B9A",
-                rt: "\u3066\u3044"
-            }
-        ],
-        verbPrompt: "\u5EF6",
-        verbRuby: [
-            {
-                text: "\u5EF6",
-                rt: "\u306E"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5EF6",
-                rt: "\u306E"
-            },
-            {
-                text: "\u3073",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Calendar),
-        color: "text-blue-300"
-    },
-    {
-        id: 118,
-        level: 6,
-        politeSentence: "\u4E88\u5B9A\u3092\u5EF6\u3070\u3057\u307E\u3059",
-        politeKana: "\u3088\u3066\u3044\u3092\u306E\u3070\u3057\u307E\u3059",
-        plainSentence: "\u4E88\u5B9A\u3092\u5EF6\u3070\u3059",
-        plainKana: "\u3088\u3066\u3044\u3092\u306E\u3070\u3059",
-        type: "Transitive",
-        english: "I extend the schedule",
-        noun: "\u4E88\u5B9A",
-        nounRuby: [
-            {
-                text: "\u4E88",
-                rt: "\u3088"
-            },
-            {
-                text: "\u5B9A",
-                rt: "\u3066\u3044"
-            }
-        ],
-        verbPrompt: "\u5EF6",
-        verbRuby: [
-            {
-                text: "\u5EF6",
-                rt: "\u306E"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u5EF6",
-                rt: "\u306E"
-            },
-            {
-                text: "\u3070",
-                rt: ""
-            },
-            {
-                text: "\u3059",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Calendar),
-        color: "text-blue-500"
-    },
-    {
-        id: 119,
-        level: 6,
-        politeSentence: "\u72AF\u4EBA\u304C\u6355\u307E\u308A\u307E\u3059",
-        politeKana: "\u306F\u3093\u306B\u3093\u304C\u3064\u304B\u307E\u308A\u307E\u3059",
-        plainSentence: "\u72AF\u4EBA\u304C\u6355\u307E\u308B",
-        plainKana: "\u306F\u3093\u306B\u3093\u304C\u3064\u304B\u307E\u308B",
-        type: "Intransitive",
-        english: "The criminal is caught",
-        noun: "\u72AF\u4EBA",
-        nounRuby: [
-            {
-                text: "\u72AF",
-                rt: "\u306F\u3093"
-            },
-            {
-                text: "\u4EBA",
-                rt: "\u306B\u3093"
-            }
-        ],
-        verbPrompt: "\u6355",
-        verbRuby: [
-            {
-                text: "\u6355",
-                rt: "\u3064\u304B"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6355",
-                rt: "\u3064\u304B"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Fingerprint),
-        color: "text-gray-600"
-    },
-    {
-        id: 120,
-        level: 6,
-        politeSentence: "\u72AF\u4EBA\u3092\u6355\u307E\u3048\u307E\u3059",
-        politeKana: "\u306F\u3093\u306B\u3093\u3092\u3064\u304B\u307E\u3048\u307E\u3059",
-        plainSentence: "\u72AF\u4EBA\u3092\u6355\u307E\u3048\u308B",
-        plainKana: "\u306F\u3093\u306B\u3093\u3092\u3064\u304B\u307E\u3048\u308B",
-        type: "Transitive",
-        english: "I catch the criminal",
-        noun: "\u72AF\u4EBA",
-        nounRuby: [
-            {
-                text: "\u72AF",
-                rt: "\u306F\u3093"
-            },
-            {
-                text: "\u4EBA",
-                rt: "\u306B\u3093"
-            }
-        ],
-        verbPrompt: "\u6355",
-        verbRuby: [
-            {
-                text: "\u6355",
-                rt: "\u3064\u304B"
-            }
-        ],
-        dictionaryRuby: [
-            {
-                text: "\u6355",
-                rt: "\u3064\u304B"
-            },
-            {
-                text: "\u307E",
-                rt: ""
-            },
-            {
-                text: "\u3048",
-                rt: ""
-            },
-            {
-                text: "\u308B",
-                rt: ""
-            }
-        ],
-        icon: (0, _iconsJs.Fingerprint),
-        color: "text-gray-800"
-    }
-];
+parcelHelpers.export(exports, "SettingsPanel", ()=>(0, _settingsPanelJsx.SettingsPanel));
+parcelHelpers.export(exports, "LevelSelector", ()=>(0, _levelSelectorJsx.LevelSelector));
+parcelHelpers.export(exports, "TypeSelector", ()=>(0, _typeSelectorJsx.TypeSelector));
+parcelHelpers.export(exports, "FormSelector", ()=>(0, _formSelectorJsx.FormSelector));
+parcelHelpers.export(exports, "DisplayOptions", ()=>(0, _displayOptionsJsx.DisplayOptions));
+parcelHelpers.export(exports, "QuizModeSelector", ()=>(0, _quizModeSelectorJsx.QuizModeSelector));
+var _settingsPanelJsx = require("./SettingsPanel.jsx");
+var _levelSelectorJsx = require("./LevelSelector.jsx");
+var _typeSelectorJsx = require("./TypeSelector.jsx");
+var _formSelectorJsx = require("./FormSelector.jsx");
+var _displayOptionsJsx = require("./DisplayOptions.jsx");
+var _quizModeSelectorJsx = require("./QuizModeSelector.jsx");
 
-},{"./icons.js":"djMwZ","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"7h6Pi":[function(require,module,exports,__globalThis) {
-"use strict";
-var Refresh = require("7422ead32dcc1e6b");
-function debounce(func, delay) {
-    {
-        let timeout = undefined;
-        let lastTime = 0;
-        return function(args) {
-            // Call immediately if last call was more than the delay ago.
-            // Otherwise, set a timeout. This means the first call is fast
-            // (for the common case of a single update), and subsequent updates
-            // are batched.
-            let now = Date.now();
-            if (now - lastTime > delay) {
-                lastTime = now;
-                func.call(null, args);
-            } else {
-                clearTimeout(timeout);
-                timeout = setTimeout(function() {
-                    timeout = undefined;
-                    lastTime = Date.now();
-                    func.call(null, args);
-                }, delay);
-            }
-        };
-    }
-}
-var enqueueUpdate = debounce(function() {
-    Refresh.performReactRefresh();
-}, 30);
-module.exports.init = function() {
-    if (!globalThis.$RefreshReg$) {
-        Refresh.injectIntoGlobalHook(globalThis);
-        globalThis.$RefreshReg$ = function() {};
-        globalThis.$RefreshSig$ = function() {
-            return function(type) {
-                return type;
-            };
-        };
-        if (typeof window !== 'undefined') {
-            let ErrorOverlay = require("e4d875b7642f9496");
-            ErrorOverlay.setEditorHandler(function(errorLocation) {
-                let file = `${errorLocation.fileName}:${errorLocation.lineNumber || 1}:${errorLocation.colNumber || 1}`;
-                fetch(module.bundle.devServer + `/__parcel_launch_editor?file=${encodeURIComponent(file)}`);
-            });
-            ErrorOverlay.startReportingRuntimeErrors({
-                onError: function() {}
-            });
-            window.addEventListener('parcelhmraccept', ()=>{
-                ErrorOverlay.dismissRuntimeErrors();
-            });
-        }
-    }
-};
-// Everything below is either adapted or copied from
-// https://github.com/facebook/metro/blob/61de16bd1edd7e738dd0311c89555a644023ab2d/packages/metro/src/lib/polyfills/require.js
-// MIT License - Copyright (c) Facebook, Inc. and its affiliates.
-module.exports.prelude = function(module1) {
-    globalThis.$RefreshReg$ = function(type, id) {
-        Refresh.register(type, module1.id + ' ' + id);
-    };
-    globalThis.$RefreshSig$ = Refresh.createSignatureFunctionForTransform;
-};
-module.exports.postlude = function(module1) {
-    if (typeof window === 'undefined') return;
-    if (isReactRefreshBoundary(module1.exports)) {
-        registerExportsForReactRefresh(module1);
-        if (module1.hot) {
-            module1.hot.dispose(function(data) {
-                if (Refresh.hasUnrecoverableErrors()) window.location.reload();
-                data.prevExports = module1.exports;
-            });
-            module1.hot.accept(function(getParents) {
-                var prevExports = module1.hot.data.prevExports;
-                var nextExports = module1.exports;
-                // Since we just executed the code for it, it's possible
-                // that the new exports make it ineligible for being a boundary.
-                var isNoLongerABoundary = !isReactRefreshBoundary(nextExports);
-                // It can also become ineligible if its exports are incompatible
-                // with the previous exports.
-                // For example, if you add/remove/change exports, we'll want
-                // to re-execute the importing modules, and force those components
-                // to re-render. Similarly, if you convert a class component
-                // to a function, we want to invalidate the boundary.
-                var didInvalidate = shouldInvalidateReactRefreshBoundary(prevExports, nextExports);
-                if (isNoLongerABoundary || didInvalidate) {
-                    // We'll be conservative. The only case in which we won't do a full
-                    // reload is if all parent modules are also refresh boundaries.
-                    // In that case we'll add them to the current queue.
-                    var parents = getParents();
-                    if (parents.length === 0) {
-                        // Looks like we bubbled to the root. Can't recover from that.
-                        window.location.reload();
-                        return;
-                    }
-                    return parents;
-                }
-                enqueueUpdate();
-            });
-        }
-    }
-};
-function isReactRefreshBoundary(exports) {
-    if (Refresh.isLikelyComponentType(exports)) return true;
-    if (exports == null || typeof exports !== 'object') // Exit if we can't iterate over exports.
-    return false;
-    var hasExports = false;
-    var areAllExportsComponents = true;
-    let isESM = '__esModule' in exports;
-    for(var key in exports){
-        hasExports = true;
-        if (key === '__esModule') continue;
-        var desc = Object.getOwnPropertyDescriptor(exports, key);
-        if (desc && desc.get && !isESM) // Don't invoke getters for CJS as they may have side effects.
-        return false;
-        var exportValue = exports[key];
-        if (!Refresh.isLikelyComponentType(exportValue)) areAllExportsComponents = false;
-    }
-    return hasExports && areAllExportsComponents;
-}
-function shouldInvalidateReactRefreshBoundary(prevExports, nextExports) {
-    var prevSignature = getRefreshBoundarySignature(prevExports);
-    var nextSignature = getRefreshBoundarySignature(nextExports);
-    if (prevSignature.length !== nextSignature.length) return true;
-    for(var i = 0; i < nextSignature.length; i++){
-        if (prevSignature[i] !== nextSignature[i]) return true;
-    }
-    return false;
-}
-// When this signature changes, it's unsafe to stop at this refresh boundary.
-function getRefreshBoundarySignature(exports) {
-    var signature = [];
-    signature.push(Refresh.getFamilyByType(exports));
-    if (exports == null || typeof exports !== 'object') // Exit if we can't iterate over exports.
-    // (This is important for legacy environments.)
-    return signature;
-    let isESM = '__esModule' in exports;
-    for(var key in exports){
-        if (key === '__esModule') continue;
-        var desc = Object.getOwnPropertyDescriptor(exports, key);
-        if (desc && desc.get && !isESM) continue;
-        var exportValue = exports[key];
-        signature.push(key);
-        signature.push(Refresh.getFamilyByType(exportValue));
-    }
-    return signature;
-}
-function registerExportsForReactRefresh(module1) {
-    var exports = module1.exports, id = module1.id;
-    Refresh.register(exports, id + ' %exports%');
-    if (exports == null || typeof exports !== 'object') // Exit if we can't iterate over exports.
-    // (This is important for legacy environments.)
-    return;
-    let isESM = '__esModule' in exports;
-    for(var key in exports){
-        var desc = Object.getOwnPropertyDescriptor(exports, key);
-        if (desc && desc.get && !isESM) continue;
-        var exportValue = exports[key];
-        var typeID = id + ' %exports% ' + key;
-        Refresh.register(exportValue, typeID);
-    }
-}
+},{"./SettingsPanel.jsx":"3IqcN","./LevelSelector.jsx":"28OyW","./TypeSelector.jsx":"dzsSw","./FormSelector.jsx":"lwYLU","./DisplayOptions.jsx":"kFayP","./QuizModeSelector.jsx":"6Jra5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"3IqcN":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$2c0e = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$2c0e.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$2c0e.prelude(module);
 
-},{"7422ead32dcc1e6b":"hpiFP","e4d875b7642f9496":"gnoim"}],"hpiFP":[function(require,module,exports,__globalThis) {
-'use strict';
-module.exports = require("96622d495519d4e");
-
-},{"96622d495519d4e":"7AD9f"}],"7AD9f":[function(require,module,exports,__globalThis) {
-/**
- * @license React
- * react-refresh-runtime.development.js
- *
- * Copyright (c) Meta Platforms, Inc. and affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ "use strict";
-(function() {
-    function computeFullKey(signature) {
-        if (null !== signature.fullKey) return signature.fullKey;
-        var fullKey = signature.ownKey;
-        try {
-            var hooks = signature.getCustomHooks();
-        } catch (err) {
-            return signature.forceReset = !0, signature.fullKey = fullKey;
-        }
-        for(var i = 0; i < hooks.length; i++){
-            var hook = hooks[i];
-            if ("function" !== typeof hook) return signature.forceReset = !0, signature.fullKey = fullKey;
-            hook = allSignaturesByType.get(hook);
-            if (void 0 !== hook) {
-                var nestedHookKey = computeFullKey(hook);
-                hook.forceReset && (signature.forceReset = !0);
-                fullKey += "\n---\n" + nestedHookKey;
-            }
-        }
-        return signature.fullKey = fullKey;
-    }
-    function resolveFamily(type) {
-        return updatedFamiliesByType.get(type);
-    }
-    function cloneMap(map) {
-        var clone = new Map();
-        map.forEach(function(value, key) {
-            clone.set(key, value);
-        });
-        return clone;
-    }
-    function cloneSet(set) {
-        var clone = new Set();
-        set.forEach(function(value) {
-            clone.add(value);
-        });
-        return clone;
-    }
-    function getProperty(object, property) {
-        try {
-            return object[property];
-        } catch (err) {}
-    }
-    function register(type, id) {
-        if (!(null === type || "function" !== typeof type && "object" !== typeof type || allFamiliesByType.has(type))) {
-            var family = allFamiliesByID.get(id);
-            void 0 === family ? (family = {
-                current: type
-            }, allFamiliesByID.set(id, family)) : pendingUpdates.push([
-                family,
-                type
-            ]);
-            allFamiliesByType.set(type, family);
-            if ("object" === typeof type && null !== type) switch(getProperty(type, "$$typeof")){
-                case REACT_FORWARD_REF_TYPE:
-                    register(type.render, id + "$render");
-                    break;
-                case REACT_MEMO_TYPE:
-                    register(type.type, id + "$type");
-            }
-        }
-    }
-    function setSignature(type, key) {
-        var forceReset = 2 < arguments.length && void 0 !== arguments[2] ? arguments[2] : !1, getCustomHooks = 3 < arguments.length ? arguments[3] : void 0;
-        allSignaturesByType.has(type) || allSignaturesByType.set(type, {
-            forceReset: forceReset,
-            ownKey: key,
-            fullKey: null,
-            getCustomHooks: getCustomHooks || function() {
-                return [];
-            }
-        });
-        if ("object" === typeof type && null !== type) switch(getProperty(type, "$$typeof")){
-            case REACT_FORWARD_REF_TYPE:
-                setSignature(type.render, key, forceReset, getCustomHooks);
-                break;
-            case REACT_MEMO_TYPE:
-                setSignature(type.type, key, forceReset, getCustomHooks);
-        }
-    }
-    function collectCustomHooksForSignature(type) {
-        type = allSignaturesByType.get(type);
-        void 0 !== type && computeFullKey(type);
-    }
-    var REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_MEMO_TYPE = Symbol.for("react.memo"), PossiblyWeakMap = "function" === typeof WeakMap ? WeakMap : Map, allFamiliesByID = new Map(), allFamiliesByType = new PossiblyWeakMap(), allSignaturesByType = new PossiblyWeakMap(), updatedFamiliesByType = new PossiblyWeakMap(), pendingUpdates = [], helpersByRendererID = new Map(), helpersByRoot = new Map(), mountedRoots = new Set(), failedRoots = new Set(), rootElements = "function" === typeof WeakMap ? new WeakMap() : null, isPerformingRefresh = !1;
-    exports._getMountedRootCount = function() {
-        return mountedRoots.size;
-    };
-    exports.collectCustomHooksForSignature = collectCustomHooksForSignature;
-    exports.createSignatureFunctionForTransform = function() {
-        var savedType, hasCustomHooks, didCollectHooks = !1;
-        return function(type, key, forceReset, getCustomHooks) {
-            if ("string" === typeof key) return savedType || (savedType = type, hasCustomHooks = "function" === typeof getCustomHooks), null == type || "function" !== typeof type && "object" !== typeof type || setSignature(type, key, forceReset, getCustomHooks), type;
-            !didCollectHooks && hasCustomHooks && (didCollectHooks = !0, collectCustomHooksForSignature(savedType));
-        };
-    };
-    exports.getFamilyByID = function(id) {
-        return allFamiliesByID.get(id);
-    };
-    exports.getFamilyByType = function(type) {
-        return allFamiliesByType.get(type);
-    };
-    exports.hasUnrecoverableErrors = function() {
-        return !1;
-    };
-    exports.injectIntoGlobalHook = function(globalObject) {
-        var hook = globalObject.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-        if (void 0 === hook) {
-            var nextID = 0;
-            globalObject.__REACT_DEVTOOLS_GLOBAL_HOOK__ = hook = {
-                renderers: new Map(),
-                supportsFiber: !0,
-                inject: function() {
-                    return nextID++;
-                },
-                onScheduleFiberRoot: function() {},
-                onCommitFiberRoot: function() {},
-                onCommitFiberUnmount: function() {}
-            };
-        }
-        if (hook.isDisabled) console.warn("Something has shimmed the React DevTools global hook (__REACT_DEVTOOLS_GLOBAL_HOOK__). Fast Refresh is not compatible with this shim and will be disabled.");
-        else {
-            var oldInject = hook.inject;
-            hook.inject = function(injected) {
-                var id = oldInject.apply(this, arguments);
-                "function" === typeof injected.scheduleRefresh && "function" === typeof injected.setRefreshHandler && helpersByRendererID.set(id, injected);
-                return id;
-            };
-            hook.renderers.forEach(function(injected, id) {
-                "function" === typeof injected.scheduleRefresh && "function" === typeof injected.setRefreshHandler && helpersByRendererID.set(id, injected);
-            });
-            var oldOnCommitFiberRoot = hook.onCommitFiberRoot, oldOnScheduleFiberRoot = hook.onScheduleFiberRoot || function() {};
-            hook.onScheduleFiberRoot = function(id, root, children) {
-                isPerformingRefresh || (failedRoots.delete(root), null !== rootElements && rootElements.set(root, children));
-                return oldOnScheduleFiberRoot.apply(this, arguments);
-            };
-            hook.onCommitFiberRoot = function(id, root, maybePriorityLevel, didError) {
-                var helpers = helpersByRendererID.get(id);
-                if (void 0 !== helpers) {
-                    helpersByRoot.set(root, helpers);
-                    helpers = root.current;
-                    var alternate = helpers.alternate;
-                    null !== alternate ? (alternate = null != alternate.memoizedState && null != alternate.memoizedState.element && mountedRoots.has(root), helpers = null != helpers.memoizedState && null != helpers.memoizedState.element, !alternate && helpers ? (mountedRoots.add(root), failedRoots.delete(root)) : alternate && helpers || (alternate && !helpers ? (mountedRoots.delete(root), didError ? failedRoots.add(root) : helpersByRoot.delete(root)) : alternate || helpers || didError && failedRoots.add(root))) : mountedRoots.add(root);
-                }
-                return oldOnCommitFiberRoot.apply(this, arguments);
-            };
-        }
-    };
-    exports.isLikelyComponentType = function(type) {
-        switch(typeof type){
-            case "function":
-                if (null != type.prototype) {
-                    if (type.prototype.isReactComponent) return !0;
-                    var ownNames = Object.getOwnPropertyNames(type.prototype);
-                    if (1 < ownNames.length || "constructor" !== ownNames[0] || type.prototype.__proto__ !== Object.prototype) return !1;
-                }
-                type = type.name || type.displayName;
-                return "string" === typeof type && /^[A-Z]/.test(type);
-            case "object":
-                if (null != type) switch(getProperty(type, "$$typeof")){
-                    case REACT_FORWARD_REF_TYPE:
-                    case REACT_MEMO_TYPE:
-                        return !0;
-                }
-                return !1;
-            default:
-                return !1;
-        }
-    };
-    exports.performReactRefresh = function() {
-        if (0 === pendingUpdates.length || isPerformingRefresh) return null;
-        isPerformingRefresh = !0;
-        try {
-            var staleFamilies = new Set(), updatedFamilies = new Set(), updates = pendingUpdates;
-            pendingUpdates = [];
-            updates.forEach(function(_ref) {
-                var family = _ref[0];
-                _ref = _ref[1];
-                var prevType = family.current;
-                updatedFamiliesByType.set(prevType, family);
-                updatedFamiliesByType.set(_ref, family);
-                family.current = _ref;
-                prevType.prototype && prevType.prototype.isReactComponent || _ref.prototype && _ref.prototype.isReactComponent ? _ref = !1 : (prevType = allSignaturesByType.get(prevType), _ref = allSignaturesByType.get(_ref), _ref = void 0 === prevType && void 0 === _ref || void 0 !== prevType && void 0 !== _ref && computeFullKey(prevType) === computeFullKey(_ref) && !_ref.forceReset ? !0 : !1);
-                _ref ? updatedFamilies.add(family) : staleFamilies.add(family);
-            });
-            var update = {
-                updatedFamilies: updatedFamilies,
-                staleFamilies: staleFamilies
-            };
-            helpersByRendererID.forEach(function(helpers) {
-                helpers.setRefreshHandler(resolveFamily);
-            });
-            var didError = !1, firstError = null, failedRootsSnapshot = cloneSet(failedRoots), mountedRootsSnapshot = cloneSet(mountedRoots), helpersByRootSnapshot = cloneMap(helpersByRoot);
-            failedRootsSnapshot.forEach(function(root) {
-                var helpers = helpersByRootSnapshot.get(root);
-                if (void 0 === helpers) throw Error("Could not find helpers for a root. This is a bug in React Refresh.");
-                failedRoots.has(root);
-                if (null !== rootElements && rootElements.has(root)) {
-                    var element = rootElements.get(root);
-                    try {
-                        helpers.scheduleRoot(root, element);
-                    } catch (err) {
-                        didError || (didError = !0, firstError = err);
-                    }
-                }
-            });
-            mountedRootsSnapshot.forEach(function(root) {
-                var helpers = helpersByRootSnapshot.get(root);
-                if (void 0 === helpers) throw Error("Could not find helpers for a root. This is a bug in React Refresh.");
-                mountedRoots.has(root);
-                try {
-                    helpers.scheduleRefresh(root, update);
-                } catch (err) {
-                    didError || (didError = !0, firstError = err);
-                }
-            });
-            if (didError) throw firstError;
-            return update;
-        } finally{
-            isPerformingRefresh = !1;
-        }
-    };
-    exports.register = register;
-    exports.setSignature = setSignature;
-})();
-
-},{}],"gnoim":[function(require,module,exports,__globalThis) {
+try {
+// SettingsPanel - Main settings container with dropdown
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "setEditorHandler", ()=>$da9882e673ac146b$export$25a22ac46f1bd016);
-parcelHelpers.export(exports, "reportRuntimeError", ()=>$da9882e673ac146b$export$74e9101ce4078c0);
-parcelHelpers.export(exports, "startReportingRuntimeErrors", ()=>$da9882e673ac146b$export$cda2c88a41631c16);
-parcelHelpers.export(exports, "dismissRuntimeErrors", ()=>$da9882e673ac146b$export$1cfa6d161ca81bd9);
-parcelHelpers.export(exports, "stopReportingRuntimeErrors", ()=>$da9882e673ac146b$export$25ba7d9a816639e7);
-function $parcel$interopDefault(a) {
-    return a && a.__esModule ? a.default : a;
-}
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /* eslint-env browser */ /* eslint-disable react/react-in-jsx-scope, no-console */ var $b6c7f0288a15c619$var$n, $b6c7f0288a15c619$export$41c562ebe57d11e2, $b6c7f0288a15c619$var$u, $b6c7f0288a15c619$export$a8257692ac88316c, $b6c7f0288a15c619$var$i, $b6c7f0288a15c619$var$r, $b6c7f0288a15c619$var$o, $b6c7f0288a15c619$var$e, $b6c7f0288a15c619$var$f, $b6c7f0288a15c619$var$c, $b6c7f0288a15c619$var$s, $b6c7f0288a15c619$var$a, $b6c7f0288a15c619$var$h, $b6c7f0288a15c619$var$p = {}, $b6c7f0288a15c619$var$y = [], $b6c7f0288a15c619$var$v = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i, $b6c7f0288a15c619$var$w = Array.isArray;
-function $b6c7f0288a15c619$var$d(n, l) {
-    for(var u in l)n[u] = l[u];
-    return n;
-}
-function $b6c7f0288a15c619$var$g(n) {
-    n && n.parentNode && n.parentNode.removeChild(n);
-}
-function $b6c7f0288a15c619$export$c8a8987d4410bf2d(l, u, t) {
-    var i, r, o, e = {};
-    for(o in u)"key" == o ? i = u[o] : "ref" == o ? r = u[o] : e[o] = u[o];
-    if (arguments.length > 2 && (e.children = arguments.length > 3 ? $b6c7f0288a15c619$var$n.call(arguments, 2) : t), "function" == typeof l && null != l.defaultProps) for(o in l.defaultProps)null == e[o] && (e[o] = l.defaultProps[o]);
-    return $b6c7f0288a15c619$var$m(l, e, i, r, null);
-}
-function $b6c7f0288a15c619$var$m(n, t, i, r, o) {
-    var e = {
-        type: n,
-        props: t,
-        key: i,
-        ref: r,
-        __k: null,
-        __: null,
-        __b: 0,
-        __e: null,
-        __c: null,
-        constructor: void 0,
-        __v: null == o ? ++$b6c7f0288a15c619$var$u : o,
-        __i: -1,
-        __u: 0
-    };
-    return null == o && null != $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode && $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode(e), e;
-}
-function $b6c7f0288a15c619$export$7d1e3a5e95ceca43() {
-    return {
-        current: null
-    };
-}
-function $b6c7f0288a15c619$export$ffb0004e005737fa(n) {
-    return n.children;
-}
-function $b6c7f0288a15c619$export$16fa2f45be04daa8(n, l) {
-    this.props = n, this.context = l;
-}
-function $b6c7f0288a15c619$var$S(n, l) {
-    if (null == l) return n.__ ? $b6c7f0288a15c619$var$S(n.__, n.__i + 1) : null;
-    for(var u; l < n.__k.length; l++)if (null != (u = n.__k[l]) && null != u.__e) return u.__e;
-    return "function" == typeof n.type ? $b6c7f0288a15c619$var$S(n) : null;
-}
-function $b6c7f0288a15c619$var$C(n) {
-    var l, u;
-    if (null != (n = n.__) && null != n.__c) {
-        for(n.__e = n.__c.base = null, l = 0; l < n.__k.length; l++)if (null != (u = n.__k[l]) && null != u.__e) {
-            n.__e = n.__c.base = u.__e;
-            break;
-        }
-        return $b6c7f0288a15c619$var$C(n);
-    }
-}
-function $b6c7f0288a15c619$var$M(n) {
-    (!n.__d && (n.__d = !0) && $b6c7f0288a15c619$var$i.push(n) && !$b6c7f0288a15c619$var$$.__r++ || $b6c7f0288a15c619$var$r != $b6c7f0288a15c619$export$41c562ebe57d11e2.debounceRendering) && (($b6c7f0288a15c619$var$r = $b6c7f0288a15c619$export$41c562ebe57d11e2.debounceRendering) || $b6c7f0288a15c619$var$o)($b6c7f0288a15c619$var$$);
-}
-function $b6c7f0288a15c619$var$$() {
-    for(var n, u, t, r, o, f, c, s = 1; $b6c7f0288a15c619$var$i.length;)$b6c7f0288a15c619$var$i.length > s && $b6c7f0288a15c619$var$i.sort($b6c7f0288a15c619$var$e), n = $b6c7f0288a15c619$var$i.shift(), s = $b6c7f0288a15c619$var$i.length, n.__d && (t = void 0, o = (r = (u = n).__v).__e, f = [], c = [], u.__P && ((t = $b6c7f0288a15c619$var$d({}, r)).__v = r.__v + 1, $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode && $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode(t), $b6c7f0288a15c619$var$O(u.__P, t, r, u.__n, u.__P.namespaceURI, 32 & r.__u ? [
-        o
-    ] : null, f, null == o ? $b6c7f0288a15c619$var$S(r) : o, !!(32 & r.__u), c), t.__v = r.__v, t.__.__k[t.__i] = t, $b6c7f0288a15c619$var$z(f, t, c), t.__e != o && $b6c7f0288a15c619$var$C(t)));
-    $b6c7f0288a15c619$var$$.__r = 0;
-}
-function $b6c7f0288a15c619$var$I(n, l, u, t, i, r, o, e, f, c, s) {
-    var a, h, v, w, d, g, _ = t && t.__k || $b6c7f0288a15c619$var$y, m = l.length;
-    for(f = $b6c7f0288a15c619$var$P(u, l, _, f, m), a = 0; a < m; a++)null != (v = u.__k[a]) && (h = -1 == v.__i ? $b6c7f0288a15c619$var$p : _[v.__i] || $b6c7f0288a15c619$var$p, v.__i = a, g = $b6c7f0288a15c619$var$O(n, v, h, i, r, o, e, f, c, s), w = v.__e, v.ref && h.ref != v.ref && (h.ref && $b6c7f0288a15c619$var$q(h.ref, null, v), s.push(v.ref, v.__c || w, v)), null == d && null != w && (d = w), 4 & v.__u || h.__k === v.__k ? f = $b6c7f0288a15c619$var$A(v, f, n) : "function" == typeof v.type && void 0 !== g ? f = g : w && (f = w.nextSibling), v.__u &= -7);
-    return u.__e = d, f;
-}
-function $b6c7f0288a15c619$var$P(n, l, u, t, i) {
-    var r, o, e, f, c, s = u.length, a = s, h = 0;
-    for(n.__k = new Array(i), r = 0; r < i; r++)null != (o = l[r]) && "boolean" != typeof o && "function" != typeof o ? (f = r + h, (o = n.__k[r] = "string" == typeof o || "number" == typeof o || "bigint" == typeof o || o.constructor == String ? $b6c7f0288a15c619$var$m(null, o, null, null, null) : $b6c7f0288a15c619$var$w(o) ? $b6c7f0288a15c619$var$m($b6c7f0288a15c619$export$ffb0004e005737fa, {
-        children: o
-    }, null, null, null) : null == o.constructor && o.__b > 0 ? $b6c7f0288a15c619$var$m(o.type, o.props, o.key, o.ref ? o.ref : null, o.__v) : o).__ = n, o.__b = n.__b + 1, e = null, -1 != (c = o.__i = $b6c7f0288a15c619$var$L(o, u, f, a)) && (a--, (e = u[c]) && (e.__u |= 2)), null == e || null == e.__v ? (-1 == c && (i > s ? h-- : i < s && h++), "function" != typeof o.type && (o.__u |= 4)) : c != f && (c == f - 1 ? h-- : c == f + 1 ? h++ : (c > f ? h-- : h++, o.__u |= 4))) : n.__k[r] = null;
-    if (a) for(r = 0; r < s; r++)null != (e = u[r]) && 0 == (2 & e.__u) && (e.__e == t && (t = $b6c7f0288a15c619$var$S(e)), $b6c7f0288a15c619$var$B(e, e));
-    return t;
-}
-function $b6c7f0288a15c619$var$A(n, l, u) {
-    var t, i;
-    if ("function" == typeof n.type) {
-        for(t = n.__k, i = 0; t && i < t.length; i++)t[i] && (t[i].__ = n, l = $b6c7f0288a15c619$var$A(t[i], l, u));
-        return l;
-    }
-    n.__e != l && (l && n.type && !u.contains(l) && (l = $b6c7f0288a15c619$var$S(n)), u.insertBefore(n.__e, l || null), l = n.__e);
-    do l = l && l.nextSibling;
-    while (null != l && 8 == l.nodeType);
-    return l;
-}
-function $b6c7f0288a15c619$export$47e4c5b300681277(n, l) {
-    return l = l || [], null == n || "boolean" == typeof n || ($b6c7f0288a15c619$var$w(n) ? n.some(function(n) {
-        $b6c7f0288a15c619$export$47e4c5b300681277(n, l);
-    }) : l.push(n)), l;
-}
-function $b6c7f0288a15c619$var$L(n, l, u, t) {
-    var i, r, o = n.key, e = n.type, f = l[u];
-    if (null === f && null == n.key || f && o == f.key && e == f.type && 0 == (2 & f.__u)) return u;
-    if (t > (null != f && 0 == (2 & f.__u) ? 1 : 0)) for(i = u - 1, r = u + 1; i >= 0 || r < l.length;){
-        if (i >= 0) {
-            if ((f = l[i]) && 0 == (2 & f.__u) && o == f.key && e == f.type) return i;
-            i--;
-        }
-        if (r < l.length) {
-            if ((f = l[r]) && 0 == (2 & f.__u) && o == f.key && e == f.type) return r;
-            r++;
-        }
-    }
-    return -1;
-}
-function $b6c7f0288a15c619$var$T(n, l, u) {
-    "-" == l[0] ? n.setProperty(l, null == u ? "" : u) : n[l] = null == u ? "" : "number" != typeof u || $b6c7f0288a15c619$var$v.test(l) ? u : u + "px";
-}
-function $b6c7f0288a15c619$var$j(n, l, u, t, i) {
-    var r;
-    n: if ("style" == l) {
-        if ("string" == typeof u) n.style.cssText = u;
-        else {
-            if ("string" == typeof t && (n.style.cssText = t = ""), t) for(l in t)u && l in u || $b6c7f0288a15c619$var$T(n.style, l, "");
-            if (u) for(l in u)t && u[l] == t[l] || $b6c7f0288a15c619$var$T(n.style, l, u[l]);
-        }
-    } else if ("o" == l[0] && "n" == l[1]) r = l != (l = l.replace($b6c7f0288a15c619$var$f, "$1")), l = l.toLowerCase() in n || "onFocusOut" == l || "onFocusIn" == l ? l.toLowerCase().slice(2) : l.slice(2), n.l || (n.l = {}), n.l[l + r] = u, u ? t ? u.u = t.u : (u.u = $b6c7f0288a15c619$var$c, n.addEventListener(l, r ? $b6c7f0288a15c619$var$a : $b6c7f0288a15c619$var$s, r)) : n.removeEventListener(l, r ? $b6c7f0288a15c619$var$a : $b6c7f0288a15c619$var$s, r);
-    else {
-        if ("http://www.w3.org/2000/svg" == i) l = l.replace(/xlink(H|:h)/, "h").replace(/sName$/, "s");
-        else if ("width" != l && "height" != l && "href" != l && "list" != l && "form" != l && "tabIndex" != l && "download" != l && "rowSpan" != l && "colSpan" != l && "role" != l && "popover" != l && l in n) try {
-            n[l] = null == u ? "" : u;
-            break n;
-        } catch (n) {}
-        "function" == typeof u || (null == u || !1 === u && "-" != l[4] ? n.removeAttribute(l) : n.setAttribute(l, "popover" == l && 1 == u ? "" : u));
-    }
-}
-function $b6c7f0288a15c619$var$F(n) {
-    return function(u) {
-        if (this.l) {
-            var t = this.l[u.type + n];
-            if (null == u.t) u.t = $b6c7f0288a15c619$var$c++;
-            else if (u.t < t.u) return;
-            return t($b6c7f0288a15c619$export$41c562ebe57d11e2.event ? $b6c7f0288a15c619$export$41c562ebe57d11e2.event(u) : u);
-        }
-    };
-}
-function $b6c7f0288a15c619$var$O(n, u, t, i, r, o, e, f, c, s) {
-    var a, h, p, y, v, _, m, b, S, C, M, $, P, A, H, L, T, j = u.type;
-    if (null != u.constructor) return null;
-    128 & t.__u && (c = !!(32 & t.__u), o = [
-        f = u.__e = t.__e
-    ]), (a = $b6c7f0288a15c619$export$41c562ebe57d11e2.__b) && a(u);
-    n: if ("function" == typeof j) try {
-        if (b = u.props, S = "prototype" in j && j.prototype.render, C = (a = j.contextType) && i[a.__c], M = a ? C ? C.props.value : a.__ : i, t.__c ? m = (h = u.__c = t.__c).__ = h.__E : (S ? u.__c = h = new j(b, M) : (u.__c = h = new $b6c7f0288a15c619$export$16fa2f45be04daa8(b, M), h.constructor = j, h.render = $b6c7f0288a15c619$var$D), C && C.sub(h), h.props = b, h.state || (h.state = {}), h.context = M, h.__n = i, p = h.__d = !0, h.__h = [], h._sb = []), S && null == h.__s && (h.__s = h.state), S && null != j.getDerivedStateFromProps && (h.__s == h.state && (h.__s = $b6c7f0288a15c619$var$d({}, h.__s)), $b6c7f0288a15c619$var$d(h.__s, j.getDerivedStateFromProps(b, h.__s))), y = h.props, v = h.state, h.__v = u, p) S && null == j.getDerivedStateFromProps && null != h.componentWillMount && h.componentWillMount(), S && null != h.componentDidMount && h.__h.push(h.componentDidMount);
-        else {
-            if (S && null == j.getDerivedStateFromProps && b !== y && null != h.componentWillReceiveProps && h.componentWillReceiveProps(b, M), !h.__e && null != h.shouldComponentUpdate && !1 === h.shouldComponentUpdate(b, h.__s, M) || u.__v == t.__v) {
-                for(u.__v != t.__v && (h.props = b, h.state = h.__s, h.__d = !1), u.__e = t.__e, u.__k = t.__k, u.__k.some(function(n) {
-                    n && (n.__ = u);
-                }), $ = 0; $ < h._sb.length; $++)h.__h.push(h._sb[$]);
-                h._sb = [], h.__h.length && e.push(h);
-                break n;
-            }
-            null != h.componentWillUpdate && h.componentWillUpdate(b, h.__s, M), S && null != h.componentDidUpdate && h.__h.push(function() {
-                h.componentDidUpdate(y, v, _);
-            });
-        }
-        if (h.context = M, h.props = b, h.__P = n, h.__e = !1, P = $b6c7f0288a15c619$export$41c562ebe57d11e2.__r, A = 0, S) {
-            for(h.state = h.__s, h.__d = !1, P && P(u), a = h.render(h.props, h.state, h.context), H = 0; H < h._sb.length; H++)h.__h.push(h._sb[H]);
-            h._sb = [];
-        } else do h.__d = !1, P && P(u), a = h.render(h.props, h.state, h.context), h.state = h.__s;
-        while (h.__d && ++A < 25);
-        h.state = h.__s, null != h.getChildContext && (i = $b6c7f0288a15c619$var$d($b6c7f0288a15c619$var$d({}, i), h.getChildContext())), S && !p && null != h.getSnapshotBeforeUpdate && (_ = h.getSnapshotBeforeUpdate(y, v)), L = a, null != a && a.type === $b6c7f0288a15c619$export$ffb0004e005737fa && null == a.key && (L = $b6c7f0288a15c619$var$N(a.props.children)), f = $b6c7f0288a15c619$var$I(n, $b6c7f0288a15c619$var$w(L) ? L : [
-            L
-        ], u, t, i, r, o, e, f, c, s), h.base = u.__e, u.__u &= -161, h.__h.length && e.push(h), m && (h.__E = h.__ = null);
-    } catch (n) {
-        if (u.__v = null, c || null != o) {
-            if (n.then) {
-                for(u.__u |= c ? 160 : 128; f && 8 == f.nodeType && f.nextSibling;)f = f.nextSibling;
-                o[o.indexOf(f)] = null, u.__e = f;
-            } else for(T = o.length; T--;)$b6c7f0288a15c619$var$g(o[T]);
-        } else u.__e = t.__e, u.__k = t.__k;
-        $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, u, t);
-    }
-    else null == o && u.__v == t.__v ? (u.__k = t.__k, u.__e = t.__e) : f = u.__e = $b6c7f0288a15c619$var$V(t.__e, u, t, i, r, o, e, c, s);
-    return (a = $b6c7f0288a15c619$export$41c562ebe57d11e2.diffed) && a(u), 128 & u.__u ? void 0 : f;
-}
-function $b6c7f0288a15c619$var$z(n, u, t) {
-    for(var i = 0; i < t.length; i++)$b6c7f0288a15c619$var$q(t[i], t[++i], t[++i]);
-    $b6c7f0288a15c619$export$41c562ebe57d11e2.__c && $b6c7f0288a15c619$export$41c562ebe57d11e2.__c(u, n), n.some(function(u) {
-        try {
-            n = u.__h, u.__h = [], n.some(function(n) {
-                n.call(u);
-            });
-        } catch (n) {
-            $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, u.__v);
-        }
-    });
-}
-function $b6c7f0288a15c619$var$N(n) {
-    return "object" != typeof n || null == n || n.__b && n.__b > 0 ? n : $b6c7f0288a15c619$var$w(n) ? n.map($b6c7f0288a15c619$var$N) : $b6c7f0288a15c619$var$d({}, n);
-}
-function $b6c7f0288a15c619$var$V(u, t, i, r, o, e, f, c, s) {
-    var a, h, y, v, d, _, m, b = i.props, k = t.props, x = t.type;
-    if ("svg" == x ? o = "http://www.w3.org/2000/svg" : "math" == x ? o = "http://www.w3.org/1998/Math/MathML" : o || (o = "http://www.w3.org/1999/xhtml"), null != e) {
-        for(a = 0; a < e.length; a++)if ((d = e[a]) && "setAttribute" in d == !!x && (x ? d.localName == x : 3 == d.nodeType)) {
-            u = d, e[a] = null;
-            break;
-        }
-    }
-    if (null == u) {
-        if (null == x) return document.createTextNode(k);
-        u = document.createElementNS(o, x, k.is && k), c && ($b6c7f0288a15c619$export$41c562ebe57d11e2.__m && $b6c7f0288a15c619$export$41c562ebe57d11e2.__m(t, e), c = !1), e = null;
-    }
-    if (null == x) b === k || c && u.data == k || (u.data = k);
-    else {
-        if (e = e && $b6c7f0288a15c619$var$n.call(u.childNodes), b = i.props || $b6c7f0288a15c619$var$p, !c && null != e) for(b = {}, a = 0; a < u.attributes.length; a++)b[(d = u.attributes[a]).name] = d.value;
-        for(a in b)if (d = b[a], "children" == a) ;
-        else if ("dangerouslySetInnerHTML" == a) y = d;
-        else if (!(a in k)) {
-            if ("value" == a && "defaultValue" in k || "checked" == a && "defaultChecked" in k) continue;
-            $b6c7f0288a15c619$var$j(u, a, null, d, o);
-        }
-        for(a in k)d = k[a], "children" == a ? v = d : "dangerouslySetInnerHTML" == a ? h = d : "value" == a ? _ = d : "checked" == a ? m = d : c && "function" != typeof d || b[a] === d || $b6c7f0288a15c619$var$j(u, a, d, b[a], o);
-        if (h) c || y && (h.__html == y.__html || h.__html == u.innerHTML) || (u.innerHTML = h.__html), t.__k = [];
-        else if (y && (u.innerHTML = ""), $b6c7f0288a15c619$var$I("template" == t.type ? u.content : u, $b6c7f0288a15c619$var$w(v) ? v : [
-            v
-        ], t, i, r, "foreignObject" == x ? "http://www.w3.org/1999/xhtml" : o, e, f, e ? e[0] : i.__k && $b6c7f0288a15c619$var$S(i, 0), c, s), null != e) for(a = e.length; a--;)$b6c7f0288a15c619$var$g(e[a]);
-        c || (a = "value", "progress" == x && null == _ ? u.removeAttribute("value") : null != _ && (_ !== u[a] || "progress" == x && !_ || "option" == x && _ != b[a]) && $b6c7f0288a15c619$var$j(u, a, _, b[a], o), a = "checked", null != m && m != u[a] && $b6c7f0288a15c619$var$j(u, a, m, b[a], o));
-    }
-    return u;
-}
-function $b6c7f0288a15c619$var$q(n, u, t) {
-    try {
-        if ("function" == typeof n) {
-            var i = "function" == typeof n.__u;
-            i && n.__u(), i && null == u || (n.__u = n(u));
-        } else n.current = u;
-    } catch (n) {
-        $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, t);
-    }
-}
-function $b6c7f0288a15c619$var$B(n, u, t) {
-    var i, r;
-    if ($b6c7f0288a15c619$export$41c562ebe57d11e2.unmount && $b6c7f0288a15c619$export$41c562ebe57d11e2.unmount(n), (i = n.ref) && (i.current && i.current != n.__e || $b6c7f0288a15c619$var$q(i, null, u)), null != (i = n.__c)) {
-        if (i.componentWillUnmount) try {
-            i.componentWillUnmount();
-        } catch (n) {
-            $b6c7f0288a15c619$export$41c562ebe57d11e2.__e(n, u);
-        }
-        i.base = i.__P = null;
-    }
-    if (i = n.__k) for(r = 0; r < i.length; r++)i[r] && $b6c7f0288a15c619$var$B(i[r], u, t || "function" != typeof n.type);
-    t || $b6c7f0288a15c619$var$g(n.__e), n.__c = n.__ = n.__e = void 0;
-}
-function $b6c7f0288a15c619$var$D(n, l, u) {
-    return this.constructor(n, u);
-}
-function $b6c7f0288a15c619$export$b3890eb0ae9dca99(u, t, i) {
-    var r, o, e, f;
-    t == document && (t = document.documentElement), $b6c7f0288a15c619$export$41c562ebe57d11e2.__ && $b6c7f0288a15c619$export$41c562ebe57d11e2.__(u, t), o = (r = "function" == typeof i) ? null : i && i.__k || t.__k, e = [], f = [], $b6c7f0288a15c619$var$O(t, u = (!r && i || t).__k = $b6c7f0288a15c619$export$c8a8987d4410bf2d($b6c7f0288a15c619$export$ffb0004e005737fa, null, [
-        u
-    ]), o || $b6c7f0288a15c619$var$p, $b6c7f0288a15c619$var$p, t.namespaceURI, !r && i ? [
-        i
-    ] : o ? null : t.firstChild ? $b6c7f0288a15c619$var$n.call(t.childNodes) : null, e, !r && i ? i : o ? o.__e : t.firstChild, r, f), $b6c7f0288a15c619$var$z(e, u, f);
-}
-function $b6c7f0288a15c619$export$fa8d919ba61d84db(n, l) {
-    $b6c7f0288a15c619$export$b3890eb0ae9dca99(n, l, $b6c7f0288a15c619$export$fa8d919ba61d84db);
-}
-function $b6c7f0288a15c619$export$e530037191fcd5d7(l, u, t) {
-    var i, r, o, e, f = $b6c7f0288a15c619$var$d({}, l.props);
-    for(o in l.type && l.type.defaultProps && (e = l.type.defaultProps), u)"key" == o ? i = u[o] : "ref" == o ? r = u[o] : f[o] = null == u[o] && null != e ? e[o] : u[o];
-    return arguments.length > 2 && (f.children = arguments.length > 3 ? $b6c7f0288a15c619$var$n.call(arguments, 2) : t), $b6c7f0288a15c619$var$m(l.type, f, i || l.key, r || l.ref, null);
-}
-function $b6c7f0288a15c619$export$fd42f52fd3ae1109(n) {
-    function l(n) {
-        var u, t;
-        return this.getChildContext || (u = new Set, (t = {})[l.__c] = this, this.getChildContext = function() {
-            return t;
-        }, this.componentWillUnmount = function() {
-            u = null;
-        }, this.shouldComponentUpdate = function(n) {
-            this.props.value != n.value && u.forEach(function(n) {
-                n.__e = !0, $b6c7f0288a15c619$var$M(n);
-            });
-        }, this.sub = function(n) {
-            u.add(n);
-            var l = n.componentWillUnmount;
-            n.componentWillUnmount = function() {
-                u && u.delete(n), l && l.call(n);
-            };
-        }), n.children;
-    }
-    return l.__c = "__cC" + $b6c7f0288a15c619$var$h++, l.__ = n, l.Provider = l.__l = (l.Consumer = function(n, l) {
-        return n.children(l);
-    }).contextType = l, l;
-}
-$b6c7f0288a15c619$var$n = $b6c7f0288a15c619$var$y.slice, $b6c7f0288a15c619$export$41c562ebe57d11e2 = {
-    __e: function(n, l, u, t) {
-        for(var i, r, o; l = l.__;)if ((i = l.__c) && !i.__) try {
-            if ((r = i.constructor) && null != r.getDerivedStateFromError && (i.setState(r.getDerivedStateFromError(n)), o = i.__d), null != i.componentDidCatch && (i.componentDidCatch(n, t || {}), o = i.__d), o) return i.__E = i;
-        } catch (l) {
-            n = l;
-        }
-        throw n;
-    }
-}, $b6c7f0288a15c619$var$u = 0, $b6c7f0288a15c619$export$a8257692ac88316c = function(n) {
-    return null != n && null == n.constructor;
-}, $b6c7f0288a15c619$export$16fa2f45be04daa8.prototype.setState = function(n, l) {
-    var u;
-    u = null != this.__s && this.__s != this.state ? this.__s : this.__s = $b6c7f0288a15c619$var$d({}, this.state), "function" == typeof n && (n = n($b6c7f0288a15c619$var$d({}, u), this.props)), n && $b6c7f0288a15c619$var$d(u, n), null != n && this.__v && (l && this._sb.push(l), $b6c7f0288a15c619$var$M(this));
-}, $b6c7f0288a15c619$export$16fa2f45be04daa8.prototype.forceUpdate = function(n) {
-    this.__v && (this.__e = !0, n && this.__h.push(n), $b6c7f0288a15c619$var$M(this));
-}, $b6c7f0288a15c619$export$16fa2f45be04daa8.prototype.render = $b6c7f0288a15c619$export$ffb0004e005737fa, $b6c7f0288a15c619$var$i = [], $b6c7f0288a15c619$var$o = "function" == typeof Promise ? Promise.prototype.then.bind(Promise.resolve()) : setTimeout, $b6c7f0288a15c619$var$e = function(n, l) {
-    return n.__v.__b - l.__v.__b;
-}, $b6c7f0288a15c619$var$$.__r = 0, $b6c7f0288a15c619$var$f = /(PointerCapture)$|Capture$/i, $b6c7f0288a15c619$var$c = 0, $b6c7f0288a15c619$var$s = $b6c7f0288a15c619$var$F(!1), $b6c7f0288a15c619$var$a = $b6c7f0288a15c619$var$F(!0), $b6c7f0288a15c619$var$h = 0;
-var $23b7c1cb98b19658$var$t = /["&<]/;
-function $23b7c1cb98b19658$var$n(r) {
-    if (0 === r.length || !1 === $23b7c1cb98b19658$var$t.test(r)) return r;
-    for(var e = 0, n = 0, o = "", f = ""; n < r.length; n++){
-        switch(r.charCodeAt(n)){
-            case 34:
-                f = "&quot;";
-                break;
-            case 38:
-                f = "&amp;";
-                break;
-            case 60:
-                f = "&lt;";
-                break;
-            default:
-                continue;
-        }
-        n !== e && (o += r.slice(e, n)), o += f, e = n + 1;
-    }
-    return n !== e && (o += r.slice(e, n)), o;
-}
-var $23b7c1cb98b19658$var$o = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i, $23b7c1cb98b19658$var$f = 0, $23b7c1cb98b19658$var$i = Array.isArray;
-function $23b7c1cb98b19658$export$34b9dba7ce09269b(e, t, n, o, i, u) {
-    t || (t = {});
-    var a, c, p = t;
-    if ("ref" in p) for(c in p = {}, t)"ref" == c ? a = t[c] : p[c] = t[c];
-    var l = {
-        type: e,
-        props: p,
-        key: n,
-        ref: a,
-        __k: null,
-        __: null,
-        __b: 0,
-        __e: null,
-        __c: null,
-        constructor: void 0,
-        __v: --$23b7c1cb98b19658$var$f,
-        __i: -1,
-        __u: 0,
-        __source: i,
-        __self: u
-    };
-    if ("function" == typeof e && (a = e.defaultProps)) for(c in a)void 0 === p[c] && (p[c] = a[c]);
-    return $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode && $b6c7f0288a15c619$export$41c562ebe57d11e2.vnode(l), l;
-}
-function $23b7c1cb98b19658$export$45700d561b2268ac(r) {
-    var t = $23b7c1cb98b19658$export$34b9dba7ce09269b($b6c7f0288a15c619$export$ffb0004e005737fa, {
-        tpl: r,
-        exprs: [].slice.call(arguments, 1)
-    });
-    return t.key = t.__v, t;
-}
-var $23b7c1cb98b19658$var$c = {}, $23b7c1cb98b19658$var$p = /[A-Z]/g;
-function $23b7c1cb98b19658$export$991f6ffe102e5bac(e, t) {
-    if ($b6c7f0288a15c619$export$41c562ebe57d11e2.attr) {
-        var f = $b6c7f0288a15c619$export$41c562ebe57d11e2.attr(e, t);
-        if ("string" == typeof f) return f;
-    }
-    if ("ref" === e || "key" === e) return "";
-    if ("style" === e && "object" == typeof t) {
-        var i = "";
-        for(var u in t){
-            var a = t[u];
-            if (null != a && "" !== a) {
-                var l = "-" == u[0] ? u : $23b7c1cb98b19658$var$c[u] || ($23b7c1cb98b19658$var$c[u] = u.replace($23b7c1cb98b19658$var$p, "-$&").toLowerCase()), s = ";";
-                "number" != typeof a || l.startsWith("--") || $23b7c1cb98b19658$var$o.test(l) || (s = "px;"), i = i + l + ":" + a + s;
-            }
-        }
-        return e + '="' + i + '"';
-    }
-    return null == t || !1 === t || "function" == typeof t || "object" == typeof t ? "" : !0 === t ? e : e + '="' + $23b7c1cb98b19658$var$n(t) + '"';
-}
-function $23b7c1cb98b19658$export$40e96e718441efeb(r) {
-    if (null == r || "boolean" == typeof r || "function" == typeof r) return null;
-    if ("object" == typeof r) {
-        if (void 0 === r.constructor) return r;
-        if ($23b7c1cb98b19658$var$i(r)) {
-            for(var e = 0; e < r.length; e++)r[e] = $23b7c1cb98b19658$export$40e96e718441efeb(r[e]);
-            return r;
-        }
-    }
-    return $23b7c1cb98b19658$var$n("" + r);
-}
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /* eslint-env browser */ /**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ let $883a43040cbd0629$var$boundErrorHandler = null;
-function $883a43040cbd0629$var$errorHandler(callback, e) {
-    // $FlowFixMe
-    if (!e.error) return;
-    // $FlowFixMe
-    const { error: error } = e;
-    if (error instanceof Error) callback(error);
-    else // Look in your browser's devtools for more information
-    callback(new Error(error));
-}
-function $883a43040cbd0629$export$6503ec6e8aabbaf(target, callback) {
-    if ($883a43040cbd0629$var$boundErrorHandler !== null) return;
-    $883a43040cbd0629$var$boundErrorHandler = $883a43040cbd0629$var$errorHandler.bind(undefined, callback);
-    target.addEventListener('error', $883a43040cbd0629$var$boundErrorHandler);
-}
-function $883a43040cbd0629$export$d07f55d4c15c0440(target) {
-    if ($883a43040cbd0629$var$boundErrorHandler === null) return;
-    target.removeEventListener('error', $883a43040cbd0629$var$boundErrorHandler);
-    $883a43040cbd0629$var$boundErrorHandler = null;
-}
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ let $900f8c32b7484e20$var$boundRejectionHandler = null;
-function $900f8c32b7484e20$var$rejectionHandler(callback, e) {
-    if (e == null || e.reason == null) return callback(new Error('Unknown'));
-    let { reason: reason } = e;
-    if (reason instanceof Error) return callback(reason);
-    // A non-error was rejected, we don't have a trace :(
-    // Look in your browser's devtools for more information
-    return callback(new Error(reason));
-}
-function $900f8c32b7484e20$export$6503ec6e8aabbaf(target, callback) {
-    if ($900f8c32b7484e20$var$boundRejectionHandler !== null) return;
-    $900f8c32b7484e20$var$boundRejectionHandler = $900f8c32b7484e20$var$rejectionHandler.bind(undefined, callback);
-    // $FlowFixMe
-    target.addEventListener('unhandledrejection', $900f8c32b7484e20$var$boundRejectionHandler);
-}
-function $900f8c32b7484e20$export$d07f55d4c15c0440(target) {
-    if ($900f8c32b7484e20$var$boundRejectionHandler === null) return;
-    // $FlowFixMe
-    target.removeEventListener('unhandledrejection', $900f8c32b7484e20$var$boundRejectionHandler);
-    $900f8c32b7484e20$var$boundRejectionHandler = null;
-}
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ let $5f72ade198404e99$var$stackTraceRegistered = false;
-// Default: https://docs.microsoft.com/en-us/scripting/javascript/reference/stacktracelimit-property-error-javascript
-let $5f72ade198404e99$var$restoreStackTraceValue = 10;
-const $5f72ade198404e99$var$MAX_STACK_LENGTH = 50;
-function $5f72ade198404e99$export$6503ec6e8aabbaf(limit = $5f72ade198404e99$var$MAX_STACK_LENGTH) {
-    if ($5f72ade198404e99$var$stackTraceRegistered) return;
-    try {
-        $5f72ade198404e99$var$restoreStackTraceValue = Error.stackTraceLimit;
-        Error.stackTraceLimit = limit;
-        $5f72ade198404e99$var$stackTraceRegistered = true;
-    } catch (e) {
-    // Not all browsers support this so we don't care if it errors
-    }
-}
-function $5f72ade198404e99$export$d07f55d4c15c0440() {
-    if (!$5f72ade198404e99$var$stackTraceRegistered) return;
-    try {
-        Error.stackTraceLimit = $5f72ade198404e99$var$restoreStackTraceValue;
-        $5f72ade198404e99$var$stackTraceRegistered = false;
-    } catch (e) {
-    // Not all browsers support this so we don't care if it errors
-    }
-}
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /**
- * A representation of a stack frame.
- */ class $d35756f426c25812$export$8949fddf10447898 {
-    constructor(functionName = null, fileName = null, lineNumber = null, columnNumber = null, scriptCode = null, sourceFunctionName = null, sourceFileName = null, sourceLineNumber = null, sourceColumnNumber = null, sourceScriptCode = null){
-        if (functionName && functionName.indexOf('Object.') === 0) functionName = functionName.slice(7);
-        if (// https://github.com/facebook/create-react-app/issues/2097
-        // Let's ignore a meaningless name we get for top-level modules.
-        functionName === 'friendlySyntaxErrorLabel' || functionName === 'exports.__esModule' || functionName === '<anonymous>' || !functionName) functionName = null;
-        this.functionName = functionName;
-        this.fileName = fileName;
-        this.lineNumber = lineNumber;
-        this.columnNumber = columnNumber;
-        this._originalFunctionName = sourceFunctionName;
-        this._originalFileName = sourceFileName;
-        this._originalLineNumber = sourceLineNumber;
-        this._originalColumnNumber = sourceColumnNumber;
-        this._scriptCode = scriptCode;
-        this._originalScriptCode = sourceScriptCode;
-    }
-    /**
-   * Returns the name of this function.
-   */ getFunctionName() {
-        return this.functionName || '(anonymous function)';
-    }
-    /**
-   * Returns the source of the frame.
-   * This contains the file name, line number, and column number when available.
-   */ getSource() {
-        let str = '';
-        if (this.fileName != null) str += this.fileName + ':';
-        if (this.lineNumber != null) str += this.lineNumber + ':';
-        if (this.columnNumber != null) str += this.columnNumber + ':';
-        return str.slice(0, -1);
-    }
-    /**
-   * Returns a pretty version of this stack frame.
-   */ toString() {
-        const functionName = this.getFunctionName();
-        const source = this.getSource();
-        return `${functionName}${source ? ` (${source})` : ``}`;
-    }
-}
-var $d35756f426c25812$export$2e2bcd8739ae039 = $d35756f426c25812$export$8949fddf10447898;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $865b9ffc545cb441$var$regexExtractLocation = /\(?(.+?)(?::(\d+))?(?::(\d+))?\)?$/;
-function $865b9ffc545cb441$var$extractLocation(token) {
-    return $865b9ffc545cb441$var$regexExtractLocation.exec(token) // $FlowFixMe
-    .slice(1).map((v)=>{
-        const p = Number(v);
-        if (!isNaN(p)) return p;
-        return v;
-    });
-}
-const $865b9ffc545cb441$var$regexValidFrame_Chrome = /^\s*(at|in)\s.+(:\d+)/;
-const $865b9ffc545cb441$var$regexValidFrame_FireFox = /(^|@)\S+:\d+|.+line\s+\d+\s+>\s+(eval|Function).+/;
-function $865b9ffc545cb441$var$parseStack(stack) {
-    let frames = stack.filter((e)=>$865b9ffc545cb441$var$regexValidFrame_Chrome.test(e) || $865b9ffc545cb441$var$regexValidFrame_FireFox.test(e)).map((e)=>{
-        if ($865b9ffc545cb441$var$regexValidFrame_FireFox.test(e)) {
-            // Strip eval, we don't care about it
-            let isEval = false;
-            if (/ > (eval|Function)/.test(e)) {
-                e = e.replace(/ line (\d+)(?: > eval line \d+)* > (eval|Function):\d+:\d+/g, ':$1');
-                isEval = true;
-            }
-            const data = e.split(/[@]/g);
-            const last = data.pop();
-            return new $d35756f426c25812$export$2e2bcd8739ae039(data.join('@') || (isEval ? 'eval' : null), ...$865b9ffc545cb441$var$extractLocation(last));
-        } else {
-            // Strip eval, we don't care about it
-            if (e.indexOf('(eval ') !== -1) e = e.replace(/(\(eval at [^()]*)|(\),.*$)/g, '');
-            if (e.indexOf('(at ') !== -1) e = e.replace(/\(at /, '(');
-            const data = e.trim().split(/\s+/g).slice(1);
-            const last = data.pop();
-            return new $d35756f426c25812$export$2e2bcd8739ae039(data.join(' ') || null, ...$865b9ffc545cb441$var$extractLocation(last));
-        }
-    });
-    let index = frames.findIndex((frame)=>frame.getFunctionName().includes('react-stack-bottom-frame'));
-    if (index >= 0) frames = frames.slice(0, index);
-    return frames;
-}
-/**
- * Turns an <code>Error</code>, or similar object, into a set of <code>StackFrame</code>s.
- * @alias parse
- */ function $865b9ffc545cb441$export$98e6a39c04603d36(error) {
-    if (error == null) throw new Error('You cannot pass a null object.');
-    if (typeof error === 'string') return $865b9ffc545cb441$var$parseStack(error.split('\n'));
-    if (Array.isArray(error)) return $865b9ffc545cb441$var$parseStack(error);
-    if (typeof error.stack === 'string') return $865b9ffc545cb441$var$parseStack(error.stack.split('\n'));
-    throw new Error('The error you provided does not contain a stack trace.');
-}
-var $865b9ffc545cb441$export$2e2bcd8739ae039 = $865b9ffc545cb441$export$98e6a39c04603d36;
-/**
- * Enhances a set of <code>StackFrame</code>s with their original positions and code (when available).
- * @param {StackFrame[]} frames A set of <code>StackFrame</code>s which contain (generated) code positions.
- * @param {number} [contextLines=3] The number of lines to provide before and after the line specified in the <code>StackFrame</code>.
- */ async function $df495b51087c401c$export$35b6448019ed80b8(error, contextLines = 3) {
-    const frames = $865b9ffc545cb441$export$98e6a39c04603d36(error);
-    // $FlowFixMe
-    let res = await fetch(module.bundle.devServer + '/__parcel_code_frame', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            contextLines: contextLines,
-            frames: frames.map((f)=>({
-                    fileName: f.fileName,
-                    lineNumber: f.lineNumber,
-                    columnNumber: f.columnNumber
-                }))
-        })
-    });
-    let json = await res.json();
-    return json.map((f, i)=>new $d35756f426c25812$export$8949fddf10447898(frames[i].functionName, f.fileName, f.lineNumber, f.columnNumber, f.compiledLines, frames[i].functionName, f.sourceFileName, f.sourceLineNumber, f.sourceColumnNumber, f.sourceLines));
-}
-var $df495b51087c401c$export$2e2bcd8739ae039 = $df495b51087c401c$export$35b6448019ed80b8;
-const $6d40ebe8356580e0$var$CONTEXT_SIZE = 3;
-function $6d40ebe8356580e0$export$9123e6c9c0ac21ed(crash) {
-    return (error, unhandledRejection = false)=>{
-        $df495b51087c401c$export$2e2bcd8739ae039(error, $6d40ebe8356580e0$var$CONTEXT_SIZE).then((stackFrames)=>{
-            if (stackFrames == null) return;
-            crash({
-                error: error,
-                unhandledRejection: unhandledRejection,
-                contextSize: $6d40ebe8356580e0$var$CONTEXT_SIZE,
-                stackFrames: stackFrames
-            });
-        }).catch((e)=>{
-            // eslint-disable-next-line no-console
-            console.log('Could not get the stack frames of error:', e);
-        });
-    };
-}
-function $6d40ebe8356580e0$var$patchConsole(method, onError) {
-    /* eslint-disable no-console */ let original = console[method];
-    console[method] = (...args)=>{
-        let error = null;
-        if (typeof args[0] === 'string') {
-            let format = args[0].match(/%[oOdisfc]/g);
-            if (format) {
-                let errorIndex = format.findIndex((match)=>match === '%o' || match === '%O');
-                if (errorIndex < 0) errorIndex = format.findIndex((match)=>match === '%s');
-                if (errorIndex >= 0) error = args[errorIndex + 1];
-                else error = args[1];
-                if (!(error instanceof Error)) {
-                    let index = 1;
-                    let message = args[0].replace(/%[oOdisfc]/g, (match)=>{
-                        switch(match){
-                            case '%s':
-                                return String(args[index++]);
-                            case '%f':
-                                return parseFloat(args[index++]);
-                            case '%d':
-                            case '%i':
-                                return parseInt(args[index++], 10);
-                            case '%o':
-                            case '%O':
-                                if (args[index] instanceof Error) return String(args[index++]);
-                                else return JSON.stringify(args[index++]);
-                            case '%c':
-                                index++;
-                                return '';
-                        }
-                    });
-                    error = new Error(message);
-                }
-            } else error = new Error(args[0]);
-        } else error = args.find((arg)=>arg instanceof Error);
-        if (error && !error.message.includes('[parcel]') && typeof window !== 'undefined' && window.__REACT_DEVTOOLS_GLOBAL_HOOK__) {
-            // Attempt to append the React component stack
-            // TODO: use React.captureOwnerStack once stable.
-            let hook = window.__REACT_DEVTOOLS_GLOBAL_HOOK__;
-            if (hook.renderers instanceof Map) {
-                for (let renderer of hook.renderers.values())if (typeof renderer?.currentDispatcherRef?.getCurrentStack === 'function') {
-                    let stack = renderer.currentDispatcherRef.getCurrentStack();
-                    if (stack) {
-                        error.stack += stack;
-                        break;
-                    }
-                }
-            }
-            onError(error);
-        }
-        original.apply(console, args);
-    };
-/* eslint-enable no-console */ }
-function $6d40ebe8356580e0$export$38ec23daa6e8dcdf(crash) {
-    const crashWithFramesRunTime = $6d40ebe8356580e0$export$9123e6c9c0ac21ed(crash);
-    $883a43040cbd0629$export$6503ec6e8aabbaf(window, (error)=>crashWithFramesRunTime(error, false));
-    $900f8c32b7484e20$export$6503ec6e8aabbaf(window, (error)=>crashWithFramesRunTime(error, true));
-    $5f72ade198404e99$export$6503ec6e8aabbaf();
-    $6d40ebe8356580e0$var$patchConsole('error', (error)=>crashWithFramesRunTime(error, false));
-    return function() {
-        $5f72ade198404e99$export$d07f55d4c15c0440();
-        $900f8c32b7484e20$export$d07f55d4c15c0440(window);
-        $883a43040cbd0629$export$d07f55d4c15c0440(window);
-    };
-}
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /* eslint-env browser */ var $10ecac3e4062713a$var$t, $10ecac3e4062713a$var$r, $10ecac3e4062713a$var$u, $10ecac3e4062713a$var$i, $10ecac3e4062713a$var$o = 0, $10ecac3e4062713a$var$f = [], $10ecac3e4062713a$var$c = $b6c7f0288a15c619$export$41c562ebe57d11e2, $10ecac3e4062713a$var$e = $10ecac3e4062713a$var$c.__b, $10ecac3e4062713a$var$a = $10ecac3e4062713a$var$c.__r, $10ecac3e4062713a$var$v = $10ecac3e4062713a$var$c.diffed, $10ecac3e4062713a$var$l = $10ecac3e4062713a$var$c.__c, $10ecac3e4062713a$var$m = $10ecac3e4062713a$var$c.unmount, $10ecac3e4062713a$var$s = $10ecac3e4062713a$var$c.__;
-function $10ecac3e4062713a$var$p(n, t) {
-    $10ecac3e4062713a$var$c.__h && $10ecac3e4062713a$var$c.__h($10ecac3e4062713a$var$r, n, $10ecac3e4062713a$var$o || t), $10ecac3e4062713a$var$o = 0;
-    var u = $10ecac3e4062713a$var$r.__H || ($10ecac3e4062713a$var$r.__H = {
-        __: [],
-        __h: []
-    });
-    return n >= u.__.length && u.__.push({}), u.__[n];
-}
-function $10ecac3e4062713a$export$60241385465d0a34(n) {
-    return $10ecac3e4062713a$var$o = 1, $10ecac3e4062713a$export$13e3392192263954($10ecac3e4062713a$var$D, n);
-}
-function $10ecac3e4062713a$export$13e3392192263954(n, u, i) {
-    var o = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 2);
-    if (o.t = n, !o.__c && (o.__ = [
-        i ? i(u) : $10ecac3e4062713a$var$D(void 0, u),
-        function(n) {
-            var t = o.__N ? o.__N[0] : o.__[0], r = o.t(t, n);
-            t !== r && (o.__N = [
-                r,
-                o.__[1]
-            ], o.__c.setState({}));
-        }
-    ], o.__c = $10ecac3e4062713a$var$r, !$10ecac3e4062713a$var$r.__f)) {
-        var f = function(n, t, r) {
-            if (!o.__c.__H) return !0;
-            var u = o.__c.__H.__.filter(function(n) {
-                return !!n.__c;
-            });
-            if (u.every(function(n) {
-                return !n.__N;
-            })) return !c || c.call(this, n, t, r);
-            var i = o.__c.props !== n;
-            return u.forEach(function(n) {
-                if (n.__N) {
-                    var t = n.__[0];
-                    n.__ = n.__N, n.__N = void 0, t !== n.__[0] && (i = !0);
-                }
-            }), c && c.call(this, n, t, r) || i;
-        };
-        $10ecac3e4062713a$var$r.__f = !0;
-        var c = $10ecac3e4062713a$var$r.shouldComponentUpdate, e = $10ecac3e4062713a$var$r.componentWillUpdate;
-        $10ecac3e4062713a$var$r.componentWillUpdate = function(n, t, r) {
-            if (this.__e) {
-                var u = c;
-                c = void 0, f(n, t, r), c = u;
-            }
-            e && e.call(this, n, t, r);
-        }, $10ecac3e4062713a$var$r.shouldComponentUpdate = f;
-    }
-    return o.__N || o.__;
-}
-function $10ecac3e4062713a$export$6d9c69b0de29b591(n, u) {
-    var i = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 3);
-    !$10ecac3e4062713a$var$c.__s && $10ecac3e4062713a$var$C(i.__H, u) && (i.__ = n, i.u = u, $10ecac3e4062713a$var$r.__H.__h.push(i));
-}
-function $10ecac3e4062713a$export$e5c5a5f917a5871c(n, u) {
-    var i = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 4);
-    !$10ecac3e4062713a$var$c.__s && $10ecac3e4062713a$var$C(i.__H, u) && (i.__ = n, i.u = u, $10ecac3e4062713a$var$r.__h.push(i));
-}
-function $10ecac3e4062713a$export$b8f5890fc79d6aca(n) {
-    return $10ecac3e4062713a$var$o = 5, $10ecac3e4062713a$export$1538c33de8887b59(function() {
-        return {
-            current: n
-        };
+parcelHelpers.export(exports, "SettingsPanel", ()=>SettingsPanel);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _iconsJs = require("../ui/icons.js");
+var _useClickOutsideJs = require("../../hooks/useClickOutside.js");
+var _levelSelectorJsx = require("./LevelSelector.jsx");
+var _typeSelectorJsx = require("./TypeSelector.jsx");
+var _formSelectorJsx = require("./FormSelector.jsx");
+var _displayOptionsJsx = require("./DisplayOptions.jsx");
+var _quizModeSelectorJsx = require("./QuizModeSelector.jsx");
+var _s = $RefreshSig$();
+function SettingsPanel() {
+    _s();
+    const [isOpen, setIsOpen] = (0, _react.useState)(false);
+    const handleClose = (0, _react.useCallback)(()=>{
+        setIsOpen(false);
     }, []);
+    const ref = (0, _useClickOutsideJs.useClickOutside)(handleClose);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "absolute top-4 left-3 z-50",
+        ref: ref,
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                onClick: ()=>setIsOpen(!isOpen),
+                className: "flex items-center gap-2 bg-[#2a2a2a] hover:bg-[#333] text-gray-200 px-4 py-2 rounded-lg border border-[#333] shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.Settings), {
+                        size: 18,
+                        className: "text-gray-300"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/SettingsPanel.jsx",
+                        lineNumber: 26,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "font-medium text-sm tracking-wide",
+                        children: "\u8A2D\u5B9A"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/SettingsPanel.jsx",
+                        lineNumber: 27,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/settings/SettingsPanel.jsx",
+                lineNumber: 22,
+                columnNumber: 7
+            }, this),
+            isOpen && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "absolute top-full left-0 mt-1 bg-[#2a2a2a] p-2 rounded-lg border border-[#333] shadow-xl w-[22rem] animate-in fade-in slide-in-from-top-2 z-50 max-h-[100vh] overflow-y-auto",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _levelSelectorJsx.LevelSelector), {}, void 0, false, {
+                        fileName: "src/components/settings/SettingsPanel.jsx",
+                        lineNumber: 32,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _typeSelectorJsx.TypeSelector), {}, void 0, false, {
+                        fileName: "src/components/settings/SettingsPanel.jsx",
+                        lineNumber: 33,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _formSelectorJsx.FormSelector), {}, void 0, false, {
+                        fileName: "src/components/settings/SettingsPanel.jsx",
+                        lineNumber: 34,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _displayOptionsJsx.DisplayOptions), {}, void 0, false, {
+                        fileName: "src/components/settings/SettingsPanel.jsx",
+                        lineNumber: 35,
+                        columnNumber: 11
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _quizModeSelectorJsx.QuizModeSelector), {}, void 0, false, {
+                        fileName: "src/components/settings/SettingsPanel.jsx",
+                        lineNumber: 36,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/settings/SettingsPanel.jsx",
+                lineNumber: 31,
+                columnNumber: 9
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/settings/SettingsPanel.jsx",
+        lineNumber: 21,
+        columnNumber: 5
+    }, this);
 }
-function $10ecac3e4062713a$export$d5a552a76deda3c2(n, t, r) {
-    $10ecac3e4062713a$var$o = 6, $10ecac3e4062713a$export$e5c5a5f917a5871c(function() {
-        if ("function" == typeof n) {
-            var r = n(t());
-            return function() {
-                n(null), r && "function" == typeof r && r();
-            };
-        }
-        if (n) return n.current = t(), function() {
-            return n.current = null;
-        };
-    }, null == r ? r : r.concat(n));
-}
-function $10ecac3e4062713a$export$1538c33de8887b59(n, r) {
-    var u = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 7);
-    return $10ecac3e4062713a$var$C(u.__H, r) && (u.__ = n(), u.__H = r, u.__h = n), u.__;
-}
-function $10ecac3e4062713a$export$35808ee640e87ca7(n, t) {
-    return $10ecac3e4062713a$var$o = 8, $10ecac3e4062713a$export$1538c33de8887b59(function() {
-        return n;
-    }, t);
-}
-function $10ecac3e4062713a$export$fae74005e78b1a27(n) {
-    var u = $10ecac3e4062713a$var$r.context[n.__c], i = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 9);
-    return i.c = n, u ? (null == i.__ && (i.__ = !0, u.sub($10ecac3e4062713a$var$r)), u.props.value) : n.__;
-}
-function $10ecac3e4062713a$export$dc8fbce3eb94dc1e(n, t) {
-    $10ecac3e4062713a$var$c.useDebugValue && $10ecac3e4062713a$var$c.useDebugValue(t ? t(n) : n);
-}
-function $10ecac3e4062713a$export$c052f6604b7d51fe(n) {
-    var u = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 10), i = $10ecac3e4062713a$export$60241385465d0a34();
-    return u.__ = n, $10ecac3e4062713a$var$r.componentDidCatch || ($10ecac3e4062713a$var$r.componentDidCatch = function(n, t) {
-        u.__ && u.__(n, t), i[1](n);
-    }), [
-        i[0],
-        function() {
-            i[1](void 0);
-        }
+_s(SettingsPanel, "BUBFnZy39t+Pb1QTy0l+N8ip9GU=", false, function() {
+    return [
+        (0, _useClickOutsideJs.useClickOutside)
     ];
+});
+_c = SettingsPanel;
+var _c;
+$RefreshReg$(_c, "SettingsPanel");
+
+  $parcel$ReactRefreshHelpers$2c0e.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
 }
-function $10ecac3e4062713a$export$f680877a34711e37() {
-    var n = $10ecac3e4062713a$var$p($10ecac3e4062713a$var$t++, 11);
-    if (!n.__) {
-        for(var u = $10ecac3e4062713a$var$r.__v; null !== u && !u.__m && null !== u.__;)u = u.__;
-        var i = u.__m || (u.__m = [
-            0,
-            0
-        ]);
-        n.__ = "P" + i[0] + "-" + i[1]++;
-    }
-    return n.__;
-}
-function $10ecac3e4062713a$var$j() {
-    for(var n; n = $10ecac3e4062713a$var$f.shift();)if (n.__P && n.__H) try {
-        n.__H.__h.forEach($10ecac3e4062713a$var$z), n.__H.__h.forEach($10ecac3e4062713a$var$B), n.__H.__h = [];
-    } catch (t) {
-        n.__H.__h = [], $10ecac3e4062713a$var$c.__e(t, n.__v);
-    }
-}
-$10ecac3e4062713a$var$c.__b = function(n) {
-    $10ecac3e4062713a$var$r = null, $10ecac3e4062713a$var$e && $10ecac3e4062713a$var$e(n);
-}, $10ecac3e4062713a$var$c.__ = function(n, t) {
-    n && t.__k && t.__k.__m && (n.__m = t.__k.__m), $10ecac3e4062713a$var$s && $10ecac3e4062713a$var$s(n, t);
-}, $10ecac3e4062713a$var$c.__r = function(n) {
-    $10ecac3e4062713a$var$a && $10ecac3e4062713a$var$a(n), $10ecac3e4062713a$var$t = 0;
-    var i = ($10ecac3e4062713a$var$r = n.__c).__H;
-    i && ($10ecac3e4062713a$var$u === $10ecac3e4062713a$var$r ? (i.__h = [], $10ecac3e4062713a$var$r.__h = [], i.__.forEach(function(n) {
-        n.__N && (n.__ = n.__N), n.u = n.__N = void 0;
-    })) : (i.__h.forEach($10ecac3e4062713a$var$z), i.__h.forEach($10ecac3e4062713a$var$B), i.__h = [], $10ecac3e4062713a$var$t = 0)), $10ecac3e4062713a$var$u = $10ecac3e4062713a$var$r;
-}, $10ecac3e4062713a$var$c.diffed = function(n) {
-    $10ecac3e4062713a$var$v && $10ecac3e4062713a$var$v(n);
-    var t = n.__c;
-    t && t.__H && (t.__H.__h.length && (1 !== $10ecac3e4062713a$var$f.push(t) && $10ecac3e4062713a$var$i === $10ecac3e4062713a$var$c.requestAnimationFrame || (($10ecac3e4062713a$var$i = $10ecac3e4062713a$var$c.requestAnimationFrame) || $10ecac3e4062713a$var$w)($10ecac3e4062713a$var$j)), t.__H.__.forEach(function(n) {
-        n.u && (n.__H = n.u), n.u = void 0;
-    })), $10ecac3e4062713a$var$u = $10ecac3e4062713a$var$r = null;
-}, $10ecac3e4062713a$var$c.__c = function(n, t) {
-    t.some(function(n) {
-        try {
-            n.__h.forEach($10ecac3e4062713a$var$z), n.__h = n.__h.filter(function(n) {
-                return !n.__ || $10ecac3e4062713a$var$B(n);
-            });
-        } catch (r) {
-            t.some(function(n) {
-                n.__h && (n.__h = []);
-            }), t = [], $10ecac3e4062713a$var$c.__e(r, n.__v);
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../ui/icons.js":"5p7MZ","../../hooks/useClickOutside.js":"5vhZg","./LevelSelector.jsx":"28OyW","./TypeSelector.jsx":"dzsSw","./FormSelector.jsx":"lwYLU","./DisplayOptions.jsx":"kFayP","./QuizModeSelector.jsx":"6Jra5","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"5vhZg":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$66c7 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$66c7.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$66c7.prelude(module);
+
+try {
+// useClickOutside - detects clicks outside a ref element
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "useClickOutside", ()=>useClickOutside);
+var _react = require("react");
+var _s = $RefreshSig$();
+function useClickOutside(callback) {
+    _s();
+    const ref = (0, _react.useRef)(null);
+    (0, _react.useEffect)(()=>{
+        function handleClickOutside(event) {
+            if (ref.current && !ref.current.contains(event.target)) callback();
         }
-    }), $10ecac3e4062713a$var$l && $10ecac3e4062713a$var$l(n, t);
-}, $10ecac3e4062713a$var$c.unmount = function(n) {
-    $10ecac3e4062713a$var$m && $10ecac3e4062713a$var$m(n);
-    var t, r = n.__c;
-    r && r.__H && (r.__H.__.forEach(function(n) {
-        try {
-            $10ecac3e4062713a$var$z(n);
-        } catch (n) {
-            t = n;
-        }
-    }), r.__H = void 0, t && $10ecac3e4062713a$var$c.__e(t, r.__v));
-};
-var $10ecac3e4062713a$var$k = "function" == typeof requestAnimationFrame;
-function $10ecac3e4062713a$var$w(n) {
-    var t, r = function() {
-        clearTimeout(u), $10ecac3e4062713a$var$k && cancelAnimationFrame(t), setTimeout(n);
-    }, u = setTimeout(r, 100);
-    $10ecac3e4062713a$var$k && (t = requestAnimationFrame(r));
-}
-function $10ecac3e4062713a$var$z(n) {
-    var t = $10ecac3e4062713a$var$r, u = n.__c;
-    "function" == typeof u && (n.__c = void 0, u()), $10ecac3e4062713a$var$r = t;
-}
-function $10ecac3e4062713a$var$B(n) {
-    var t = $10ecac3e4062713a$var$r;
-    n.__c = n.__(), $10ecac3e4062713a$var$r = t;
-}
-function $10ecac3e4062713a$var$C(n, t) {
-    return !n || n.length !== t.length || t.some(function(t, r) {
-        return t !== n[r];
-    });
-}
-function $10ecac3e4062713a$var$D(n, t) {
-    return "function" == typeof t ? t(n) : t;
-}
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $74bb4be6e9b78681$export$f30cb9bc4f736419 = {
-    // Colors for components styles
-    background: 'white',
-    color: 'black',
-    headerColor: '#ce1126',
-    primaryPreBackground: 'rgba(206, 17, 38, 0.05)',
-    primaryPreColor: 'inherit',
-    secondaryPreBackground: 'rgba(251, 245, 180, 0.3)',
-    secondaryPreColor: 'inherit',
-    footer: '#878e91',
-    anchorColor: '#878e91',
-    toggleBackground: 'transparent',
-    toggleColor: '#878e91',
-    closeColor: '#293238',
-    navBackground: 'rgba(206, 17, 38, 0.05)',
-    navArrow: '#ce1126',
-    diffAdded: 'green',
-    diffRemoved: '#ce1126',
-    // Light color scheme inspired by https://chriskempson.github.io/base16/css/base16-github.css
-    // base00: '#ffffff',
-    base01: '#f5f5f5',
-    // base02: '#c8c8fa',
-    base03: '#6e6e6e',
-    // base04: '#e8e8e8',
-    base05: '#333333',
-    // base06: '#ffffff',
-    // base07: '#ffffff',
-    base08: '#881280',
-    // base09: '#0086b3',
-    // base0A: '#795da3',
-    base0B: '#1155cc',
-    base0C: '#994500',
-    // base0D: '#795da3',
-    base0E: '#c80000'
-};
-const $74bb4be6e9b78681$export$3e936a8db52a10a0 = {
-    // Colors for components styles
-    background: '#353535',
-    color: 'white',
-    headerColor: '#e83b46',
-    primaryPreBackground: 'rgba(206, 17, 38, 0.1)',
-    primaryPreColor: '#fccfcf',
-    secondaryPreBackground: 'rgba(251, 245, 180, 0.1)',
-    secondaryPreColor: '#fbf5b4',
-    footer: '#878e91',
-    anchorColor: '#878e91',
-    toggleBackground: 'transparent',
-    toggleColor: '#878e91',
-    closeColor: '#ffffff',
-    navBackground: 'rgba(206, 17, 38, 0.2)',
-    navArrow: '#ce1126',
-    diffAdded: '#85e285',
-    diffRemoved: '#ff5459',
-    // Dark color scheme inspired by https://github.com/atom/base16-tomorrow-dark-theme/blob/master/styles/colors.less
-    // base00: '#1d1f21',
-    base01: '#282a2e',
-    // base02: '#373b41',
-    base03: '#969896',
-    // base04: '#b4b7b4',
-    base05: '#c5c8c6',
-    // base06: '#e0e0e0',
-    // base07: '#ffffff',
-    base08: '#cc6666',
-    // base09: '#de935f',
-    // base0A: '#f0c674',
-    base0B: '#b5bd68',
-    base0C: '#8abeb7',
-    // base0D: '#81a2be',
-    base0E: '#b294bb'
-};
-const $74bb4be6e9b78681$export$bca14c5b3b88a9c9 = Object.fromEntries(Object.keys($74bb4be6e9b78681$export$f30cb9bc4f736419).map((key)=>[
-        key,
-        `light-dark(${$74bb4be6e9b78681$export$f30cb9bc4f736419[key]}, ${$74bb4be6e9b78681$export$3e936a8db52a10a0[key]})`
-    ]));
-const $74bb4be6e9b78681$export$7ef984671d1853d7 = {
-    width: '100vw',
-    height: '100vh',
-    maxWidth: 'none',
-    maxHeight: 'none',
-    border: 0,
-    margin: 0,
-    padding: 0,
-    boxSizing: 'border-box',
-    textAlign: 'center',
-    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.background,
-    outline: 'none',
-    colorScheme: 'light dark'
-};
-const $20d888b381d18c6c$var$overlayStyle = {
-    position: 'relative',
-    display: 'inline-flex',
-    flexDirection: 'column',
-    height: '100%',
-    width: '1024px',
-    maxWidth: '100%',
-    overflowX: 'hidden',
-    overflowY: 'auto',
-    padding: '0.5rem',
-    boxSizing: 'border-box',
-    textAlign: 'left',
-    fontFamily: 'Consolas, Menlo, monospace',
-    fontSize: '11px',
-    whiteSpace: 'pre-wrap',
-    wordBreak: 'break-word',
-    lineHeight: 1.5,
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.color
-};
-function $20d888b381d18c6c$var$ErrorOverlay(props) {
-    const { shortcutHandler: shortcutHandler } = props;
-    $10ecac3e4062713a$export$6d9c69b0de29b591(()=>{
-        const onKeyDown = (e)=>{
-            if (shortcutHandler) shortcutHandler(e.key);
-        };
-        window.addEventListener('keydown', onKeyDown);
+        document.addEventListener('mousedown', handleClickOutside);
         return ()=>{
-            window.removeEventListener('keydown', onKeyDown);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [
-        shortcutHandler
+        callback
     ]);
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-        style: $20d888b381d18c6c$var$overlayStyle,
-        children: props.children
-    });
+    return ref;
 }
-var $20d888b381d18c6c$export$2e2bcd8739ae039 = $20d888b381d18c6c$var$ErrorOverlay;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $7aae0c9ea64fc08c$var$closeButtonStyle = {
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.closeColor,
-    lineHeight: '1rem',
-    fontSize: '1.5rem',
-    padding: '1rem',
-    cursor: 'pointer',
-    position: 'absolute',
-    right: 0,
-    top: 0
-};
-function $7aae0c9ea64fc08c$var$CloseButton({ close: close }) {
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
-        title: "Click or press Escape to dismiss.",
-        onClick: close,
-        style: $7aae0c9ea64fc08c$var$closeButtonStyle,
-        children: "\xd7"
-    });
+_s(useClickOutside, "8uVE59eA/r6b92xF80p7sH8rXLk=");
+
+  $parcel$ReactRefreshHelpers$66c7.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
 }
-var $7aae0c9ea64fc08c$export$2e2bcd8739ae039 = $7aae0c9ea64fc08c$var$CloseButton;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $1adc179a826c5dd2$var$navigationBarStyle = {
-    marginBottom: '0.5rem'
-};
-const $1adc179a826c5dd2$var$buttonContainerStyle = {
-    marginRight: '1em'
-};
-const $1adc179a826c5dd2$var$_navButtonStyle = {
-    border: 'none',
-    borderRadius: '4px',
-    padding: '3px 6px',
-    cursor: 'pointer'
-};
-const $1adc179a826c5dd2$var$leftButtonStyle = {
-    ...$1adc179a826c5dd2$var$_navButtonStyle,
-    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navBackground,
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navArrow,
-    borderTopRightRadius: '0px',
-    borderBottomRightRadius: '0px',
-    marginRight: '1px'
-};
-const $1adc179a826c5dd2$var$rightButtonStyle = {
-    ...$1adc179a826c5dd2$var$_navButtonStyle,
-    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navBackground,
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.navArrow,
-    borderTopLeftRadius: '0px',
-    borderBottomLeftRadius: '0px'
-};
-function $1adc179a826c5dd2$var$NavigationBar(props) {
-    const { currentError: currentError, totalErrors: totalErrors, previous: previous, next: next } = props;
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-        style: $1adc179a826c5dd2$var$navigationBarStyle,
+},{"react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"28OyW":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$55f3 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$55f3.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$55f3.prelude(module);
+
+try {
+// LevelSelector - Level selection checkboxes
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "LevelSelector", ()=>LevelSelector);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _settingsContextJsx = require("../../context/SettingsContext.jsx");
+var _checkboxJsx = require("../ui/Checkbox.jsx");
+var _quizDefaultsJs = require("../../constants/quizDefaults.js");
+var _s = $RefreshSig$();
+function LevelSelector() {
+    _s();
+    const { selectedLevels, toggleLevel } = (0, _settingsContextJsx.useSettings)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
         children: [
-            $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
-                style: $1adc179a826c5dd2$var$buttonContainerStyle,
-                children: [
-                    $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
-                        onClick: previous,
-                        style: $1adc179a826c5dd2$var$leftButtonStyle,
-                        children: "\u2190"
-                    }),
-                    $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
-                        onClick: next,
-                        style: $1adc179a826c5dd2$var$rightButtonStyle,
-                        children: "\u2192"
-                    })
-                ]
-            }),
-            `${currentError} of ${totalErrors} errors on the page`
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
+                children: "Select Levels"
+            }, void 0, false, {
+                fileName: "src/components/settings/LevelSelector.jsx",
+                lineNumber: 12,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "grid grid-cols-2 gap-0 mb-2",
+                children: (0, _quizDefaultsJs.AVAILABLE_LEVELS).map((level)=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: selectedLevels.includes(level),
+                        onChange: ()=>toggleLevel(level),
+                        label: `\u{30EC}\u{30D9}\u{30EB} ${level}`,
+                        colorClass: "bg-green-500 border-green-500",
+                        labelColorClass: "text-white"
+                    }, level, false, {
+                        fileName: "src/components/settings/LevelSelector.jsx",
+                        lineNumber: 17,
+                        columnNumber: 11
+                    }, this))
+            }, void 0, false, {
+                fileName: "src/components/settings/LevelSelector.jsx",
+                lineNumber: 15,
+                columnNumber: 7
+            }, this)
         ]
-    });
+    }, void 0, true);
 }
-var $1adc179a826c5dd2$export$2e2bcd8739ae039 = $1adc179a826c5dd2$var$NavigationBar;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $c306e3a42547c8c2$var$headerStyle = {
-    fontSize: '2em',
-    fontFamily: 'sans-serif',
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.headerColor,
-    whiteSpace: 'pre-wrap',
-    // Top bottom margin spaces header
-    // Right margin revents overlap with close button
-    margin: '0 2rem 0.75rem 0',
-    flex: '0 0 auto'
-};
-function $c306e3a42547c8c2$var$Header(props) {
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-        style: $c306e3a42547c8c2$var$headerStyle,
-        children: props.headerText
-    });
-}
-var $c306e3a42547c8c2$export$2e2bcd8739ae039 = $c306e3a42547c8c2$var$Header;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ /**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $97c30df7f5c364f7$var$_preStyle = {
-    position: 'relative',
-    display: 'block',
-    padding: '0.5em',
-    marginTop: '0.5em',
-    marginBottom: '0.5em',
-    overflowX: 'auto',
-    whiteSpace: 'pre-wrap',
-    borderRadius: '0.25rem'
-};
-const $97c30df7f5c364f7$var$codeStyle = {
-    fontFamily: 'Consolas, Menlo, monospace'
-};
-function $97c30df7f5c364f7$var$CodeBlock({ main: main, codeHTML: codeHTML }) {
-    const primaryPreStyle = {
-        ...$97c30df7f5c364f7$var$_preStyle,
-        backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreBackground,
-        color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreColor
-    };
-    const secondaryPreStyle = {
-        ...$97c30df7f5c364f7$var$_preStyle,
-        backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.secondaryPreBackground,
-        color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.secondaryPreColor
-    };
-    const preStyle = main ? primaryPreStyle : secondaryPreStyle;
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("pre", {
-        style: preStyle,
-        children: $23b7c1cb98b19658$export$34b9dba7ce09269b("code", {
-            style: $97c30df7f5c364f7$var$codeStyle,
-            dangerouslySetInnerHTML: {
-                __html: codeHTML
-            }
-        })
-    });
-}
-var $97c30df7f5c364f7$export$2e2bcd8739ae039 = $97c30df7f5c364f7$var$CodeBlock;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ function $f78f50d61026cdc5$export$44b1e5ee7f53eae1(sourceFileName, sourceLineNumber, sourceColumnNumber, fileName, lineNumber, columnNumber, compiled) {
-    let prettyURL;
-    if (!compiled && sourceFileName && typeof sourceLineNumber === 'number') {
-        // Remove everything up to the first /src/ or /node_modules/
-        const trimMatch = /^[/|\\].*?[/|\\]((src|node_modules)[/|\\].*)/.exec(sourceFileName);
-        if (trimMatch && trimMatch[1]) prettyURL = trimMatch[1];
-        else prettyURL = sourceFileName;
-        prettyURL += ':' + sourceLineNumber;
-        // Note: we intentionally skip 0's because they're produced by cheap webpack maps
-        if (sourceColumnNumber) prettyURL += ':' + sourceColumnNumber;
-    } else if (fileName && typeof lineNumber === 'number') {
-        prettyURL = fileName + ':' + lineNumber;
-        // Note: we intentionally skip 0's because they're produced by cheap webpack maps
-        if (columnNumber) prettyURL += ':' + columnNumber;
-    } else prettyURL = 'unknown';
-    return prettyURL.replace('webpack://', '.');
-}
-var $f78f50d61026cdc5$export$2e2bcd8739ae039 = $f78f50d61026cdc5$export$44b1e5ee7f53eae1;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ var $cdea3ae92bef6910$exports = {};
-'use strict';
-$cdea3ae92bef6910$exports = $cdea3ae92bef6910$var$ansiHTML;
-// Reference to https://github.com/sindresorhus/ansi-regex
-var $cdea3ae92bef6910$var$_regANSI = /(?:(?:\u001b\[)|\u009b)(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-M|f-m])|\u001b[A-M]/;
-var $cdea3ae92bef6910$var$_defColors = {
-    reset: [
-        'fff',
-        '000'
-    ],
-    black: '000',
-    red: 'ff0000',
-    green: '209805',
-    yellow: 'e8bf03',
-    blue: '0000ff',
-    magenta: 'ff00ff',
-    cyan: '00ffee',
-    lightgrey: 'f0f0f0',
-    darkgrey: '888'
-};
-var $cdea3ae92bef6910$var$_styles = {
-    30: 'black',
-    31: 'red',
-    32: 'green',
-    33: 'yellow',
-    34: 'blue',
-    35: 'magenta',
-    36: 'cyan',
-    37: 'lightgrey'
-};
-var $cdea3ae92bef6910$var$_openTags = {
-    '1': 'font-weight:bold',
-    '2': 'opacity:0.5',
-    '3': '<i>',
-    '4': '<u>',
-    '8': 'display:none',
-    '9': '<del>' // delete
-};
-var $cdea3ae92bef6910$var$_closeTags = {
-    '23': '</i>',
-    '24': '</u>',
-    '29': '</del>' // reset delete
-};
-[
-    0,
-    21,
-    22,
-    27,
-    28,
-    39,
-    49
-].forEach(function(n) {
-    $cdea3ae92bef6910$var$_closeTags[n] = '</span>';
+_s(LevelSelector, "oaRZVdc6wpx6sIuRW9mRwHoyu9c=", false, function() {
+    return [
+        (0, _settingsContextJsx.useSettings)
+    ];
 });
-/**
- * Converts text with ANSI color codes to HTML markup.
- * @param {String} text
- * @returns {*}
- */ function $cdea3ae92bef6910$var$ansiHTML(text) {
-    // Returns the text if the string has no ANSI escape code.
-    if (!$cdea3ae92bef6910$var$_regANSI.test(text)) return text;
-    // Cache opened sequence.
-    var ansiCodes = [];
-    // Replace with markup.
-    var ret = text.replace(/\033\[(\d+)m/g, function(match, seq) {
-        var ot = $cdea3ae92bef6910$var$_openTags[seq];
-        if (ot) {
-            // If current sequence has been opened, close it.
-            if (!!~ansiCodes.indexOf(seq)) {
-                ansiCodes.pop();
-                return '</span>';
-            }
-            // Open tag.
-            ansiCodes.push(seq);
-            return ot[0] === '<' ? ot : '<span style="' + ot + ';">';
-        }
-        var ct = $cdea3ae92bef6910$var$_closeTags[seq];
-        if (ct) {
-            // Pop sequence
-            ansiCodes.pop();
-            return ct;
-        }
-        return '';
-    });
-    // Make sure tags are closed.
-    var l = ansiCodes.length;
-    l > 0 && (ret += Array(l + 1).join('</span>'));
-    return ret;
+_c = LevelSelector;
+var _c;
+$RefreshReg$(_c, "LevelSelector");
+
+  $parcel$ReactRefreshHelpers$55f3.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
 }
-/**
- * Customize colors.
- * @param {Object} colors reference to _defColors
- */ $cdea3ae92bef6910$var$ansiHTML.setColors = function(colors) {
-    if (typeof colors !== 'object') throw new Error('`colors` parameter must be an Object.');
-    var _finalColors = {};
-    for(var key in $cdea3ae92bef6910$var$_defColors){
-        var hex = colors.hasOwnProperty(key) ? colors[key] : null;
-        if (!hex) {
-            _finalColors[key] = $cdea3ae92bef6910$var$_defColors[key];
-            continue;
-        }
-        if ('reset' === key) {
-            if (typeof hex === 'string') hex = [
-                hex
-            ];
-            if (!Array.isArray(hex) || hex.length === 0 || hex.some(function(h) {
-                return typeof h !== 'string';
-            })) throw new Error('The value of `' + key + '` property must be an Array and each item could only be a hex string, e.g.: FF0000');
-            var defHexColor = $cdea3ae92bef6910$var$_defColors[key];
-            if (!hex[0]) hex[0] = defHexColor[0];
-            if (hex.length === 1 || !hex[1]) {
-                hex = [
-                    hex[0]
-                ];
-                hex.push(defHexColor[1]);
-            }
-            hex = hex.slice(0, 2);
-        } else if (typeof hex !== 'string') throw new Error('The value of `' + key + '` property must be a hex string, e.g.: FF0000');
-        _finalColors[key] = hex;
-    }
-    $cdea3ae92bef6910$var$_setTags(_finalColors);
-};
-/**
- * Reset colors.
- */ $cdea3ae92bef6910$var$ansiHTML.reset = function() {
-    $cdea3ae92bef6910$var$_setTags($cdea3ae92bef6910$var$_defColors);
-};
-/**
- * Expose tags, including open and close.
- * @type {Object}
- */ $cdea3ae92bef6910$var$ansiHTML.tags = {};
-if (Object.defineProperty) {
-    Object.defineProperty($cdea3ae92bef6910$var$ansiHTML.tags, 'open', {
-        get: function() {
-            return $cdea3ae92bef6910$var$_openTags;
-        }
-    });
-    Object.defineProperty($cdea3ae92bef6910$var$ansiHTML.tags, 'close', {
-        get: function() {
-            return $cdea3ae92bef6910$var$_closeTags;
-        }
-    });
-} else {
-    $cdea3ae92bef6910$var$ansiHTML.tags.open = $cdea3ae92bef6910$var$_openTags;
-    $cdea3ae92bef6910$var$ansiHTML.tags.close = $cdea3ae92bef6910$var$_closeTags;
-}
-function $cdea3ae92bef6910$var$_setTags(colors) {
-    // reset all
-    $cdea3ae92bef6910$var$_openTags['0'] = 'font-weight:normal;opacity:1;color:#' + colors.reset[0] + ';background:#' + colors.reset[1];
-    // inverse
-    $cdea3ae92bef6910$var$_openTags['7'] = 'color:#' + colors.reset[1] + ';background:#' + colors.reset[0];
-    // dark grey
-    $cdea3ae92bef6910$var$_openTags['90'] = 'color:#' + colors.darkgrey;
-    for(var code in $cdea3ae92bef6910$var$_styles){
-        var color = $cdea3ae92bef6910$var$_styles[code];
-        var oriColor = colors[color] || '000';
-        $cdea3ae92bef6910$var$_openTags[code] = 'color:#' + oriColor;
-        code = parseInt(code);
-        $cdea3ae92bef6910$var$_openTags[(code + 10).toString()] = 'background:#' + oriColor;
-    }
-}
-$cdea3ae92bef6910$var$ansiHTML.reset();
-// Map ANSI colors from what babel-code-frame uses to base16-github
-// See: https://github.com/babel/babel/blob/e86f62b304d280d0bab52c38d61842b853848ba6/packages/babel-code-frame/src/index.js#L9-L22
-const $b67e2a05a9c13039$var$colors = {
-    reset: [
-        $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base05,
-        'transparent'
-    ],
-    black: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base05,
-    red: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base08 /* marker, bg-invalid */ ,
-    green: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0B /* string */ ,
-    yellow: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base08 /* capitalized, jsx_tag, punctuator */ ,
-    blue: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0C,
-    magenta: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0C /* regex */ ,
-    cyan: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base0E /* keyword */ ,
-    gray: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base03 /* comment, gutter */ ,
-    lightgrey: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base01,
-    darkgrey: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.base03
-};
-/*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).setColors($b67e2a05a9c13039$var$colors);
-// $FlowFixMe
-for(let tag in /*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).tags.open)/*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).tags.open[tag] = /*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports).tags.open[tag].replace(/#light-dark/g, 'light-dark');
-function $b67e2a05a9c13039$var$generateAnsiHTML(txt) {
-    return /*@__PURE__*/ $parcel$interopDefault($cdea3ae92bef6910$exports)(txt.replace(/[&<>"']/g, (c)=>{
-        switch(c){
-            case '&':
-                return '&amp';
-            case '<':
-                return '&lt;';
-            case '>':
-                return '&gt';
-            case '"':
-                return '&quot;';
-            case "'":
-                return '&#39;';
-            default:
-                return c;
-        }
-    }));
-}
-var $b67e2a05a9c13039$export$2e2bcd8739ae039 = $b67e2a05a9c13039$var$generateAnsiHTML;
-const $e0e0fa52b83f95a9$var$linkStyle = {
-    fontSize: '0.9em',
-    marginBottom: '0.9em'
-};
-const $e0e0fa52b83f95a9$var$anchorStyle = {
-    textDecoration: 'none',
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.anchorColor,
-    cursor: 'pointer'
-};
-const $e0e0fa52b83f95a9$var$codeAnchorStyle = {
-    cursor: 'pointer'
-};
-const $e0e0fa52b83f95a9$var$toggleStyle = {
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.toggleColor,
-    cursor: 'pointer',
-    border: 'none',
-    display: 'block',
-    width: '100%',
-    textAlign: 'left',
-    background: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.toggleBackground,
-    fontFamily: 'Consolas, Menlo, monospace',
-    fontSize: '1em',
-    padding: '0px',
-    lineHeight: '1.5'
-};
-function $e0e0fa52b83f95a9$var$StackFrame(props) {
-    const { frame: frame, critical: critical, showCode: showCode } = props;
-    const { fileName: fileName, lineNumber: lineNumber, columnNumber: columnNumber, _scriptCode: scriptLines, _originalFileName: sourceFileName, _originalLineNumber: sourceLineNumber, _originalColumnNumber: sourceColumnNumber, _originalScriptCode: sourceLines } = frame;
-    const functionName = frame.getFunctionName();
-    const [compiled, setCompiled] = $10ecac3e4062713a$export$60241385465d0a34(!sourceLines);
-    const getErrorLocation = ()=>{
-        const { _originalFileName: fileName, _originalLineNumber: lineNumber } = props.frame;
-        // Unknown file
-        if (!fileName) return null;
-        // e.g. "/path-to-my-app/webpack/bootstrap eaddeb46b67d75e4dfc1"
-        const isInternalWebpackBootstrapCode = fileName.trim().indexOf(' ') !== -1;
-        if (isInternalWebpackBootstrapCode) return null;
-        // Code is in a real file
-        return {
-            fileName: fileName,
-            lineNumber: lineNumber || 1
-        };
-    };
-    const editorHandler = ()=>{
-        const errorLoc = getErrorLocation();
-        if (!errorLoc) return;
-        props.editorHandler?.(errorLoc);
-    };
-    const url = $f78f50d61026cdc5$export$44b1e5ee7f53eae1(sourceFileName, sourceLineNumber, sourceColumnNumber, fileName, lineNumber, columnNumber, compiled);
-    let codeBlockProps = null;
-    if (showCode) {
-        if (compiled && scriptLines && scriptLines.length !== 0 && lineNumber != null) codeBlockProps = {
-            codeHTML: $b67e2a05a9c13039$export$2e2bcd8739ae039(scriptLines),
-            main: critical
-        };
-        else if (!compiled && sourceLines && sourceLines.length !== 0 && sourceLineNumber != null) codeBlockProps = {
-            codeHTML: $b67e2a05a9c13039$export$2e2bcd8739ae039(sourceLines),
-            main: critical
-        };
-    }
-    const canOpenInEditor = getErrorLocation() !== null && props.editorHandler !== null;
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/SettingsContext.jsx":"hBba3","../ui/Checkbox.jsx":"b19pu","../../constants/quizDefaults.js":"j5Psg","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"b19pu":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$708d = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$708d.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$708d.prelude(module);
+
+try {
+// Checkbox - styled checkbox component
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Checkbox", ()=>Checkbox);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _iconsJs = require("./icons.js");
+function Checkbox({ checked, onChange, label, sublabel, colorClass = 'bg-green-500 border-green-500', labelColorClass = 'text-white' }) {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+        className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
         children: [
-            $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-                children: functionName
-            }),
-            $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-                style: $e0e0fa52b83f95a9$var$linkStyle,
-                children: $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
-                    role: "link",
-                    style: canOpenInEditor ? $e0e0fa52b83f95a9$var$anchorStyle : null,
-                    onClick: canOpenInEditor ? editorHandler : null,
-                    onKeyDown: canOpenInEditor ? (e)=>{
-                        if (e.key === 'Enter') editorHandler();
-                    } : null,
-                    tabIndex: canOpenInEditor ? '0' : null,
-                    children: url
-                })
-            }),
-            codeBlockProps && $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-                style: {
-                    marginBottom: '1.5em'
-                },
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: `w-4 h-4 rounded border flex items-center justify-center transition-colors ${checked ? colorClass : 'border-gray-500'}`,
+                children: checked && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCheck), {
+                    size: 12,
+                    className: "text-white"
+                }, void 0, false, {
+                    fileName: "src/components/ui/Checkbox.jsx",
+                    lineNumber: 16,
+                    columnNumber: 21
+                }, this)
+            }, void 0, false, {
+                fileName: "src/components/ui/Checkbox.jsx",
+                lineNumber: 15,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                type: "checkbox",
+                className: "hidden",
+                checked: checked,
+                onChange: onChange
+            }, void 0, false, {
+                fileName: "src/components/ui/Checkbox.jsx",
+                lineNumber: 18,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex flex-col",
                 children: [
-                    $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
-                        onClick: canOpenInEditor ? editorHandler : null,
-                        style: canOpenInEditor ? $e0e0fa52b83f95a9$var$codeAnchorStyle : null,
-                        children: $23b7c1cb98b19658$export$34b9dba7ce09269b($97c30df7f5c364f7$export$2e2bcd8739ae039, {
-                            ...codeBlockProps
-                        })
-                    }),
-                    scriptLines && sourceLines && $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
-                        style: $e0e0fa52b83f95a9$var$toggleStyle,
-                        onClick: ()=>{
-                            setCompiled(!compiled);
-                        },
-                        children: 'View ' + (compiled ? 'source' : 'compiled')
-                    })
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: `text-base ${checked ? `${labelColorClass} font-bold` : 'text-gray-400'}`,
+                        children: label
+                    }, void 0, false, {
+                        fileName: "src/components/ui/Checkbox.jsx",
+                        lineNumber: 25,
+                        columnNumber: 9
+                    }, this),
+                    sublabel && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: `text-[10px] ${checked ? 'text-gray-400 font-bold' : 'text-gray-400'}`,
+                        children: sublabel
+                    }, void 0, false, {
+                        fileName: "src/components/ui/Checkbox.jsx",
+                        lineNumber: 29,
+                        columnNumber: 11
+                    }, this)
                 ]
-            })
+            }, void 0, true, {
+                fileName: "src/components/ui/Checkbox.jsx",
+                lineNumber: 24,
+                columnNumber: 7
+            }, this)
         ]
-    });
+    }, void 0, true, {
+        fileName: "src/components/ui/Checkbox.jsx",
+        lineNumber: 14,
+        columnNumber: 5
+    }, this);
 }
-var $e0e0fa52b83f95a9$export$2e2bcd8739ae039 = $e0e0fa52b83f95a9$var$StackFrame;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $9a1abb59f5d10ec8$var$_collapsibleStyle = {
-    cursor: 'pointer',
-    border: 'none',
-    display: 'block',
-    width: '100%',
-    textAlign: 'left',
-    fontFamily: 'Consolas, Menlo, monospace',
-    fontSize: '1em',
-    padding: '0px',
-    lineHeight: '1.5'
-};
-const $9a1abb59f5d10ec8$var$collapsibleCollapsedStyle = {
-    ...$9a1abb59f5d10ec8$var$_collapsibleStyle,
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.color,
-    background: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.background,
-    marginBottom: '1.5em'
-};
-const $9a1abb59f5d10ec8$var$collapsibleExpandedStyle = {
-    ...$9a1abb59f5d10ec8$var$_collapsibleStyle,
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.color,
-    background: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.background,
-    marginBottom: '0.6em'
-};
-function $9a1abb59f5d10ec8$var$Collapsible(props) {
-    const [collapsed, setCollapsed] = $10ecac3e4062713a$export$60241385465d0a34(true);
-    const toggleCollapsed = ()=>{
-        setCollapsed(!collapsed);
-    };
-    const count = props.children.length;
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("details", {
-        open: !collapsed,
-        onToggle: toggleCollapsed,
+_c = Checkbox;
+var _c;
+$RefreshReg$(_c, "Checkbox");
+
+  $parcel$ReactRefreshHelpers$708d.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","./icons.js":"5p7MZ","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"dzsSw":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$8db4 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$8db4.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$8db4.prelude(module);
+
+try {
+// TypeSelector - Verb type (Transitive/Intransitive) selection
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "TypeSelector", ()=>TypeSelector);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _settingsContextJsx = require("../../context/SettingsContext.jsx");
+var _checkboxJsx = require("../ui/Checkbox.jsx");
+var _s = $RefreshSig$();
+function TypeSelector() {
+    _s();
+    const { selectedTypes, toggleType } = (0, _settingsContextJsx.useSettings)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
         children: [
-            $23b7c1cb98b19658$export$34b9dba7ce09269b("summary", {
-                style: collapsed ? $9a1abb59f5d10ec8$var$collapsibleCollapsedStyle : $9a1abb59f5d10ec8$var$collapsibleExpandedStyle,
-                children: (collapsed ? "\u25B6" : "\u25BC") + ` ${count} stack frames were ` + (collapsed ? 'collapsed.' : 'expanded.')
-            }),
-            $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
+                children: "Verb Type"
+            }, void 0, false, {
+                fileName: "src/components/settings/TypeSelector.jsx",
+                lineNumber: 11,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "grid grid-cols-2 gap-0 mb-2",
                 children: [
-                    props.children,
-                    $23b7c1cb98b19658$export$34b9dba7ce09269b("button", {
-                        onClick: toggleCollapsed,
-                        style: $9a1abb59f5d10ec8$var$collapsibleExpandedStyle,
-                        children: `\u{25B2} ${count} stack frames were expanded.`
-                    })
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: selectedTypes.includes('Intransitive'),
+                        onChange: ()=>toggleType('Intransitive'),
+                        label: "\u81EA\u52D5\u8A5E",
+                        sublabel: "Intransitive",
+                        colorClass: "bg-purple-500 border-purple-500",
+                        labelColorClass: "text-purple-400"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/TypeSelector.jsx",
+                        lineNumber: 15,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: selectedTypes.includes('Transitive'),
+                        onChange: ()=>toggleType('Transitive'),
+                        label: "\u4ED6\u52D5\u8A5E",
+                        sublabel: "Transitive",
+                        colorClass: "bg-yellow-500 border-yellow-500",
+                        labelColorClass: "text-yellow-400"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/TypeSelector.jsx",
+                        lineNumber: 23,
+                        columnNumber: 9
+                    }, this)
                 ]
-            })
+            }, void 0, true, {
+                fileName: "src/components/settings/TypeSelector.jsx",
+                lineNumber: 14,
+                columnNumber: 7
+            }, this)
         ]
-    });
+    }, void 0, true);
 }
-var $9a1abb59f5d10ec8$export$2e2bcd8739ae039 = $9a1abb59f5d10ec8$var$Collapsible;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ function $e95d7084caaf4e6d$export$723fa77eef12dd9f(sourceFileName, fileName) {
-    return sourceFileName == null || sourceFileName === '' || sourceFileName.indexOf('~/') !== -1 || sourceFileName.indexOf('node_modules/') !== -1 || sourceFileName.indexOf('error-overlay') !== -1 || sourceFileName.trim().indexOf(' ') !== -1 || fileName == null || fileName === '';
+_s(TypeSelector, "KZc9CngDaBo6277vtA/NrGeGAFs=", false, function() {
+    return [
+        (0, _settingsContextJsx.useSettings)
+    ];
+});
+_c = TypeSelector;
+var _c;
+$RefreshReg$(_c, "TypeSelector");
+
+  $parcel$ReactRefreshHelpers$8db4.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
 }
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ function $a5027556d7003a42$export$64794fcb05cf0bcf(errorName) {
-    switch(errorName){
-        case 'EvalError':
-        case 'InternalError':
-        case 'RangeError':
-        case 'ReferenceError':
-        case 'SyntaxError':
-        case 'TypeError':
-        case 'URIError':
-            return true;
-        default:
-            return false;
-    }
-}
-var $a5027556d7003a42$export$2e2bcd8739ae039 = $a5027556d7003a42$export$64794fcb05cf0bcf;
-const $5ee7d2edb790dd06$var$traceStyle = {
-    fontSize: '1em',
-    flex: '0 1 auto',
-    minHeight: '0px',
-    overflow: 'auto'
-};
-function $5ee7d2edb790dd06$var$StackTrace(props) {
-    const { stackFrames: stackFrames, errorName: errorName, contextSize: contextSize, editorHandler: editorHandler } = props;
-    const renderedFrames = [];
-    let hasReachedAppCode = false, currentBundle = [], bundleCount = 0;
-    stackFrames.forEach((frame, index)=>{
-        const { fileName: fileName, _originalFileName: sourceFileName } = frame;
-        const isInternalUrl = $e95d7084caaf4e6d$export$723fa77eef12dd9f(sourceFileName, fileName);
-        const isThrownIntentionally = !$a5027556d7003a42$export$64794fcb05cf0bcf(errorName);
-        const shouldCollapse = isInternalUrl && (isThrownIntentionally || hasReachedAppCode);
-        if (!isInternalUrl) hasReachedAppCode = true;
-        const frameEle = $23b7c1cb98b19658$export$34b9dba7ce09269b($e0e0fa52b83f95a9$export$2e2bcd8739ae039, {
-            frame: frame,
-            contextSize: contextSize,
-            critical: index === 0,
-            showCode: !shouldCollapse,
-            editorHandler: editorHandler
-        }, 'frame-' + index);
-        const lastElement = index === stackFrames.length - 1;
-        if (shouldCollapse) currentBundle.push(frameEle);
-        if (!shouldCollapse || lastElement) {
-            if (currentBundle.length === 1) renderedFrames.push(currentBundle[0]);
-            else if (currentBundle.length > 1) {
-                bundleCount++;
-                renderedFrames.push($23b7c1cb98b19658$export$34b9dba7ce09269b($9a1abb59f5d10ec8$export$2e2bcd8739ae039, {
-                    children: currentBundle
-                }, 'bundle-' + bundleCount));
-            }
-            currentBundle = [];
-        }
-        if (!shouldCollapse) renderedFrames.push(frameEle);
-    });
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-        style: $5ee7d2edb790dd06$var$traceStyle,
-        children: renderedFrames
-    });
-}
-var $5ee7d2edb790dd06$export$2e2bcd8739ae039 = $5ee7d2edb790dd06$var$StackTrace;
-const $2eeadf2892cff4e4$var$diffStyle = {
-    backgroundColor: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreBackground,
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.primaryPreColor,
-    padding: '0.5em',
-    overflowX: 'auto',
-    whiteSpace: 'pre-wrap',
-    borderRadius: '0.25rem'
-};
-function $2eeadf2892cff4e4$export$2e2bcd8739ae039({ diff: diff }) {
-    let lines = diff.split('\n').flatMap((line, i)=>[
-            $2eeadf2892cff4e4$var$formatLine(line, i),
-            '\n'
-        ]).slice(0, -1);
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("pre", {
-        style: $2eeadf2892cff4e4$var$diffStyle,
-        children: lines
-    });
-}
-function $2eeadf2892cff4e4$var$formatLine(line, index) {
-    if (line.startsWith('+')) return $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
-        style: {
-            color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.diffAdded,
-            fontWeight: 'bold'
-        },
-        children: line
-    }, index);
-    else if (line.startsWith('-') || line.startsWith('>')) return $23b7c1cb98b19658$export$34b9dba7ce09269b("span", {
-        style: {
-            color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.diffRemoved,
-            fontWeight: 'bold'
-        },
-        children: line
-    }, index);
-    else return line;
-}
-const $4baa71cb4cecc0ea$var$wrapperStyle = {
-    display: 'flex',
-    flexDirection: 'column'
-};
-function $4baa71cb4cecc0ea$var$RuntimeError({ errorRecord: errorRecord, editorHandler: editorHandler }) {
-    const { error: error, unhandledRejection: unhandledRejection, contextSize: contextSize, stackFrames: stackFrames } = errorRecord;
-    const errorName = unhandledRejection ? 'Unhandled Rejection (' + error.name + ')' : error.name;
-    // Make header prettier
-    const message = error.message;
-    let headerText = message.match(/^\w*:/) || !errorName ? message : errorName + ': ' + message;
-    headerText = headerText // TODO: maybe remove this prefix from fbjs?
-    // It's just scaring people
-    .replace(/^Invariant Violation:\s*/, '') // This is not helpful either:
-    .replace(/^Warning:\s*/, '') // Break the actionable part to the next line.
-    // AFAIK React 16+ should already do this.
-    .replace(' Check the render method', '\n\nCheck the render method').replace(' Check your code at', '\n\nCheck your code at');
-    let link, diff;
-    if (headerText.includes('https://react.dev/link/hydration-mismatch')) {
-        [headerText, diff] = headerText.split('https://react.dev/link/hydration-mismatch');
-        link = 'https://react.dev/link/hydration-mismatch';
-    } else if (headerText.includes('This will cause a hydration error.')) {
-        [headerText, diff] = headerText.split('This will cause a hydration error.');
-        headerText += 'This will cause a hydration error.';
-    }
-    let lines = headerText.split('\n');
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-        style: $4baa71cb4cecc0ea$var$wrapperStyle,
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/SettingsContext.jsx":"hBba3","../ui/Checkbox.jsx":"b19pu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"lwYLU":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$62fa = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$62fa.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$62fa.prelude(module);
+
+try {
+// FormSelector - Verb form (Polite/Plain) selection
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "FormSelector", ()=>FormSelector);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _settingsContextJsx = require("../../context/SettingsContext.jsx");
+var _checkboxJsx = require("../ui/Checkbox.jsx");
+var _s = $RefreshSig$();
+function FormSelector() {
+    _s();
+    const { selectedForms, toggleForm } = (0, _settingsContextJsx.useSettings)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
         children: [
-            $23b7c1cb98b19658$export$34b9dba7ce09269b($c306e3a42547c8c2$export$2e2bcd8739ae039, {
-                headerText: lines[0]
-            }),
-            $23b7c1cb98b19658$export$34b9dba7ce09269b("pre", {
-                children: lines.slice(1).join('\n').trim()
-            }),
-            link && $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-                children: $23b7c1cb98b19658$export$34b9dba7ce09269b("a", {
-                    href: link,
-                    target: "_blank",
-                    rel: "noreferrer",
-                    children: link
-                })
-            }),
-            diff && $23b7c1cb98b19658$export$34b9dba7ce09269b($2eeadf2892cff4e4$export$2e2bcd8739ae039, {
-                diff: diff.trim()
-            }),
-            $23b7c1cb98b19658$export$34b9dba7ce09269b($5ee7d2edb790dd06$export$2e2bcd8739ae039, {
-                stackFrames: stackFrames,
-                errorName: errorName,
-                contextSize: contextSize,
-                editorHandler: editorHandler
-            })
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
+                children: "Verb Form"
+            }, void 0, false, {
+                fileName: "src/components/settings/FormSelector.jsx",
+                lineNumber: 11,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "grid grid-cols-2 gap-0 mb-2",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: selectedForms.includes('Polite'),
+                        onChange: ()=>toggleForm('Polite'),
+                        label: "\u4E01\u5BE7\u5F62",
+                        sublabel: "Polite Form",
+                        colorClass: "bg-[#5F9EA0] border-[#5F9EA0]",
+                        labelColorClass: "text-[#5F9EA0]"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/FormSelector.jsx",
+                        lineNumber: 15,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: selectedForms.includes('Plain'),
+                        onChange: ()=>toggleForm('Plain'),
+                        label: "\u666E\u901A\u5F62",
+                        sublabel: "Plain Form",
+                        colorClass: "bg-[#D1AD8C] border-[#D1AD8C]",
+                        labelColorClass: "text-[#D1AD8C]"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/FormSelector.jsx",
+                        lineNumber: 23,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/settings/FormSelector.jsx",
+                lineNumber: 14,
+                columnNumber: 7
+            }, this)
         ]
-    });
+    }, void 0, true);
 }
-var $4baa71cb4cecc0ea$export$2e2bcd8739ae039 = $4baa71cb4cecc0ea$var$RuntimeError;
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */ const $7606db210182b733$var$footerStyle = {
-    fontFamily: 'sans-serif',
-    color: $74bb4be6e9b78681$export$bca14c5b3b88a9c9.footer,
-    marginTop: '0.5rem',
-    flex: '0 0 auto'
-};
-function $7606db210182b733$var$Footer(props) {
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b("div", {
-        style: $7606db210182b733$var$footerStyle,
+_s(FormSelector, "q1e21qYaB/tSjTI/iOLoBkyukrs=", false, function() {
+    return [
+        (0, _settingsContextJsx.useSettings)
+    ];
+});
+_c = FormSelector;
+var _c;
+$RefreshReg$(_c, "FormSelector");
+
+  $parcel$ReactRefreshHelpers$62fa.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/SettingsContext.jsx":"hBba3","../ui/Checkbox.jsx":"b19pu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"kFayP":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$b62a = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$b62a.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$b62a.prelude(module);
+
+try {
+// DisplayOptions - Toggle display options (English, Furigana, Dictionary, Pairs)
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "DisplayOptions", ()=>DisplayOptions);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _settingsContextJsx = require("../../context/SettingsContext.jsx");
+var _checkboxJsx = require("../ui/Checkbox.jsx");
+var _s = $RefreshSig$();
+function DisplayOptions() {
+    _s();
+    const { showEnglish, setShowEnglish, showFurigana, setShowFurigana, showDictionary, setShowDictionary, showPairs, setShowPairs } = (0, _settingsContextJsx.useSettings)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
         children: [
-            props.line1,
-            $23b7c1cb98b19658$export$34b9dba7ce09269b("br", {}),
-            props.line2
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
+                children: "Display Options"
+            }, void 0, false, {
+                fileName: "src/components/settings/DisplayOptions.jsx",
+                lineNumber: 16,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "grid grid-cols-2 gap-0 mb-2",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: showEnglish,
+                        onChange: ()=>setShowEnglish(!showEnglish),
+                        label: "\u82F1\u8A9E\u8868\u8A18",
+                        sublabel: "English Labels",
+                        colorClass: "bg-green-500 border-green-500",
+                        labelColorClass: "text-white"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/DisplayOptions.jsx",
+                        lineNumber: 20,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: showFurigana,
+                        onChange: ()=>setShowFurigana(!showFurigana),
+                        label: "\u632F\u4EEE\u540D",
+                        sublabel: "Furigana",
+                        colorClass: "bg-green-500 border-green-500",
+                        labelColorClass: "text-white"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/DisplayOptions.jsx",
+                        lineNumber: 28,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: showDictionary,
+                        onChange: ()=>setShowDictionary(!showDictionary),
+                        label: "\u8F9E\u66F8\u5F62",
+                        sublabel: "Dictionary Form",
+                        colorClass: "bg-green-500 border-green-500",
+                        labelColorClass: "text-white"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/DisplayOptions.jsx",
+                        lineNumber: 36,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: showPairs,
+                        onChange: ()=>setShowPairs(!showPairs),
+                        label: "\u30DA\u30A2\u30D2\u30F3\u30C8\u8868\u793A",
+                        sublabel: "Display Pairs Hints",
+                        colorClass: "bg-green-500 border-green-500",
+                        labelColorClass: "text-white"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/DisplayOptions.jsx",
+                        lineNumber: 44,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/settings/DisplayOptions.jsx",
+                lineNumber: 19,
+                columnNumber: 7
+            }, this)
         ]
-    });
+    }, void 0, true);
 }
-var $7606db210182b733$export$2e2bcd8739ae039 = $7606db210182b733$var$Footer;
-function $d0eac8b125ed15e2$var$RuntimeErrorContainer(props) {
-    const { errorRecords: errorRecords, close: close } = props;
-    const totalErrors = errorRecords.length;
-    let [currentIndex, setCurrentIndex] = $10ecac3e4062713a$export$60241385465d0a34(0);
-    let previous = ()=>{
-        setCurrentIndex(currentIndex > 0 ? currentIndex - 1 : totalErrors - 1);
+_s(DisplayOptions, "FxIHY31MKH5Vp5YVUScUQp0SPV4=", false, function() {
+    return [
+        (0, _settingsContextJsx.useSettings)
+    ];
+});
+_c = DisplayOptions;
+var _c;
+$RefreshReg$(_c, "DisplayOptions");
+
+  $parcel$ReactRefreshHelpers$b62a.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/SettingsContext.jsx":"hBba3","../ui/Checkbox.jsx":"b19pu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"6Jra5":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$ba5c = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$ba5c.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$ba5c.prelude(module);
+
+try {
+// QuizModeSelector - Fixed sequence toggle
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizModeSelector", ()=>QuizModeSelector);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _settingsContextJsx = require("../../context/SettingsContext.jsx");
+var _checkboxJsx = require("../ui/Checkbox.jsx");
+var _s = $RefreshSig$();
+function QuizModeSelector() {
+    _s();
+    const { isFixedOrder, setIsFixedOrder } = (0, _settingsContextJsx.useSettings)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1",
+                children: "Quiz Mode"
+            }, void 0, false, {
+                fileName: "src/components/settings/QuizModeSelector.jsx",
+                lineNumber: 11,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "grid grid-cols-2 gap-0",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                    checked: isFixedOrder,
+                    onChange: ()=>setIsFixedOrder(!isFixedOrder),
+                    label: "\u56FA\u5B9A\u9806",
+                    sublabel: "Fixed Sequence",
+                    colorClass: "bg-green-500 border-green-500",
+                    labelColorClass: "text-white"
+                }, void 0, false, {
+                    fileName: "src/components/settings/QuizModeSelector.jsx",
+                    lineNumber: 15,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "src/components/settings/QuizModeSelector.jsx",
+                lineNumber: 14,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true);
+}
+_s(QuizModeSelector, "+NqeRfXei4YHqN7bE6298gx8Knc=", false, function() {
+    return [
+        (0, _settingsContextJsx.useSettings)
+    ];
+});
+_c = QuizModeSelector;
+var _c;
+$RefreshReg$(_c, "QuizModeSelector");
+
+  $parcel$ReactRefreshHelpers$ba5c.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/SettingsContext.jsx":"hBba3","../ui/Checkbox.jsx":"b19pu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"4VvA3":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizCard", ()=>(0, _quizCardJsx.QuizCard));
+parcelHelpers.export(exports, "QuizInput", ()=>(0, _quizInputJsx.QuizInput));
+parcelHelpers.export(exports, "QuizFeedback", ()=>(0, _quizFeedbackJsx.QuizFeedback));
+parcelHelpers.export(exports, "QuizControls", ()=>(0, _quizControlsJsx.QuizControls));
+parcelHelpers.export(exports, "QuizComplete", ()=>(0, _quizCompleteJsx.QuizComplete));
+parcelHelpers.export(exports, "QuizHeader", ()=>(0, _quizHeaderJsx.QuizHeader));
+parcelHelpers.export(exports, "QuizCounter", ()=>(0, _quizCounterJsx.QuizCounter));
+var _quizCardJsx = require("./QuizCard.jsx");
+var _quizInputJsx = require("./QuizInput.jsx");
+var _quizFeedbackJsx = require("./QuizFeedback.jsx");
+var _quizControlsJsx = require("./QuizControls.jsx");
+var _quizCompleteJsx = require("./QuizComplete.jsx");
+var _quizHeaderJsx = require("./QuizHeader.jsx");
+var _quizCounterJsx = require("./QuizCounter.jsx");
+
+},{"./QuizCard.jsx":"lAQRc","./QuizInput.jsx":"9QJI6","./QuizFeedback.jsx":"8zhnJ","./QuizControls.jsx":"ddf3c","./QuizComplete.jsx":"1xMPU","./QuizHeader.jsx":"i7ROF","./QuizCounter.jsx":"7HMuo","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"lAQRc":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$d555 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$d555.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$d555.prelude(module);
+
+try {
+// QuizCard - displays noun and verb prompt
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizCard", ()=>QuizCard);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _rubyTextJsx = require("../ui/RubyText.jsx");
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _settingsContextJsx = require("../../context/SettingsContext.jsx");
+var _s = $RefreshSig$();
+function QuizCard() {
+    _s();
+    const { currentQuestion } = (0, _quizContextJsx.useQuiz)();
+    const { showFurigana, showDictionary, showEnglish } = (0, _settingsContextJsx.useSettings)();
+    if (!currentQuestion) return null;
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "w-full max-w-sm flex flex-col items-center gap-2",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "w-full flex justify-between items-end px-4 pr-12",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "flex flex-col items-center group",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                className: "mb-0.5 h-12 flex items-end",
+                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rubyTextJsx.RubyText), {
+                                    data: currentQuestion.nounRuby,
+                                    showFurigana: showFurigana
+                                }, void 0, false, {
+                                    fileName: "src/components/quiz/QuizCard.jsx",
+                                    lineNumber: 20,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizCard.jsx",
+                                lineNumber: 19,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                className: "flex flex-col items-center w-full",
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "h-[2px] w-10 bg-red-600 mb-0.5"
+                                    }, void 0, false, {
+                                        fileName: "src/components/quiz/QuizCard.jsx",
+                                        lineNumber: 23,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                        className: "text-[10px] text-gray-300 tracking-wider font-semibold",
+                                        children: "\u540D\u8A5E"
+                                    }, void 0, false, {
+                                        fileName: "src/components/quiz/QuizCard.jsx",
+                                        lineNumber: 24,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/quiz/QuizCard.jsx",
+                                lineNumber: 22,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/quiz/QuizCard.jsx",
+                        lineNumber: 18,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "flex flex-col items-center",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                className: "mb-0.5 h-12 flex items-end",
+                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rubyTextJsx.RubyText), {
+                                    data: showDictionary ? currentQuestion.dictionaryRuby : currentQuestion.verbRuby,
+                                    showFurigana: showFurigana
+                                }, void 0, false, {
+                                    fileName: "src/components/quiz/QuizCard.jsx",
+                                    lineNumber: 31,
+                                    columnNumber: 13
+                                }, this)
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizCard.jsx",
+                                lineNumber: 30,
+                                columnNumber: 11
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                className: "flex flex-col items-center w-full",
+                                children: [
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                        className: "h-[2px] w-10 bg-red-600 mb-0.5"
+                                    }, void 0, false, {
+                                        fileName: "src/components/quiz/QuizCard.jsx",
+                                        lineNumber: 37,
+                                        columnNumber: 13
+                                    }, this),
+                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                        className: "text-[10px] text-gray-300 tracking-wider font-semibold",
+                                        children: "\u52D5\u8A5E"
+                                    }, void 0, false, {
+                                        fileName: "src/components/quiz/QuizCard.jsx",
+                                        lineNumber: 38,
+                                        columnNumber: 13
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "src/components/quiz/QuizCard.jsx",
+                                lineNumber: 36,
+                                columnNumber: 11
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/quiz/QuizCard.jsx",
+                        lineNumber: 29,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/quiz/QuizCard.jsx",
+                lineNumber: 16,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: `text-xl tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-purple-400'}`,
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "font-bold",
+                        children: currentQuestion.type === 'Transitive' ? "\u4ED6\u52D5\u8A5E" : "\u81EA\u52D5\u8A5E"
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizCard.jsx",
+                        lineNumber: 45,
+                        columnNumber: 9
+                    }, this),
+                    showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "text-xs text-gray-300 font-normal",
+                        children: [
+                            " ",
+                            currentQuestion.type
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/quiz/QuizCard.jsx",
+                        lineNumber: 46,
+                        columnNumber: 25
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/quiz/QuizCard.jsx",
+                lineNumber: 44,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/quiz/QuizCard.jsx",
+        lineNumber: 14,
+        columnNumber: 5
+    }, this);
+}
+_s(QuizCard, "zYvoU4T5AJtvY7/u1zEpsFb7n18=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz),
+        (0, _settingsContextJsx.useSettings)
+    ];
+});
+_c = QuizCard;
+var _c;
+$RefreshReg$(_c, "QuizCard");
+
+  $parcel$ReactRefreshHelpers$d555.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../ui/RubyText.jsx":"a719D","../../context/QuizContext.jsx":"hrQeu","../../context/SettingsContext.jsx":"hBba3","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"a719D":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$9ec5 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$9ec5.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$9ec5.prelude(module);
+
+try {
+// RubyText - displays Japanese text with tap-to-toggle furigana
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "RubyText", ()=>RubyText);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _s = $RefreshSig$();
+function RubyText({ data, showFurigana }) {
+    _s();
+    // Track if the entire compound word's furigana is toggled
+    const [isToggled, setIsToggled] = (0, _react.useState)(false);
+    // Reset toggle when data changes (new question)
+    (0, _react.useEffect)(()=>{
+        setIsToggled(false);
+    }, [
+        data
+    ]);
+    // Check if this compound has any furigana
+    const hasFurigana = data.some((item)=>item.rt);
+    const handleTap = ()=>{
+        if (!hasFurigana) return; // Only toggle if there's furigana
+        setIsToggled((prev)=>!prev);
     };
-    let next = ()=>{
-        setCurrentIndex(currentIndex < totalErrors - 1 ? currentIndex + 1 : 0);
+    // Determine if furigana should show: global setting XOR toggle
+    const shouldShowFurigana = showFurigana ? !isToggled : isToggled;
+    // Prevent mousedown/touchstart from stealing focus from input (keeps virtual keyboard open)
+    const preventBlur = (e)=>{
+        e.preventDefault();
     };
-    return $23b7c1cb98b19658$export$34b9dba7ce09269b($20d888b381d18c6c$export$2e2bcd8739ae039, {
-        shortcutHandler: (key)=>{
-            if (key === 'Escape') props.close();
-            else if (key === 'ArrowLeft') previous();
-            else if (key === 'ArrowRight') next();
-        },
-        children: [
-            $23b7c1cb98b19658$export$34b9dba7ce09269b($7aae0c9ea64fc08c$export$2e2bcd8739ae039, {
-                close: close
-            }),
-            totalErrors > 1 && $23b7c1cb98b19658$export$34b9dba7ce09269b($1adc179a826c5dd2$export$2e2bcd8739ae039, {
-                currentError: currentIndex + 1,
-                totalErrors: totalErrors,
-                previous: previous,
-                next: next
-            }),
-            $23b7c1cb98b19658$export$34b9dba7ce09269b($4baa71cb4cecc0ea$export$2e2bcd8739ae039, {
-                errorRecord: errorRecords[currentIndex],
-                editorHandler: props.editorHandler
-            }),
-            $23b7c1cb98b19658$export$34b9dba7ce09269b($7606db210182b733$export$2e2bcd8739ae039, {
-                line1: "This screen is visible only in development. It will not appear if the app crashes in production.",
-                line2: "Open your browser\u2019s developer console to further inspect this error.  Click the 'X' or hit ESC to dismiss this message."
-            })
-        ]
-    });
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: `flex items-end ${hasFurigana ? 'cursor-pointer select-none hover:opacity-80 transition-opacity' : ''}`,
+        onMouseDown: hasFurigana ? preventBlur : undefined,
+        onTouchStart: hasFurigana ? preventBlur : undefined,
+        onClick: handleTap,
+        children: data.map((item, idx)=>{
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactDefault.default).Fragment, {
+                children: item.rt ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ruby", {
+                    className: "flex flex-col-reverse items-center",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "text-3xl font-medium tracking-wide",
+                            children: item.text
+                        }, void 0, false, {
+                            fileName: "src/components/ui/RubyText.jsx",
+                            lineNumber: 41,
+                            columnNumber: 17
+                        }, this),
+                        shouldShowFurigana && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("rt", {
+                            className: "text-xs text-gray-300 font-normal mb-0.5",
+                            children: item.rt
+                        }, void 0, false, {
+                            fileName: "src/components/ui/RubyText.jsx",
+                            lineNumber: 43,
+                            columnNumber: 19
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/ui/RubyText.jsx",
+                    lineNumber: 40,
+                    columnNumber: 15
+                }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                    className: "text-3xl font-medium tracking-wide",
+                    children: item.text
+                }, void 0, false, {
+                    fileName: "src/components/ui/RubyText.jsx",
+                    lineNumber: 47,
+                    columnNumber: 15
+                }, this)
+            }, idx, false, {
+                fileName: "src/components/ui/RubyText.jsx",
+                lineNumber: 38,
+                columnNumber: 11
+            }, this);
+        })
+    }, void 0, false, {
+        fileName: "src/components/ui/RubyText.jsx",
+        lineNumber: 30,
+        columnNumber: 5
+    }, this);
 }
-var $d0eac8b125ed15e2$export$2e2bcd8739ae039 = $d0eac8b125ed15e2$var$RuntimeErrorContainer;
-let $da9882e673ac146b$var$iframe = null;
-let $da9882e673ac146b$var$editorHandler = null;
-let $da9882e673ac146b$var$currentRuntimeErrorRecords = [];
-let $da9882e673ac146b$var$stopListeningToRuntimeErrors = null;
-function $da9882e673ac146b$export$25a22ac46f1bd016(handler) {
-    $da9882e673ac146b$var$editorHandler = handler;
-    if ($da9882e673ac146b$var$iframe) $da9882e673ac146b$var$update();
+_s(RubyText, "ufB/RmQyCCuAHLH+RN0PE1i6KAA=");
+_c = RubyText;
+var _c;
+$RefreshReg$(_c, "RubyText");
+
+  $parcel$ReactRefreshHelpers$9ec5.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
 }
-function $da9882e673ac146b$export$74e9101ce4078c0(error, options) {
-    $6d40ebe8356580e0$export$9123e6c9c0ac21ed($da9882e673ac146b$var$handleRuntimeError(options))(error, false);
-}
-function $da9882e673ac146b$export$cda2c88a41631c16(options) {
-    if ($da9882e673ac146b$var$stopListeningToRuntimeErrors !== null) throw new Error('Already listening');
-    $da9882e673ac146b$var$stopListeningToRuntimeErrors = $6d40ebe8356580e0$export$38ec23daa6e8dcdf($da9882e673ac146b$var$handleRuntimeError(options));
-}
-const $da9882e673ac146b$var$handleRuntimeError = (options)=>(errorRecord)=>{
-        try {
-            if (typeof options.onError === 'function') options.onError.call(null);
-        } finally{
-            if ($da9882e673ac146b$var$currentRuntimeErrorRecords.some(({ error: error })=>error === errorRecord.error)) // This fixes https://github.com/facebook/create-react-app/issues/3011.
-            // eslint-disable-next-line no-unsafe-finally
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"9QJI6":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$13e3 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$13e3.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$13e3.prelude(module);
+
+try {
+// QuizInput - input field with validation
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizInput", ()=>QuizInput);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _iconsJs = require("../ui/icons.js");
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _useInputHandlerJs = require("../../hooks/useInputHandler.js");
+var _s = $RefreshSig$();
+function QuizInput() {
+    _s();
+    const { userInput, setInput, setInvalidInput, setFeedback, isInvalidInput, feedback, inputRef, handleNext, checkAnswer } = (0, _quizContextJsx.useQuiz)();
+    const { handleInputChange, validateInput } = (0, _useInputHandlerJs.useInputHandler)(inputRef, setInput, setInvalidInput);
+    const handleFormSubmit = (e)=>{
+        e.preventDefault();
+        // If already showing feedback, Enter should go to next
+        if (feedback === 'incorrect' || feedback === 'correct') {
+            handleNext(feedback === 'correct');
             return;
-            $da9882e673ac146b$var$currentRuntimeErrorRecords = $da9882e673ac146b$var$currentRuntimeErrorRecords.concat([
-                errorRecord
-            ]);
-            $da9882e673ac146b$var$update();
+        }
+        // Validate input is hiragana only and not empty
+        if (!validateInput(userInput)) return;
+        // Check if answer is correct
+        if (checkAnswer(userInput)) handleNext(true);
+        else setFeedback('incorrect');
+    };
+    const handleKeyDown = (e)=>{
+        // Allow Enter to proceed to next even when input is disabled
+        if (e.key === 'Enter' && (feedback === 'incorrect' || feedback === 'correct')) {
+            e.preventDefault();
+            handleNext(feedback === 'correct');
         }
     };
-function $da9882e673ac146b$export$1cfa6d161ca81bd9() {
-    $da9882e673ac146b$var$currentRuntimeErrorRecords = [];
-    $da9882e673ac146b$var$update();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("form", {
+        onSubmit: handleFormSubmit,
+        className: "relative w-full",
+        onKeyDown: handleKeyDown,
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
+                ref: inputRef,
+                type: "text",
+                value: userInput,
+                onChange: handleInputChange,
+                placeholder: "\u6587\u3092\u5165\u529B...",
+                className: `w-full bg-white text-black text-center text-lg py-2.5 px-4 rounded-full focus:outline-none focus:ring-2 transition-all shadow-lg
+          ${feedback === 'correct' ? 'ring-green-500 bg-green-50' : ''}
+          ${feedback === 'incorrect' ? 'ring-red-500 bg-red-50' : ''}
+          ${isInvalidInput ? 'ring-red-500 ring-2 bg-red-50 animate-shake' : ''}
+          ${!feedback && !isInvalidInput ? 'ring-transparent focus:ring-blue-400' : ''}
+        `,
+                autoFocus: true,
+                disabled: feedback === 'correct' || feedback === 'incorrect'
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizInput.jsx",
+                lineNumber: 58,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "absolute right-3 top-1/2 -translate-y-1/2",
+                children: [
+                    feedback === 'correct' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.CheckCircle), {
+                        size: 16,
+                        className: "text-green-600 animate-bounce"
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizInput.jsx",
+                        lineNumber: 76,
+                        columnNumber: 36
+                    }, this),
+                    feedback === 'incorrect' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.XCircle), {
+                        size: 16,
+                        className: "text-red-600 animate-pulse"
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizInput.jsx",
+                        lineNumber: 77,
+                        columnNumber: 38
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/quiz/QuizInput.jsx",
+                lineNumber: 75,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/quiz/QuizInput.jsx",
+        lineNumber: 53,
+        columnNumber: 5
+    }, this);
 }
-function $da9882e673ac146b$export$25ba7d9a816639e7() {
-    if ($da9882e673ac146b$var$stopListeningToRuntimeErrors === null) throw new Error('Not currently listening');
-    try {
-        $da9882e673ac146b$var$stopListeningToRuntimeErrors();
-    } finally{
-        $da9882e673ac146b$var$stopListeningToRuntimeErrors = null;
-    }
+_s(QuizInput, "z6woxmKxx38gCzSksHv1u+fopBw=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz),
+        (0, _useInputHandlerJs.useInputHandler)
+    ];
+});
+_c = QuizInput;
+var _c;
+$RefreshReg$(_c, "QuizInput");
+
+  $parcel$ReactRefreshHelpers$13e3.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
 }
-let $da9882e673ac146b$var$rootNode, $da9882e673ac146b$var$shadow;
-function $da9882e673ac146b$var$update() {
-    if (!$da9882e673ac146b$var$rootNode) {
-        $da9882e673ac146b$var$rootNode = document.createElement('parcel-error-overlay');
-        $da9882e673ac146b$var$shadow = $da9882e673ac146b$var$rootNode.attachShadow({
-            mode: 'open'
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../ui/icons.js":"5p7MZ","../../context/QuizContext.jsx":"hrQeu","../../hooks/useInputHandler.js":"5ALu9","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"5ALu9":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$36fd = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$36fd.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$36fd.prelude(module);
+
+try {
+// useInputHandler - handles romaji to hiragana conversion with cursor preservation
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "useInputHandler", ()=>useInputHandler);
+var _react = require("react");
+var _hiraganaUtilsJs = require("../utils/hiraganaUtils.js");
+var _textUtilsJs = require("../utils/textUtils.js");
+var _s = $RefreshSig$();
+function useInputHandler(inputRef, setInput, setInvalidInput) {
+    _s();
+    const handleInputChange = (0, _react.useCallback)((e)=>{
+        const input = e.target;
+        const rawValue = input.value;
+        const selectionStart = input.selectionStart;
+        const selectionEnd = input.selectionEnd;
+        // Get the portion before cursor to calculate length difference
+        const beforeCursor = rawValue.slice(0, selectionStart);
+        const convertedBeforeCursor = (0, _hiraganaUtilsJs.romajiToHiragana)(beforeCursor);
+        // Convert full value to Hiragana
+        const hiraganaValue = (0, _hiraganaUtilsJs.romajiToHiragana)(rawValue);
+        // Calculate new cursor position based on converted text before cursor
+        const newCursorPos = convertedBeforeCursor.length;
+        setInput(hiraganaValue);
+        // Restore cursor position after React re-renders
+        requestAnimationFrame(()=>{
+            if (inputRef.current) {
+                inputRef.current.selectionStart = newCursorPos;
+                inputRef.current.selectionEnd = newCursorPos + (selectionEnd - selectionStart);
+            }
         });
-        if ($da9882e673ac146b$var$rootNode) document.body?.appendChild($da9882e673ac146b$var$rootNode);
-    }
-    if ($da9882e673ac146b$var$currentRuntimeErrorRecords.length > 0 && $da9882e673ac146b$var$shadow) $b6c7f0288a15c619$export$b3890eb0ae9dca99($23b7c1cb98b19658$export$34b9dba7ce09269b("dialog", {
-        ref: (d)=>d?.showModal(),
-        style: $74bb4be6e9b78681$export$7ef984671d1853d7,
-        onClose: $da9882e673ac146b$export$1cfa6d161ca81bd9,
-        children: $23b7c1cb98b19658$export$34b9dba7ce09269b($da9882e673ac146b$var$ErrorOverlay, {})
-    }), $da9882e673ac146b$var$shadow);
-    else {
-        $da9882e673ac146b$var$rootNode?.remove();
-        $da9882e673ac146b$var$rootNode = null;
-    }
+    }, [
+        inputRef,
+        setInput
+    ]);
+    const validateInput = (0, _react.useCallback)((input)=>{
+        const trimmed = input.trim();
+        if (trimmed.length === 0 || !(0, _textUtilsJs.isHiraganaOnly)(trimmed)) {
+            setInvalidInput(true);
+            return false;
+        }
+        return true;
+    }, [
+        setInvalidInput
+    ]);
+    return {
+        handleInputChange,
+        validateInput
+    };
 }
-function $da9882e673ac146b$var$ErrorOverlay() {
-    if ($da9882e673ac146b$var$currentRuntimeErrorRecords.length > 0) return $23b7c1cb98b19658$export$34b9dba7ce09269b($d0eac8b125ed15e2$export$2e2bcd8739ae039, {
-        errorRecords: $da9882e673ac146b$var$currentRuntimeErrorRecords,
-        close: $da9882e673ac146b$export$1cfa6d161ca81bd9,
-        editorHandler: $da9882e673ac146b$var$editorHandler
-    });
+_s(useInputHandler, "a8TOQjAIVRNYYKzztXg+5yCamaU=");
+
+  $parcel$ReactRefreshHelpers$36fd.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react":"jMk1U","../utils/hiraganaUtils.js":"5pW0g","../utils/textUtils.js":"kTnlS","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"kTnlS":[function(require,module,exports,__globalThis) {
+// Pure functions for text validation
+// Check if a string contains Katakana characters
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "containsKatakana", ()=>containsKatakana);
+parcelHelpers.export(exports, "isHiraganaOnly", ()=>isHiraganaOnly);
+const containsKatakana = (str)=>/[\u30a1-\u30f6]/.test(str);
+const isHiraganaOnly = (str)=>/^[\u3041-\u3096]+$/.test(str);
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"8zhnJ":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$f5e1 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$f5e1.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$f5e1.prelude(module);
+
+try {
+// QuizFeedback - displays correct/incorrect feedback with answers
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizFeedback", ()=>QuizFeedback);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _answerRubyTextJsx = require("../ui/AnswerRubyText.jsx");
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _settingsContextJsx = require("../../context/SettingsContext.jsx");
+var _sentenceBuilderJs = require("../../utils/sentenceBuilder.js");
+var _quizLogicJs = require("../../utils/quizLogic.js");
+var _sentenceDataJs = require("../../data/sentenceData.js");
+var _s = $RefreshSig$();
+function QuizFeedback() {
+    _s();
+    const { feedback, currentQuestion } = (0, _quizContextJsx.useQuiz)();
+    const { selectedForms, showFurigana, showEnglish, showPairs } = (0, _settingsContextJsx.useSettings)();
+    if (!feedback || !currentQuestion) return null;
+    if (feedback === 'correct') return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "min-h-[90px] flex items-start justify-center pt-3",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "text-center text-green-400 font-bold text-sm animate-in zoom-in space-y-1",
+            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                children: "Great Job!"
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizFeedback.jsx",
+                lineNumber: 20,
+                columnNumber: 11
+            }, this)
+        }, void 0, false, {
+            fileName: "src/components/quiz/QuizFeedback.jsx",
+            lineNumber: 19,
+            columnNumber: 9
+        }, this)
+    }, void 0, false, {
+        fileName: "src/components/quiz/QuizFeedback.jsx",
+        lineNumber: 18,
+        columnNumber: 7
+    }, this);
+    if (feedback === 'incorrect') {
+        const pairVerb = showPairs ? (0, _quizLogicJs.findPairVerb)(currentQuestion) : null;
+        return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "min-h-[90px] flex items-start justify-center pt-3",
+            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "text-center animate-in fade-in slide-in-from-bottom-2 space-y-1.5",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        className: "text-green-700 text-xs font-bold mb-2",
+                        children: "\u6B63\u3057\u3044\u56DE\u7B54"
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 32,
+                        columnNumber: 11
+                    }, this),
+                    selectedForms.includes('Polite') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "mb-2",
+                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _answerRubyTextJsx.AnswerRubyText), {
+                            data: (0, _sentenceBuilderJs.buildSentenceRuby)(currentQuestion, true),
+                            colorClass: "text-[#5F9EA0]",
+                            showFurigana: showFurigana
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizFeedback.jsx",
+                            lineNumber: 37,
+                            columnNumber: 15
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 36,
+                        columnNumber: 13
+                    }, this),
+                    selectedForms.includes('Plain') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "mb-2",
+                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _answerRubyTextJsx.AnswerRubyText), {
+                            data: (0, _sentenceBuilderJs.buildSentenceRuby)(currentQuestion, false),
+                            colorClass: "text-[#D1AD8C]",
+                            showFurigana: showFurigana
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizFeedback.jsx",
+                            lineNumber: 48,
+                            columnNumber: 15
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 47,
+                        columnNumber: 13
+                    }, this),
+                    showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                        className: "text-sm text-gray-300 italic",
+                        children: currentQuestion.english
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 57,
+                        columnNumber: 13
+                    }, this),
+                    showPairs && pairVerb && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(PairHints, {
+                        currentQuestion: currentQuestion,
+                        pairVerb: pairVerb,
+                        showFurigana: showFurigana,
+                        showEnglish: showEnglish
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 61,
+                        columnNumber: 37
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/quiz/QuizFeedback.jsx",
+                lineNumber: 31,
+                columnNumber: 9
+            }, this)
+        }, void 0, false, {
+            fileName: "src/components/quiz/QuizFeedback.jsx",
+            lineNumber: 30,
+            columnNumber: 7
+        }, this);
+    }
     return null;
 }
+_s(QuizFeedback, "/zvogtEyrz3rMfD1aZVqcnQ4qws=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz),
+        (0, _settingsContextJsx.useSettings)
+    ];
+});
+_c = QuizFeedback;
+// Sub-component for pair hints
+function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
+    // Determine which is intransitive (purple) and transitive (yellow)
+    const isCurrentIntransitive = currentQuestion.type === 'Intransitive';
+    const intransitiveVerb = isCurrentIntransitive ? currentQuestion : pairVerb;
+    const transitiveVerb = isCurrentIntransitive ? pairVerb : currentQuestion;
+    // Get suffix types for both verbs
+    const intransitiveSuffix = (0, _sentenceDataJs.getVerbSuffixType)(intransitiveVerb.dictionaryRuby);
+    const transitiveSuffix = (0, _sentenceDataJs.getVerbSuffixType)(transitiveVerb.dictionaryRuby);
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "flex flex-col items-center gap-2 mt-2",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex items-center justify-center gap-3",
+                children: [
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _answerRubyTextJsx.AnswerRubyText), {
+                        data: intransitiveVerb.dictionaryRuby,
+                        colorClass: "text-purple-400",
+                        textSize: "text-lg",
+                        showFurigana: showFurigana
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 84,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                        className: "text-gray-500",
+                        children: "/"
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 90,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _answerRubyTextJsx.AnswerRubyText), {
+                        data: transitiveVerb.dictionaryRuby,
+                        colorClass: "text-yellow-400",
+                        textSize: "text-lg",
+                        showFurigana: showFurigana
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 91,
+                        columnNumber: 9
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/quiz/QuizFeedback.jsx",
+                lineNumber: 83,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex flex-col items-center gap-1 text-base mt-1",
+                children: [
+                    intransitiveSuffix === 'suffix-aru' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "flex items-center gap-2",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-purple-400",
+                                children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationJa
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizFeedback.jsx",
+                                lineNumber: 102,
+                                columnNumber: 13
+                            }, this),
+                            showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-sm text-gray-300 italic",
+                                children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationEn
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizFeedback.jsx",
+                                lineNumber: 103,
+                                columnNumber: 29
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 101,
+                        columnNumber: 11
+                    }, this),
+                    transitiveSuffix === 'suffix-su' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "flex items-center gap-2",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-yellow-400",
+                                children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationJa
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizFeedback.jsx",
+                                lineNumber: 108,
+                                columnNumber: 13
+                            }, this),
+                            showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-sm text-gray-300 italic",
+                                children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationEn
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizFeedback.jsx",
+                                lineNumber: 109,
+                                columnNumber: 29
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 107,
+                        columnNumber: 11
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "src/components/quiz/QuizFeedback.jsx",
+                lineNumber: 99,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/quiz/QuizFeedback.jsx",
+        lineNumber: 82,
+        columnNumber: 5
+    }, this);
+}
+_c1 = PairHints;
+var _c, _c1;
+$RefreshReg$(_c, "QuizFeedback");
+$RefreshReg$(_c1, "PairHints");
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire06f1", {}, null, null, "http://localhost:1234")
+  $parcel$ReactRefreshHelpers$f5e1.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../ui/AnswerRubyText.jsx":"iq4QR","../../context/QuizContext.jsx":"hrQeu","../../context/SettingsContext.jsx":"hBba3","../../utils/sentenceBuilder.js":"hWLvc","../../utils/quizLogic.js":"6SiZ1","../../data/sentenceData.js":"jyZsS","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"iq4QR":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$e5f7 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$e5f7.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$e5f7.prelude(module);
+
+try {
+// AnswerRubyText - displays sentence with furigana above kanji and katakana
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "AnswerRubyText", ()=>AnswerRubyText);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _textUtilsJs = require("../../utils/textUtils.js");
+var _hiraganaUtilsJs = require("../../utils/hiraganaUtils.js");
+function AnswerRubyText({ data, colorClass, textSize = "text-xl", showFurigana = true }) {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: `flex items-end justify-center ${colorClass}`,
+        children: data.map((item, idx)=>{
+            // Determine furigana: use rt if available, or generate from Katakana
+            const furigana = item.rt || ((0, _textUtilsJs.containsKatakana)(item.text) ? (0, _hiraganaUtilsJs.toHiragana)(item.text) : "");
+            return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactDefault.default).Fragment, {
+                children: furigana && showFurigana ? /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("ruby", {
+                    className: "flex flex-col-reverse items-center",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: `${textSize} font-bold`,
+                            children: item.text
+                        }, void 0, false, {
+                            fileName: "src/components/ui/AnswerRubyText.jsx",
+                            lineNumber: 17,
+                            columnNumber: 17
+                        }, this),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("rt", {
+                            className: "text-[10px] text-gray-400 font-normal",
+                            children: furigana
+                        }, void 0, false, {
+                            fileName: "src/components/ui/AnswerRubyText.jsx",
+                            lineNumber: 18,
+                            columnNumber: 17
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/ui/AnswerRubyText.jsx",
+                    lineNumber: 16,
+                    columnNumber: 15
+                }, this) : /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                    className: `${textSize} font-bold`,
+                    children: item.text
+                }, void 0, false, {
+                    fileName: "src/components/ui/AnswerRubyText.jsx",
+                    lineNumber: 21,
+                    columnNumber: 15
+                }, this)
+            }, idx, false, {
+                fileName: "src/components/ui/AnswerRubyText.jsx",
+                lineNumber: 14,
+                columnNumber: 11
+            }, this);
+        })
+    }, void 0, false, {
+        fileName: "src/components/ui/AnswerRubyText.jsx",
+        lineNumber: 8,
+        columnNumber: 5
+    }, this);
+}
+_c = AnswerRubyText;
+var _c;
+$RefreshReg$(_c, "AnswerRubyText");
+
+  $parcel$ReactRefreshHelpers$e5f7.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../utils/textUtils.js":"kTnlS","../../utils/hiraganaUtils.js":"5pW0g","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"hWLvc":[function(require,module,exports,__globalThis) {
+// Build ruby data for a sentence
+// Returns array of { text, rt } objects where rt is only set for kanji/katakana
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "buildSentenceRuby", ()=>buildSentenceRuby);
+const buildSentenceRuby = (question, isPolite)=>{
+    const result = [];
+    // Add noun parts (already has proper rt for kanji/katakana)
+    result.push(...question.nounRuby);
+    // Determine particle from sentence (character after noun)
+    const sentence = isPolite ? question.politeSentence : question.plainSentence;
+    const nounText = question.nounRuby.map((r)=>r.text).join('');
+    const nounIndex = sentence.indexOf(nounText);
+    const particle = sentence.charAt(nounIndex + nounText.length);
+    result.push({
+        text: particle,
+        rt: ""
+    });
+    if (isPolite) {
+        // For polite form, get verb part from sentence
+        const verbStart = nounIndex + nounText.length + 1; // +1 for particle
+        const verbPart = sentence.substring(verbStart);
+        // The verbRuby has the kanji stem, rest is hiragana suffix
+        const verbKanji = question.verbRuby.map((r)=>r.text).join('');
+        if (verbPart.startsWith(verbKanji)) {
+            // Add verb kanji with furigana
+            result.push(...question.verbRuby);
+            // Add remaining hiragana suffix (きます, けます, etc.)
+            const suffix = verbPart.substring(verbKanji.length);
+            if (suffix) result.push({
+                text: suffix,
+                rt: ""
+            });
+        } else // Fallback: add the whole verb part without ruby
+        result.push({
+            text: verbPart,
+            rt: ""
+        });
+    } else // For plain form, use dictionaryRuby directly
+    result.push(...question.dictionaryRuby);
+    return result;
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"ddf3c":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$2e4d = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$2e4d.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$2e4d.prelude(module);
+
+try {
+// QuizControls - Retry, Next, Give Up buttons
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizControls", ()=>QuizControls);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _s = $RefreshSig$();
+function QuizControls() {
+    _s();
+    const { feedback, showAnswer, handleRetry, handleNext, handleGiveUp } = (0, _quizContextJsx.useQuiz)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex gap-3 justify-center mt-12 mb-4",
+                children: (feedback === 'incorrect' || showAnswer) && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            onClick: handleRetry,
+                            className: "bg-gray-600 hover:bg-gray-500 text-white font-bold py-2.5 px-8 rounded-full flex items-center gap-1.5 transition-colors text-sm",
+                            children: "\u3082\u3046\u4E00\u5EA6"
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizControls.jsx",
+                            lineNumber: 14,
+                            columnNumber: 13
+                        }, this),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                            onClick: ()=>handleNext(feedback === 'correct'),
+                            className: `${feedback === 'correct' ? 'bg-green-700 hover:bg-green-600' : 'bg-red-700 hover:bg-red-600'} text-white font-bold py-2.5 px-8 rounded-full transition-colors text-sm`,
+                            children: "\u6B21\u3078"
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizControls.jsx",
+                            lineNumber: 20,
+                            columnNumber: 13
+                        }, this)
+                    ]
+                }, void 0, true)
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizControls.jsx",
+                lineNumber: 11,
+                columnNumber: 7
+            }, this),
+            feedback === null && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex justify-center",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                    onClick: handleGiveUp,
+                    className: "text-gray-300 hover:text-gray-100 text-sm font-medium py-1 px-4 transition-colors",
+                    children: "\u308F\u304B\u3089\u306A\u3044"
+                }, void 0, false, {
+                    fileName: "src/components/quiz/QuizControls.jsx",
+                    lineNumber: 33,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizControls.jsx",
+                lineNumber: 32,
+                columnNumber: 9
+            }, this)
+        ]
+    }, void 0, true);
+}
+_s(QuizControls, "KTbyPq55XwLCzDvi3ueIaqnVjew=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz)
+    ];
+});
+_c = QuizControls;
+var _c;
+$RefreshReg$(_c, "QuizControls");
+
+  $parcel$ReactRefreshHelpers$2e4d.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/QuizContext.jsx":"hrQeu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"1xMPU":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$42e2 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$42e2.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$42e2.prelude(module);
+
+try {
+// QuizComplete - Celebration screen when quiz is completed
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizComplete", ()=>QuizComplete);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _s = $RefreshSig$();
+function QuizComplete() {
+    _s();
+    const { totalQuestions, handleRestart } = (0, _quizContextJsx.useQuiz)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "text-center text-green-400 text-xl font-bold space-y-4",
+            children: [
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                    children: "\uD83C\uDF89 \u304A\u3081\u3067\u3068\u3046\u3054\u3056\u3044\u307E\u3059\uFF01"
+                }, void 0, false, {
+                    fileName: "src/components/quiz/QuizComplete.jsx",
+                    lineNumber: 11,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                    className: "text-base text-gray-300 font-normal",
+                    children: [
+                        "\u5168 ",
+                        totalQuestions,
+                        " \u554F\u6B63\u89E3\u3067\u3059\uFF01"
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/quiz/QuizComplete.jsx",
+                    lineNumber: 12,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                    onClick: handleRestart,
+                    className: "bg-green-800 hover:bg-green-700 text-white font-bold py-2.5 px-8 rounded-full transition-colors text-sm mt-4",
+                    children: "\u30EA\u30B9\u30BF\u30FC\u30C8"
+                }, void 0, false, {
+                    fileName: "src/components/quiz/QuizComplete.jsx",
+                    lineNumber: 13,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "src/components/quiz/QuizComplete.jsx",
+            lineNumber: 10,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "src/components/quiz/QuizComplete.jsx",
+        lineNumber: 9,
+        columnNumber: 5
+    }, this);
+}
+_s(QuizComplete, "8ebMyV41tB4uqYupSZJxizmhuiM=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz)
+    ];
+});
+_c = QuizComplete;
+var _c;
+$RefreshReg$(_c, "QuizComplete");
+
+  $parcel$ReactRefreshHelpers$42e2.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/QuizContext.jsx":"hrQeu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"i7ROF":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$28d0 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$28d0.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$28d0.prelude(module);
+
+try {
+// QuizHeader - Top right controls (reset button, icon)
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizHeader", ()=>QuizHeader);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _iconsJs = require("../ui/icons.js");
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _s = $RefreshSig$();
+function QuizHeader() {
+    _s();
+    const { currentQuestion, handleRestart } = (0, _quizContextJsx.useQuiz)();
+    if (!currentQuestion) return null;
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "absolute top-4 right-3 z-40 flex items-center gap-2",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                onClick: handleRestart,
+                className: "px-3 py-2 bg-[#2a2a2a] rounded-lg shadow-inner border border-[#333] flex items-center justify-center hover:bg-[#333] transition-colors",
+                title: "\u30EA\u30BB\u30C3\u30C8 (Reset Quiz)",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _iconsJs.RefreshCw), {
+                    size: 18,
+                    className: "text-gray-300 opacity-90",
+                    strokeWidth: 1.5
+                }, void 0, false, {
+                    fileName: "src/components/quiz/QuizHeader.jsx",
+                    lineNumber: 19,
+                    columnNumber: 9
+                }, this)
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizHeader.jsx",
+                lineNumber: 14,
+                columnNumber: 7
+            }, this),
+            currentQuestion.icon && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "px-3 py-2 bg-[#2a2a2a] rounded-lg shadow-inner border border-[#333] flex items-center justify-center",
+                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(currentQuestion.icon, {
+                    size: 18,
+                    className: `${currentQuestion.color} opacity-90`,
+                    strokeWidth: 1.5
+                }, void 0, false, {
+                    fileName: "src/components/quiz/QuizHeader.jsx",
+                    lineNumber: 25,
+                    columnNumber: 11
+                }, this)
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizHeader.jsx",
+                lineNumber: 24,
+                columnNumber: 9
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/quiz/QuizHeader.jsx",
+        lineNumber: 12,
+        columnNumber: 5
+    }, this);
+}
+_s(QuizHeader, "NTI3xf+ExSjSQHSMMylhVS617ck=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz)
+    ];
+});
+_c = QuizHeader;
+var _c;
+$RefreshReg$(_c, "QuizHeader");
+
+  $parcel$ReactRefreshHelpers$28d0.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../ui/icons.js":"5p7MZ","../../context/QuizContext.jsx":"hrQeu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"7HMuo":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$7262 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$7262.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$7262.prelude(module);
+
+try {
+// QuizCounter - Question counter display
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "QuizCounter", ()=>QuizCounter);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _s = $RefreshSig$();
+function QuizCounter() {
+    _s();
+    const { shuffledData, questionNumber, totalQuestions } = (0, _quizContextJsx.useQuiz)();
+    if (shuffledData.length === 0) return null;
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "text-center text-gray-400 text-base pb-1",
+        children: [
+            "\u7B2C",
+            questionNumber,
+            "\u554F / \u5168",
+            totalQuestions,
+            "\u554F"
+        ]
+    }, void 0, true, {
+        fileName: "src/components/quiz/QuizCounter.jsx",
+        lineNumber: 11,
+        columnNumber: 5
+    }, this);
+}
+_s(QuizCounter, "RCqmd952etYddiWE9nRfhiI+URM=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz)
+    ];
+});
+_c = QuizCounter;
+var _c;
+$RefreshReg$(_c, "QuizCounter");
+
+  $parcel$ReactRefreshHelpers$7262.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/QuizContext.jsx":"hrQeu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"4uivk":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "RubyText", ()=>(0, _rubyTextJsx.RubyText));
+parcelHelpers.export(exports, "AnswerRubyText", ()=>(0, _answerRubyTextJsx.AnswerRubyText));
+parcelHelpers.export(exports, "ProgressBar", ()=>(0, _progressBarJsx.ProgressBar));
+parcelHelpers.export(exports, "Checkbox", ()=>(0, _checkboxJsx.Checkbox));
+var _rubyTextJsx = require("./RubyText.jsx");
+var _answerRubyTextJsx = require("./AnswerRubyText.jsx");
+var _progressBarJsx = require("./ProgressBar.jsx");
+var _checkboxJsx = require("./Checkbox.jsx");
+var _iconsJs = require("./icons.js");
+parcelHelpers.exportAll(_iconsJs, exports);
+
+},{"./RubyText.jsx":"a719D","./AnswerRubyText.jsx":"iq4QR","./ProgressBar.jsx":"GLBB1","./Checkbox.jsx":"b19pu","./icons.js":"5p7MZ","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"GLBB1":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$4dc1 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$4dc1.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$4dc1.prelude(module);
+
+try {
+// ProgressBar - displays quiz progress
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "ProgressBar", ()=>ProgressBar);
+var _jsxDevRuntime = require("react/jsx-dev-runtime");
+var _react = require("react");
+var _reactDefault = parcelHelpers.interopDefault(_react);
+var _quizContextJsx = require("../../context/QuizContext.jsx");
+var _s = $RefreshSig$();
+function ProgressBar() {
+    _s();
+    const { progress } = (0, _quizContextJsx.useQuiz)();
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "w-full absolute top-0 h-1 bg-gray-800",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "h-full bg-red-500 transition-all duration-300",
+            style: {
+                width: `${progress}%`
+            }
+        }, void 0, false, {
+            fileName: "src/components/ui/ProgressBar.jsx",
+            lineNumber: 10,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "src/components/ui/ProgressBar.jsx",
+        lineNumber: 9,
+        columnNumber: 5
+    }, this);
+}
+_s(ProgressBar, "UdzneXIDjVhL46J+eK6LFG3Mph0=", false, function() {
+    return [
+        (0, _quizContextJsx.useQuiz)
+    ];
+});
+_c = ProgressBar;
+var _c;
+$RefreshReg$(_c, "ProgressBar");
+
+  $parcel$ReactRefreshHelpers$4dc1.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-dev-runtime":"dVPUn","react":"jMk1U","../../context/QuizContext.jsx":"hrQeu","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}],"eGcNQ":[function(require,module,exports,__globalThis) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "useClickOutside", ()=>(0, _useClickOutsideJs.useClickOutside));
+parcelHelpers.export(exports, "useKeyboardShortcuts", ()=>(0, _useKeyboardShortcutsJs.useKeyboardShortcuts));
+parcelHelpers.export(exports, "useInputHandler", ()=>(0, _useInputHandlerJs.useInputHandler));
+var _useClickOutsideJs = require("./useClickOutside.js");
+var _useKeyboardShortcutsJs = require("./useKeyboardShortcuts.js");
+var _useInputHandlerJs = require("./useInputHandler.js");
+
+},{"./useClickOutside.js":"5vhZg","./useKeyboardShortcuts.js":"jVoJD","./useInputHandler.js":"5ALu9","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT"}],"jVoJD":[function(require,module,exports,__globalThis) {
+var $parcel$ReactRefreshHelpers$2681 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+$parcel$ReactRefreshHelpers$2681.init();
+var prevRefreshReg = globalThis.$RefreshReg$;
+var prevRefreshSig = globalThis.$RefreshSig$;
+$parcel$ReactRefreshHelpers$2681.prelude(module);
+
+try {
+// useKeyboardShortcuts - handles global keyboard events for quiz navigation
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "useKeyboardShortcuts", ()=>useKeyboardShortcuts);
+var _react = require("react");
+var _s = $RefreshSig$();
+function useKeyboardShortcuts({ feedback, onNext, onRetry }) {
+    _s();
+    (0, _react.useEffect)(()=>{
+        const handleKeyDown = (e)=>{
+            // Enter to proceed to next when feedback is showing
+            if (e.key === 'Enter' && (feedback === 'incorrect' || feedback === 'correct')) {
+                e.preventDefault();
+                onNext(feedback === 'correct');
+            }
+            // Backspace to retry when answer is revealed
+            if (e.key === 'Backspace' && (feedback === 'incorrect' || feedback === 'correct')) {
+                e.preventDefault();
+                onRetry();
+            }
+        };
+        if (feedback) window.addEventListener('keydown', handleKeyDown);
+        return ()=>{
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [
+        feedback,
+        onNext,
+        onRetry
+    ]);
+}
+_s(useKeyboardShortcuts, "OD7bBpZva5O2jO+Puf00hKivP7c=");
+
+  $parcel$ReactRefreshHelpers$2681.postlude(module);
+} finally {
+  globalThis.$RefreshReg$ = prevRefreshReg;
+  globalThis.$RefreshSig$ = prevRefreshSig;
+}
+},{"react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}]},["hiyDA","gYcKb"], "gYcKb", "parcelRequire06f1", {}, null, null, "http://localhost:1234")
 
 //# sourceMappingURL=root.ad93b51f.js.map
