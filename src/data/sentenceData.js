@@ -6,7 +6,7 @@ import {
   Bone, Users, Coffee, Egg, Scissors, Trash2, CircleDot, Beer, Files,
   ArrowRight, CheckCheck, Clock, Brain, Coins, Waves, Trees, FileX,
   ThermometerSnowflake, ThermometerSun, Shirt, Sun, Banana, Fingerprint
-} from './icons.js';
+} from '../components/ui/icons.js';
 
 // --- VERB SUFFIX RULES ---
 // Explanation strings for transitive/intransitive patterns (dual-language)

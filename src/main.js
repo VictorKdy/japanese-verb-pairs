@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Settings, CheckCheck, CheckCircle, XCircle, RefreshCw } from './icons.js';
+import { Settings, CheckCheck, CheckCircle, XCircle, RefreshCw } from './components/ui/icons.js';
 
-import { romajiToHiragana, toHiragana } from "./hiraganaUtils.js";
-import { VERB_DATA, VERB_SUFFIX_RULES, getVerbSuffixType } from "./sentenceData.js";
+import { romajiToHiragana, toHiragana } from "./utils/hiraganaUtils.js";
+import { VERB_DATA, VERB_SUFFIX_RULES, getVerbSuffixType } from "./data/sentenceData.js";
 
 // Helper function to check if a string contains Katakana
 const containsKatakana = (str) => /[\u30a1-\u30f6]/.test(str);
@@ -343,6 +343,15 @@ export default function App() {
         setShowAnswer(false);
         if(inputRef.current) inputRef.current.focus();
       }
+      
+      // Backspace to Retry: triggers when answer reveal is displayed
+      if (e.key === 'Backspace' && (feedback === 'incorrect' || feedback === 'correct')) {
+        e.preventDefault();
+        setFeedback(null);
+        setUserInput('');
+        setShowAnswer(false);
+        if(inputRef.current) inputRef.current.focus();
+      }
     };
     
     if (feedback) {
@@ -444,13 +453,13 @@ export default function App() {
           </button>
 
         {isSettingsOpen && (
-          <div className="absolute top-full left-0 mt-1 bg-[#2a2a2a] p-2 rounded-lg border border-[#333] shadow-xl w-48 animate-in fade-in slide-in-from-top-2 z-50 max-h-[100vh] overflow-y-auto">
+          <div className="absolute top-full left-0 mt-1 bg-[#2a2a2a] p-2 rounded-lg border border-[#333] shadow-xl w-[22rem] animate-in fade-in slide-in-from-top-2 z-50 max-h-[100vh] overflow-y-auto">
              
              {/* LEVEL SECTION */}
              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Select Levels
              </div>
-             <div className="flex flex-col gap-0 mb-2">
+             <div className="grid grid-cols-2 gap-0 mb-2">
                {[1, 2, 3, 4, 5, 6].map(level => (
                  <label key={level} className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                     <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedLevels.includes(level) ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
@@ -473,7 +482,7 @@ export default function App() {
              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Verb Type
              </div>
-             <div className="flex flex-col gap-0 mb-2">
+             <div className="grid grid-cols-2 gap-0 mb-2">
                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedTypes.includes('Intransitive') ? 'bg-purple-500 border-purple-500' : 'border-gray-500'}`}>
                     {selectedTypes.includes('Intransitive') && <CheckCheck size={12} className="text-white" />}
@@ -515,7 +524,7 @@ export default function App() {
              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Verb Form
              </div>
-             <div className="flex flex-col gap-0 mb-2">
+             <div className="grid grid-cols-2 gap-0 mb-2">
                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${selectedForms.includes('Polite') ? 'bg-[#5F9EA0] border-[#5F9EA0]' : 'border-gray-500'}`}>
                     {selectedForms.includes('Polite') && <CheckCheck size={12} className="text-white" />}
@@ -557,7 +566,7 @@ export default function App() {
              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Display Options
              </div>
-             <div className="flex flex-col gap-0 mb-2">
+             <div className="grid grid-cols-2 gap-0 mb-2">
                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${showEnglish ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {showEnglish && <CheckCheck size={12} className="text-white" />}
@@ -624,9 +633,9 @@ export default function App() {
                   />
                   <div className="flex flex-col">
                     <span className={`text-base ${showPairs ? 'text-white font-bold' : 'text-gray-400'}`}>
-                      ペア表示
+                      ペアヒント表示
                     </span>
-                    <span className={`text-[10px] ${showPairs ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Show Pairs</span>
+                    <span className={`text-[10px] ${showPairs ? 'text-gray-400 font-bold' : 'text-gray-400'}`}>Display Pairs Hints</span>
                   </div>
                </label>
              </div>
@@ -635,7 +644,7 @@ export default function App() {
              <div className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1 border-b border-gray-600 pb-1">
                Quiz Mode
              </div>
-             <div className="flex flex-col gap-0">
+             <div className="grid grid-cols-2 gap-0">
                <label className="flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors">
                   <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${isFixedOrder ? 'bg-green-500 border-green-500' : 'border-gray-500'}`}>
                     {isFixedOrder && <CheckCheck size={12} className="text-white" />}
@@ -693,21 +702,21 @@ export default function App() {
         
         {shuffledData.length === 0 && totalQuestions === 0 ? (
           <div className="text-center text-gray-400 text-sm">
-            Select at least one level and type to start.
+            開始するには、レベルとタイプを1つ以上選択してください。
           </div>
         ) : shuffledData.length === 0 && totalQuestions > 0 ? (
           <div className="text-center text-green-400 text-xl font-bold space-y-4">
             <p>🎉 おめでとうございます！</p>
-            <p className="text-base text-gray-300 font-normal">All {totalQuestions} questions answered correctly!</p>
+            <p className="text-base text-gray-300 font-normal">全 {totalQuestions} 問正解です！</p>
             <button
               onClick={handleRestart}
               className="bg-green-800 hover:bg-green-700 text-white font-bold py-2.5 px-8 rounded-full transition-colors text-sm mt-4"
             >
-              Restart
+              リスタート
             </button>
           </div>
         ) : !currentQuestion ? (
-          <div className="flex items-center justify-center text-white text-sm">Loading...</div>
+          <div className="flex items-center justify-center text-white text-sm">ロード中...</div>
         ) : (
           <>
             {/* Main Card Area - Compact Layout */}

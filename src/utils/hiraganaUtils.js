@@ -1,4 +1,4 @@
-import { HIRAGANA_MAP } from "./hiraganaData.js";
+import { HIRAGANA_MAP } from "../data/hiraganaData.js";
 
 // Helper to escape regex characters
 const escapeRegExp = (string) => {
