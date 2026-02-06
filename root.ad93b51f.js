@@ -207,11 +207,11 @@
       });
     }
   }
-})({"lfgdo":[function(require,module,exports,__globalThis) {
+})({"ipwxS":[function(require,module,exports,__globalThis) {
 var global = arguments[3];
 var HMR_HOST = null;
 var HMR_PORT = null;
-var HMR_SERVER_PORT = 32798;
+var HMR_SERVER_PORT = 51569;
 var HMR_SECURE = false;
 var HMR_ENV_HASH = "439701173a9199ea";
 var HMR_USE_SSE = false;
@@ -25059,7 +25059,7 @@ function QuizMain() {
         columnNumber: 12
     }, this);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "flex-1 flex flex-col items-center justify-start px-4 pt-16 pb-1",
+        className: "flex-1 flex flex-col items-center justify-start px-4 pt-10 pb-1",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizCard), {}, void 0, false, {
                 fileName: "src/App.jsx",
@@ -25067,7 +25067,7 @@ function QuizMain() {
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "w-full max-w-sm space-y-2 mt-4",
+                className: "w-full max-w-sm space-y-2 mt-2",
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _indexJs2.QuizInput), {}, void 0, false, {
                         fileName: "src/App.jsx",
@@ -25268,6 +25268,7 @@ function SettingsProvider({ children }) {
     const [showDictionary, setShowDictionary] = (0, _react.useState)(false);
     const [showPairs, setShowPairs] = (0, _react.useState)(false);
     const [showEnglish, setShowEnglish] = (0, _react.useState)(false);
+    const [showSimilarPatterns, setShowSimilarPatterns] = (0, _react.useState)(false);
     // Toggle functions with minimum constraint
     const toggleLevel = (0, _react.useCallback)((level)=>{
         setSelectedLevels((prev)=>toggleItem(prev, level));
@@ -25293,21 +25294,23 @@ function SettingsProvider({ children }) {
         showDictionary,
         showPairs,
         showEnglish,
+        showSimilarPatterns,
         setShowFurigana,
         setShowDictionary,
         setShowPairs,
-        setShowEnglish
+        setShowEnglish,
+        setShowSimilarPatterns
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(SettingsContext.Provider, {
         value: value,
         children: children
     }, void 0, false, {
         fileName: "src/context/SettingsContext.jsx",
-        lineNumber: 65,
+        lineNumber: 68,
         columnNumber: 5
     }, this);
 }
-_s(SettingsProvider, "2hHK/0Me20gans5uCLRnwGXhCi8=");
+_s(SettingsProvider, "hQxp+P5BJXrIJPY2ROhI7tbPWzs=");
 _c = SettingsProvider;
 const useSettings = ()=>{
     _s1();
@@ -28077,7 +28080,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.DoorOpen),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 2,
@@ -28117,7 +28121,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.DoorOpen),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 3,
@@ -28157,7 +28162,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.DoorClosed),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 4,
@@ -28197,7 +28203,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.DoorClosed),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 5,
@@ -28233,7 +28240,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Dog),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 6,
@@ -28269,7 +28277,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Dog),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 7,
@@ -28305,7 +28314,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Ear),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3046-\u3042\u3059"
     },
     {
         id: 8,
@@ -28345,7 +28355,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Ear),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3046-\u3042\u3059"
     },
     {
         id: 9,
@@ -28385,7 +28396,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CarFront),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 10,
@@ -28425,7 +28437,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CarFront),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 11,
@@ -28465,7 +28478,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Lightbulb),
-        color: "text-yellow-400"
+        color: "text-yellow-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 12,
@@ -28509,7 +28523,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Lightbulb),
-        color: "text-yellow-400"
+        color: "text-yellow-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 13,
@@ -28553,7 +28568,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.LightbulbOff),
-        color: "text-gray-400"
+        color: "text-gray-400",
+        morphologicalEnding: "\u3048\u308B-\u3059"
     },
     {
         id: 14,
@@ -28593,7 +28609,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.LightbulbOff),
-        color: "text-gray-400"
+        color: "text-gray-400",
+        morphologicalEnding: "\u3048\u308B-\u3059"
     },
     {
         id: 15,
@@ -28637,7 +28654,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Calendar),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 16,
@@ -28681,7 +28699,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Calendar),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 17,
@@ -28721,7 +28740,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.HeartPulse),
-        color: "text-red-400"
+        color: "text-red-400",
+        morphologicalEnding: "\u308B-\u3059"
     },
     {
         id: 18,
@@ -28761,7 +28781,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.HeartPulse),
-        color: "text-red-400"
+        color: "text-red-400",
+        morphologicalEnding: "\u308B-\u3059"
     },
     {
         id: 19,
@@ -28801,7 +28822,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.GraduationCap),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 20,
@@ -28841,7 +28863,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.GraduationCap),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     // --- LEVEL 2 (IDs 21-40) ---
     {
@@ -28882,7 +28905,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Pen),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3044\u308B-\u304A\u3059"
     },
     {
         id: 22,
@@ -28922,7 +28946,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Pen),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3044\u308B-\u304A\u3059"
     },
     {
         id: 23,
@@ -28970,7 +28995,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Music),
-        color: "text-purple-400"
+        color: "text-purple-400",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 24,
@@ -29010,7 +29036,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Music),
-        color: "text-purple-400"
+        color: "text-purple-400",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 25,
@@ -29058,7 +29085,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Mountain),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3048\u308B-\u308B"
     },
     {
         id: 26,
@@ -29102,7 +29130,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Mountain),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3048\u308B-\u308B"
     },
     {
         id: 27,
@@ -29127,7 +29156,7 @@ const VERB_DATA = [
         verbPrompt: "\u306A",
         verbRuby: [
             {
-                text: "\u306A",
+                text: "\u306A\u304F",
                 rt: ""
             }
         ],
@@ -29150,7 +29179,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Wallet),
-        color: "text-yellow-600"
+        color: "text-yellow-600",
+        morphologicalEnding: "\u3042\u308B-\u3059"
     },
     {
         id: 28,
@@ -29175,7 +29205,7 @@ const VERB_DATA = [
         verbPrompt: "\u306A",
         verbRuby: [
             {
-                text: "\u306A",
+                text: "\u306A\u304F",
                 rt: ""
             }
         ],
@@ -29194,7 +29224,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Wallet),
-        color: "text-yellow-600"
+        color: "text-yellow-600",
+        morphologicalEnding: "\u3042\u308B-\u3059"
     },
     {
         id: 29,
@@ -29219,8 +29250,8 @@ const VERB_DATA = [
         verbPrompt: "\u898B",
         verbRuby: [
             {
-                text: "\u898B",
-                rt: "\u307F"
+                text: "\u898B\u3064",
+                rt: "\u307F\u3064"
             }
         ],
         dictionaryRuby: [
@@ -29242,7 +29273,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Search),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 30,
@@ -29267,8 +29299,8 @@ const VERB_DATA = [
         verbPrompt: "\u898B",
         verbRuby: [
             {
-                text: "\u898B",
-                rt: "\u307F"
+                text: "\u898B\u3064",
+                rt: "\u307F\u3064"
             }
         ],
         dictionaryRuby: [
@@ -29290,7 +29322,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Search),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 31,
@@ -29334,7 +29367,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CheckSquare),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 32,
@@ -29378,7 +29412,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CheckSquare),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 33,
@@ -29414,7 +29449,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Wind),
-        color: "text-cyan-400"
+        color: "text-cyan-400",
+        morphologicalEnding: "\u308B-\u3048\u308B"
     },
     {
         id: 34,
@@ -29454,7 +29490,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Wind),
-        color: "text-cyan-400"
+        color: "text-cyan-400",
+        morphologicalEnding: "\u308B-\u3048\u308B"
     },
     {
         id: 35,
@@ -29494,7 +29531,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Flame),
-        color: "text-orange-400"
+        color: "text-orange-400",
+        morphologicalEnding: "\u3046-\u3042\u3059"
     },
     {
         id: 36,
@@ -29538,7 +29576,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Flame),
-        color: "text-orange-400"
+        color: "text-orange-400",
+        morphologicalEnding: "\u3046-\u3042\u3059"
     },
     {
         id: 37,
@@ -29578,7 +29617,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Croissant),
-        color: "text-yellow-700"
+        color: "text-yellow-700",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 38,
@@ -29614,7 +29654,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Croissant),
-        color: "text-yellow-700"
+        color: "text-yellow-700",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 39,
@@ -29654,7 +29695,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Soup),
-        color: "text-red-700"
+        color: "text-red-700",
+        morphologicalEnding: "\u3048\u308B-\u308B"
     },
     {
         id: 40,
@@ -29690,7 +29732,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Soup),
-        color: "text-red-700"
+        color: "text-red-700",
+        morphologicalEnding: "\u3048\u308B-\u308B"
     },
     // --- LEVEL 3 (IDs 41-60) ---
     {
@@ -29731,7 +29774,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Camera),
-        color: "text-red-500"
+        color: "text-red-500",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 42,
@@ -29767,7 +29811,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Camera),
-        color: "text-orange-500"
+        color: "text-orange-500",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 43,
@@ -29803,7 +29848,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Monitor),
-        color: "text-blue-500"
+        color: "text-blue-500",
+        morphologicalEnding: "\u308B-\u3059"
     },
     {
         id: 44,
@@ -29839,7 +29885,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Monitor),
-        color: "text-green-500"
+        color: "text-green-500",
+        morphologicalEnding: "\u308B-\u3059"
     },
     {
         id: 45,
@@ -29879,7 +29926,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Package),
-        color: "text-yellow-600"
+        color: "text-yellow-600",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 46,
@@ -29923,7 +29971,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Package),
-        color: "text-green-600"
+        color: "text-green-600",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 47,
@@ -29967,7 +30016,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Tag),
-        color: "text-red-600"
+        color: "text-red-600",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 48,
@@ -30011,7 +30061,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Tag),
-        color: "text-green-600"
+        color: "text-green-600",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 49,
@@ -30055,7 +30106,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Tag),
-        color: "text-blue-600"
+        color: "text-blue-600",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 50,
@@ -30099,7 +30151,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Tag),
-        color: "text-green-800"
+        color: "text-green-800",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 51,
@@ -30143,7 +30196,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Briefcase),
-        color: "text-purple-500"
+        color: "text-purple-500",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 52,
@@ -30187,7 +30241,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Briefcase),
-        color: "text-pink-500"
+        color: "text-pink-500",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 53,
@@ -30227,7 +30282,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Scale),
-        color: "text-teal-500"
+        color: "text-teal-500",
+        morphologicalEnding: "\u308B-\u3089\u3059"
     },
     {
         id: 54,
@@ -30271,7 +30327,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Scale),
-        color: "text-teal-700"
+        color: "text-teal-700",
+        morphologicalEnding: "\u308B-\u3089\u3059"
     },
     {
         id: 55,
@@ -30307,7 +30364,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.GraduationCap),
-        color: "text-indigo-400"
+        color: "text-indigo-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 56,
@@ -30347,7 +30405,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.GraduationCap),
-        color: "text-indigo-600"
+        color: "text-indigo-600",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 57,
@@ -30391,7 +30450,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Baby),
-        color: "text-pink-300"
+        color: "text-pink-300",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 58,
@@ -30435,7 +30495,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Baby),
-        color: "text-pink-500"
+        color: "text-pink-500",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 59,
@@ -30471,7 +30532,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.RotateCw),
-        color: "text-gray-400"
+        color: "text-gray-400",
+        morphologicalEnding: "\u308B-\u3059"
     },
     {
         id: 60,
@@ -30507,7 +30569,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.RotateCw),
-        color: "text-gray-600"
+        color: "text-gray-600",
+        morphologicalEnding: "\u308B-\u3059"
     },
     // --- LEVEL 4 (IDs 61-80) ---
     {
@@ -30548,7 +30611,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.User),
-        color: "text-orange-300"
+        color: "text-orange-300",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 62,
@@ -30588,7 +30652,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.User),
-        color: "text-orange-500"
+        color: "text-orange-500",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 63,
@@ -30628,7 +30693,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Bone),
-        color: "text-gray-300"
+        color: "text-gray-300",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 64,
@@ -30664,7 +30730,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Bone),
-        color: "text-gray-500"
+        color: "text-gray-500",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 65,
@@ -30704,7 +30771,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Users),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 66,
@@ -30744,7 +30812,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Users),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 67,
@@ -30780,7 +30849,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Users),
-        color: "text-indigo-400"
+        color: "text-indigo-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 68,
@@ -30820,7 +30890,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Users),
-        color: "text-indigo-600"
+        color: "text-indigo-600",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 69,
@@ -30860,7 +30931,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Coffee),
-        color: "text-amber-700"
+        color: "text-amber-700",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 70,
@@ -30896,7 +30968,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Coffee),
-        color: "text-amber-900"
+        color: "text-amber-900",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 71,
@@ -30936,7 +31009,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Egg),
-        color: "text-yellow-200"
+        color: "text-yellow-200",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 72,
@@ -30972,7 +31046,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Egg),
-        color: "text-yellow-400"
+        color: "text-yellow-400",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 73,
@@ -31012,7 +31087,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Scissors),
-        color: "text-red-400"
+        color: "text-red-400",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 74,
@@ -31048,7 +31124,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Scissors),
-        color: "text-red-600"
+        color: "text-red-600",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 75,
@@ -31088,7 +31165,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Trash2),
-        color: "text-orange-500"
+        color: "text-orange-500",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 76,
@@ -31128,7 +31206,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Trash2),
-        color: "text-orange-700"
+        color: "text-orange-700",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 77,
@@ -31168,7 +31247,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CircleDot),
-        color: "text-purple-400"
+        color: "text-purple-400",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 78,
@@ -31204,7 +31284,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CircleDot),
-        color: "text-purple-600"
+        color: "text-purple-600",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 79,
@@ -31244,7 +31325,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CircleDot),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 80,
@@ -31280,7 +31362,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CircleDot),
-        color: "text-blue-600"
+        color: "text-blue-600",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     // --- LEVEL 5 (IDs 81-100) ---
     {
@@ -31321,7 +31404,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Beer),
-        color: "text-yellow-500"
+        color: "text-yellow-500",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 82,
@@ -31357,7 +31441,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Beer),
-        color: "text-yellow-700"
+        color: "text-yellow-700",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 83,
@@ -31397,7 +31482,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Files),
-        color: "text-gray-400"
+        color: "text-gray-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 84,
@@ -31441,7 +31527,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Files),
-        color: "text-gray-600"
+        color: "text-gray-600",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 85,
@@ -31481,7 +31568,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.ArrowRight),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 86,
@@ -31525,7 +31613,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.ArrowRight),
-        color: "text-green-400"
+        color: "text-green-400",
+        morphologicalEnding: "\u3046-\u3048\u308B"
     },
     {
         id: 87,
@@ -31565,7 +31654,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CheckCheck),
-        color: "text-green-500"
+        color: "text-green-500",
+        morphologicalEnding: "\u3046-\u3042\u305B\u308B"
     },
     {
         id: 88,
@@ -31613,7 +31703,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.CheckCheck),
-        color: "text-green-700"
+        color: "text-green-700",
+        morphologicalEnding: "\u3046-\u3042\u305B\u308B"
     },
     {
         id: 89,
@@ -31657,7 +31748,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Clock),
-        color: "text-purple-400"
+        color: "text-purple-400",
+        morphologicalEnding: "\u3044\u308B-\u304A\u3059"
     },
     {
         id: 90,
@@ -31701,7 +31793,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Clock),
-        color: "text-purple-600"
+        color: "text-purple-600",
+        morphologicalEnding: "\u3044\u308B-\u304A\u3059"
     },
     {
         id: 91,
@@ -31741,7 +31834,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Brain),
-        color: "text-red-400"
+        color: "text-red-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 92,
@@ -31781,7 +31875,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Brain),
-        color: "text-red-600"
+        color: "text-red-600",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 93,
@@ -31825,7 +31920,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Coins),
-        color: "text-yellow-400"
+        color: "text-yellow-400",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 94,
@@ -31869,7 +31965,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Coins),
-        color: "text-yellow-600"
+        color: "text-yellow-600",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 95,
@@ -31909,7 +32006,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Waves),
-        color: "text-blue-300"
+        color: "text-blue-300",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 96,
@@ -31945,7 +32043,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Waves),
-        color: "text-blue-500"
+        color: "text-blue-500",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 97,
@@ -31985,7 +32084,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Trees),
-        color: "text-green-800"
+        color: "text-green-800",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 98,
@@ -32021,7 +32121,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Trees),
-        color: "text-green-900"
+        color: "text-green-900",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 99,
@@ -32061,7 +32162,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.FileX),
-        color: "text-gray-300"
+        color: "text-gray-300",
+        morphologicalEnding: "\u308C\u308B-\u3046"
     },
     {
         id: 100,
@@ -32097,7 +32199,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.FileX),
-        color: "text-gray-500"
+        color: "text-gray-500",
+        morphologicalEnding: "\u308C\u308B-\u3046"
     },
     // --- LEVEL 6 (IDs 101-120) ---
     {
@@ -32134,7 +32237,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Wind),
-        color: "text-blue-200"
+        color: "text-blue-200",
+        morphologicalEnding: "\u3046-\u3042\u3059"
     },
     {
         id: 102,
@@ -32174,7 +32278,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Wind),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3046-\u3042\u3059"
     },
     {
         id: 103,
@@ -32214,7 +32319,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.ThermometerSnowflake),
-        color: "text-blue-300"
+        color: "text-blue-300",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 104,
@@ -32254,7 +32360,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.ThermometerSnowflake),
-        color: "text-blue-500"
+        color: "text-blue-500",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 105,
@@ -32294,7 +32401,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.ThermometerSun),
-        color: "text-orange-300"
+        color: "text-orange-300",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 106,
@@ -32334,7 +32442,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.ThermometerSun),
-        color: "text-orange-500"
+        color: "text-orange-500",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 107,
@@ -32374,7 +32483,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Soup),
-        color: "text-blue-200"
+        color: "text-blue-200",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 108,
@@ -32414,7 +32524,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Soup),
-        color: "text-blue-400"
+        color: "text-blue-400",
+        morphologicalEnding: "\u3048\u308B-\u3042\u3059"
     },
     {
         id: 109,
@@ -32454,7 +32565,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Shirt),
-        color: "text-gray-500"
+        color: "text-gray-500",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 110,
@@ -32490,7 +32602,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Shirt),
-        color: "text-gray-700"
+        color: "text-gray-700",
+        morphologicalEnding: "\u308C\u308B-\u3059"
     },
     {
         id: 111,
@@ -32534,7 +32647,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Sun),
-        color: "text-yellow-400"
+        color: "text-yellow-400",
+        morphologicalEnding: "\u3044\u308B-\u304A\u3059"
     },
     {
         id: 112,
@@ -32578,7 +32692,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Sun),
-        color: "text-yellow-600"
+        color: "text-yellow-600",
+        morphologicalEnding: "\u3044\u308B-\u304A\u3059"
     },
     {
         id: 113,
@@ -32618,7 +32733,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Banana),
-        color: "text-yellow-300"
+        color: "text-yellow-300",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 114,
@@ -32654,7 +32770,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Banana),
-        color: "text-yellow-500"
+        color: "text-yellow-500",
+        morphologicalEnding: "\u3048\u308B-\u3046"
     },
     {
         id: 115,
@@ -32702,7 +32819,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Baby),
-        color: "text-pink-200"
+        color: "text-pink-200",
+        morphologicalEnding: "\u308C\u308B-\u3046"
     },
     {
         id: 116,
@@ -32742,7 +32860,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Baby),
-        color: "text-pink-400"
+        color: "text-pink-400",
+        morphologicalEnding: "\u308C\u308B-\u3046"
     },
     {
         id: 117,
@@ -32786,7 +32905,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Calendar),
-        color: "text-blue-300"
+        color: "text-blue-300",
+        morphologicalEnding: "\u3044\u308B-\u3042\u3059"
     },
     {
         id: 118,
@@ -32830,7 +32950,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Calendar),
-        color: "text-blue-500"
+        color: "text-blue-500",
+        morphologicalEnding: "\u3044\u308B-\u3042\u3059"
     },
     {
         id: 119,
@@ -32874,7 +32995,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Fingerprint),
-        color: "text-gray-600"
+        color: "text-gray-600",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     },
     {
         id: 120,
@@ -32922,7 +33044,8 @@ const VERB_DATA = [
             }
         ],
         icon: (0, _iconsJs.Fingerprint),
-        color: "text-gray-800"
+        color: "text-gray-800",
+        morphologicalEnding: "\u3042\u308B-\u3048\u308B"
     }
 ];
 
@@ -44989,7 +45112,18 @@ var _react = require("react");
 var _reactDefault = parcelHelpers.interopDefault(_react);
 var _iconsJs = require("./icons.js");
 function Checkbox({ checked, onChange, label, sublabel, colorClass = 'bg-green-500 border-green-500', labelColorClass = 'text-white' }) {
-    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        role: "checkbox",
+        "aria-checked": checked,
+        tabIndex: 0,
+        onClick: onChange,
+        onKeyDown: (e)=>{
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                onChange(e);
+            }
+        },
+        onMouseDown: (e)=>e.preventDefault(),
         className: "flex items-center gap-2 cursor-pointer hover:bg-[#333] py-0.5 px-2 rounded transition-colors",
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -44999,22 +45133,12 @@ function Checkbox({ checked, onChange, label, sublabel, colorClass = 'bg-green-5
                     className: "text-white"
                 }, void 0, false, {
                     fileName: "src/components/ui/Checkbox.jsx",
-                    lineNumber: 16,
+                    lineNumber: 24,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "src/components/ui/Checkbox.jsx",
-                lineNumber: 15,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
-                type: "checkbox",
-                className: "hidden",
-                checked: checked,
-                onChange: onChange
-            }, void 0, false, {
-                fileName: "src/components/ui/Checkbox.jsx",
-                lineNumber: 18,
+                lineNumber: 23,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -45025,7 +45149,7 @@ function Checkbox({ checked, onChange, label, sublabel, colorClass = 'bg-green-5
                         children: label
                     }, void 0, false, {
                         fileName: "src/components/ui/Checkbox.jsx",
-                        lineNumber: 25,
+                        lineNumber: 27,
                         columnNumber: 9
                     }, this),
                     sublabel && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -45033,13 +45157,13 @@ function Checkbox({ checked, onChange, label, sublabel, colorClass = 'bg-green-5
                         children: sublabel
                     }, void 0, false, {
                         fileName: "src/components/ui/Checkbox.jsx",
-                        lineNumber: 29,
+                        lineNumber: 31,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/ui/Checkbox.jsx",
-                lineNumber: 24,
+                lineNumber: 26,
                 columnNumber: 7
             }, this)
         ]
@@ -45240,7 +45364,7 @@ var _checkboxJsx = require("../ui/Checkbox.jsx");
 var _s = $RefreshSig$();
 function DisplayOptions() {
     _s();
-    const { showEnglish, setShowEnglish, showFurigana, setShowFurigana, showDictionary, setShowDictionary, showPairs, setShowPairs } = (0, _settingsContextJsx.useSettings)();
+    const { showEnglish, setShowEnglish, showFurigana, setShowFurigana, showDictionary, setShowDictionary, showPairs, setShowPairs, showSimilarPatterns, setShowSimilarPatterns } = (0, _settingsContextJsx.useSettings)();
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
         children: [
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -45248,7 +45372,7 @@ function DisplayOptions() {
                 children: "Display Options"
             }, void 0, false, {
                 fileName: "src/components/settings/DisplayOptions.jsx",
-                lineNumber: 16,
+                lineNumber: 17,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -45263,7 +45387,7 @@ function DisplayOptions() {
                         labelColorClass: "text-white"
                     }, void 0, false, {
                         fileName: "src/components/settings/DisplayOptions.jsx",
-                        lineNumber: 20,
+                        lineNumber: 21,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
@@ -45275,7 +45399,7 @@ function DisplayOptions() {
                         labelColorClass: "text-white"
                     }, void 0, false, {
                         fileName: "src/components/settings/DisplayOptions.jsx",
-                        lineNumber: 28,
+                        lineNumber: 29,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
@@ -45287,7 +45411,7 @@ function DisplayOptions() {
                         labelColorClass: "text-white"
                     }, void 0, false, {
                         fileName: "src/components/settings/DisplayOptions.jsx",
-                        lineNumber: 36,
+                        lineNumber: 37,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
@@ -45299,19 +45423,31 @@ function DisplayOptions() {
                         labelColorClass: "text-white"
                     }, void 0, false, {
                         fileName: "src/components/settings/DisplayOptions.jsx",
-                        lineNumber: 44,
+                        lineNumber: 45,
+                        columnNumber: 9
+                    }, this),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _checkboxJsx.Checkbox), {
+                        checked: showSimilarPatterns,
+                        onChange: ()=>setShowSimilarPatterns(!showSimilarPatterns),
+                        label: "\u540C\u3058\u30D1\u30BF\u30FC\u30F3\u306E\u8868\u793A",
+                        sublabel: "Show Similar Patterns",
+                        colorClass: "bg-green-500 border-green-500",
+                        labelColorClass: "text-white"
+                    }, void 0, false, {
+                        fileName: "src/components/settings/DisplayOptions.jsx",
+                        lineNumber: 53,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/settings/DisplayOptions.jsx",
-                lineNumber: 19,
+                lineNumber: 20,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true);
 }
-_s(DisplayOptions, "FxIHY31MKH5Vp5YVUScUQp0SPV4=", false, function() {
+_s(DisplayOptions, "MNA78WgpFAOVZ6uUkjXXBAuOuvg=", false, function() {
     return [
         (0, _settingsContextJsx.useSettings)
     ];
@@ -45440,143 +45576,138 @@ function QuizCard() {
     const { showFurigana, showDictionary, showEnglish } = (0, _settingsContextJsx.useSettings)();
     if (!currentQuestion) return null;
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-        className: "w-full max-w-sm flex flex-col items-center gap-2",
-        children: [
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: "w-full flex justify-between items-end px-4 pr-12",
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                        className: "flex flex-col items-center group",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "mb-0.5 h-12 flex items-end",
-                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rubyTextJsx.RubyText), {
-                                    data: currentQuestion.nounRuby,
-                                    showFurigana: showFurigana
-                                }, void 0, false, {
-                                    fileName: "src/components/quiz/QuizCard.jsx",
-                                    lineNumber: 20,
-                                    columnNumber: 13
-                                }, this)
+        className: "w-full max-w-sm flex flex-col items-center gap-1",
+        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+            className: "w-full flex justify-between items-end px-4 pr-12",
+            children: [
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "flex flex-col items-center group",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            className: "mb-0.5 h-12 flex items-end",
+                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rubyTextJsx.RubyText), {
+                                data: currentQuestion.nounRuby,
+                                showFurigana: showFurigana
                             }, void 0, false, {
                                 fileName: "src/components/quiz/QuizCard.jsx",
-                                lineNumber: 19,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "flex flex-col items-center w-full",
-                                children: [
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "h-[2px] w-10 bg-red-600 mb-0.5"
-                                    }, void 0, false, {
-                                        fileName: "src/components/quiz/QuizCard.jsx",
-                                        lineNumber: 23,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                        className: "text-[10px] text-gray-300 tracking-wider font-semibold",
-                                        children: "\u540D\u8A5E"
-                                    }, void 0, false, {
-                                        fileName: "src/components/quiz/QuizCard.jsx",
-                                        lineNumber: 24,
-                                        columnNumber: 13
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "src/components/quiz/QuizCard.jsx",
-                                lineNumber: 22,
-                                columnNumber: 11
+                                lineNumber: 20,
+                                columnNumber: 13
                             }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/components/quiz/QuizCard.jsx",
-                        lineNumber: 18,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                        className: "flex flex-col items-center",
-                        children: [
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "mb-0.5 h-12 flex items-end",
-                                children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rubyTextJsx.RubyText), {
-                                    data: showDictionary ? currentQuestion.dictionaryRuby : currentQuestion.verbRuby,
-                                    showFurigana: showFurigana
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizCard.jsx",
+                            lineNumber: 19,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            className: "flex flex-col items-center w-full",
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "h-[2px] w-10 bg-red-600 mb-0.5"
                                 }, void 0, false, {
                                     fileName: "src/components/quiz/QuizCard.jsx",
-                                    lineNumber: 31,
+                                    lineNumber: 23,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                    className: "text-[10px] text-gray-300 tracking-wider font-semibold",
+                                    children: "\u540D\u8A5E"
+                                }, void 0, false, {
+                                    fileName: "src/components/quiz/QuizCard.jsx",
+                                    lineNumber: 24,
                                     columnNumber: 13
                                 }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/components/quiz/QuizCard.jsx",
+                            lineNumber: 22,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/quiz/QuizCard.jsx",
+                    lineNumber: 18,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: `flex flex-col items-center text-lg tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-purple-400'}`,
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "font-bold",
+                            children: currentQuestion.type === 'Transitive' ? "\u4ED6\u52D5\u8A5E" : "\u81EA\u52D5\u8A5E"
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizCard.jsx",
+                            lineNumber: 30,
+                            columnNumber: 11
+                        }, this),
+                        showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "text-[10px] text-gray-300 font-normal",
+                            children: currentQuestion.type
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizCard.jsx",
+                            lineNumber: 31,
+                            columnNumber: 27
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/quiz/QuizCard.jsx",
+                    lineNumber: 29,
+                    columnNumber: 9
+                }, this),
+                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                    className: "flex flex-col items-center",
+                    children: [
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            className: "mb-0.5 h-12 flex items-end",
+                            children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _rubyTextJsx.RubyText), {
+                                data: showDictionary ? currentQuestion.dictionaryRuby : currentQuestion.verbRuby,
+                                showFurigana: showFurigana
                             }, void 0, false, {
                                 fileName: "src/components/quiz/QuizCard.jsx",
-                                lineNumber: 30,
-                                columnNumber: 11
-                            }, this),
-                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                className: "flex flex-col items-center w-full",
-                                children: [
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                                        className: "h-[2px] w-10 bg-red-600 mb-0.5"
-                                    }, void 0, false, {
-                                        fileName: "src/components/quiz/QuizCard.jsx",
-                                        lineNumber: 37,
-                                        columnNumber: 13
-                                    }, this),
-                                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                                        className: "text-[10px] text-gray-300 tracking-wider font-semibold",
-                                        children: "\u52D5\u8A5E"
-                                    }, void 0, false, {
-                                        fileName: "src/components/quiz/QuizCard.jsx",
-                                        lineNumber: 38,
-                                        columnNumber: 13
-                                    }, this)
-                                ]
-                            }, void 0, true, {
-                                fileName: "src/components/quiz/QuizCard.jsx",
-                                lineNumber: 36,
-                                columnNumber: 11
+                                lineNumber: 37,
+                                columnNumber: 13
                             }, this)
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/components/quiz/QuizCard.jsx",
-                        lineNumber: 29,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "src/components/quiz/QuizCard.jsx",
-                lineNumber: 16,
-                columnNumber: 7
-            }, this),
-            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
-                className: `text-xl tracking-wide ${currentQuestion.type === 'Transitive' ? 'text-yellow-400' : 'text-purple-400'}`,
-                children: [
-                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                        className: "font-bold",
-                        children: currentQuestion.type === 'Transitive' ? "\u4ED6\u52D5\u8A5E" : "\u81EA\u52D5\u8A5E"
-                    }, void 0, false, {
-                        fileName: "src/components/quiz/QuizCard.jsx",
-                        lineNumber: 45,
-                        columnNumber: 9
-                    }, this),
-                    showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
-                        className: "text-xs text-gray-300 font-normal",
-                        children: [
-                            " ",
-                            currentQuestion.type
-                        ]
-                    }, void 0, true, {
-                        fileName: "src/components/quiz/QuizCard.jsx",
-                        lineNumber: 46,
-                        columnNumber: 25
-                    }, this)
-                ]
-            }, void 0, true, {
-                fileName: "src/components/quiz/QuizCard.jsx",
-                lineNumber: 44,
-                columnNumber: 7
-            }, this)
-        ]
-    }, void 0, true, {
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizCard.jsx",
+                            lineNumber: 36,
+                            columnNumber: 11
+                        }, this),
+                        /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                            className: "flex flex-col items-center w-full",
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                                    className: "h-[2px] w-10 bg-red-600 mb-0.5"
+                                }, void 0, false, {
+                                    fileName: "src/components/quiz/QuizCard.jsx",
+                                    lineNumber: 43,
+                                    columnNumber: 13
+                                }, this),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                    className: "text-[10px] text-gray-300 tracking-wider font-semibold",
+                                    children: "\u52D5\u8A5E"
+                                }, void 0, false, {
+                                    fileName: "src/components/quiz/QuizCard.jsx",
+                                    lineNumber: 44,
+                                    columnNumber: 13
+                                }, this)
+                            ]
+                        }, void 0, true, {
+                            fileName: "src/components/quiz/QuizCard.jsx",
+                            lineNumber: 42,
+                            columnNumber: 11
+                        }, this)
+                    ]
+                }, void 0, true, {
+                    fileName: "src/components/quiz/QuizCard.jsx",
+                    lineNumber: 35,
+                    columnNumber: 9
+                }, this)
+            ]
+        }, void 0, true, {
+            fileName: "src/components/quiz/QuizCard.jsx",
+            lineNumber: 16,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
         fileName: "src/components/quiz/QuizCard.jsx",
         lineNumber: 14,
         columnNumber: 5
@@ -45909,7 +46040,7 @@ var _s = $RefreshSig$();
 function QuizFeedback() {
     _s();
     const { feedback, currentQuestion } = (0, _quizContextJsx.useQuiz)();
-    const { selectedForms, showFurigana, showEnglish, showPairs } = (0, _settingsContextJsx.useSettings)();
+    const { selectedForms, showFurigana, showEnglish, showPairs, showSimilarPatterns, selectedLevels } = (0, _settingsContextJsx.useSettings)();
     if (!feedback || !currentQuestion) return null;
     if (feedback === 'correct') return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "min-h-[90px] flex items-start justify-center pt-3",
@@ -45934,6 +46065,8 @@ function QuizFeedback() {
     }, this);
     if (feedback === 'incorrect') {
         const pairVerb = showPairs ? (0, _quizLogicJs.findPairVerb)(currentQuestion) : null;
+        const morphEnding = currentQuestion.morphologicalEnding;
+        const endingLabel = morphEnding ? morphEnding.replace('-', " \u2192 ") : null;
         return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
             className: "min-h-[90px] flex items-start justify-center pt-3",
             children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -45944,7 +46077,7 @@ function QuizFeedback() {
                         children: "\u6B63\u3057\u3044\u56DE\u7B54"
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 32,
+                        lineNumber: 34,
                         columnNumber: 11
                     }, this),
                     selectedForms.includes('Polite') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -45955,12 +46088,12 @@ function QuizFeedback() {
                             showFurigana: showFurigana
                         }, void 0, false, {
                             fileName: "src/components/quiz/QuizFeedback.jsx",
-                            lineNumber: 37,
+                            lineNumber: 39,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 36,
+                        lineNumber: 38,
                         columnNumber: 13
                     }, this),
                     selectedForms.includes('Plain') && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -45971,12 +46104,12 @@ function QuizFeedback() {
                             showFurigana: showFurigana
                         }, void 0, false, {
                             fileName: "src/components/quiz/QuizFeedback.jsx",
-                            lineNumber: 48,
+                            lineNumber: 50,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 47,
+                        lineNumber: 49,
                         columnNumber: 13
                     }, this),
                     showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
@@ -45984,7 +46117,22 @@ function QuizFeedback() {
                         children: currentQuestion.english
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 57,
+                        lineNumber: 59,
+                        columnNumber: 13
+                    }, this),
+                    endingLabel && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "mt-1",
+                        children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                            className: "text-xs text-gray-500 bg-[#2a2a2a] px-2 py-0.5 rounded-full",
+                            children: endingLabel
+                        }, void 0, false, {
+                            fileName: "src/components/quiz/QuizFeedback.jsx",
+                            lineNumber: 65,
+                            columnNumber: 15
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 64,
                         columnNumber: 13
                     }, this),
                     showPairs && pairVerb && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(PairHints, {
@@ -45994,24 +46142,33 @@ function QuizFeedback() {
                         showEnglish: showEnglish
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 61,
+                        lineNumber: 72,
                         columnNumber: 37
+                    }, this),
+                    showSimilarPatterns && morphEnding && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)(SimilarPatterns, {
+                        currentQuestion: currentQuestion,
+                        selectedLevels: selectedLevels,
+                        showFurigana: showFurigana
+                    }, void 0, false, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 76,
+                        columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/quiz/QuizFeedback.jsx",
-                lineNumber: 31,
+                lineNumber: 33,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "src/components/quiz/QuizFeedback.jsx",
-            lineNumber: 30,
+            lineNumber: 32,
             columnNumber: 7
         }, this);
     }
     return null;
 }
-_s(QuizFeedback, "/zvogtEyrz3rMfD1aZVqcnQ4qws=", false, function() {
+_s(QuizFeedback, "ywMf7rLM8dy0+Ubicecsry58uk8=", false, function() {
     return [
         (0, _quizContextJsx.useQuiz),
         (0, _settingsContextJsx.useSettings)
@@ -46040,7 +46197,7 @@ function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
                         showFurigana: showFurigana
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 84,
+                        lineNumber: 104,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -46048,7 +46205,7 @@ function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
                         children: "/"
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 90,
+                        lineNumber: 110,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _answerRubyTextJsx.AnswerRubyText), {
@@ -46058,13 +46215,13 @@ function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
                         showFurigana: showFurigana
                     }, void 0, false, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 91,
+                        lineNumber: 111,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/quiz/QuizFeedback.jsx",
-                lineNumber: 83,
+                lineNumber: 103,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -46078,7 +46235,7 @@ function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
                                 children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationJa
                             }, void 0, false, {
                                 fileName: "src/components/quiz/QuizFeedback.jsx",
-                                lineNumber: 102,
+                                lineNumber: 122,
                                 columnNumber: 13
                             }, this),
                             showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -46086,13 +46243,13 @@ function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
                                 children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).aru.explanationEn
                             }, void 0, false, {
                                 fileName: "src/components/quiz/QuizFeedback.jsx",
-                                lineNumber: 103,
+                                lineNumber: 123,
                                 columnNumber: 29
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 101,
+                        lineNumber: 121,
                         columnNumber: 11
                     }, this),
                     transitiveSuffix === 'suffix-su' && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -46103,7 +46260,7 @@ function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
                                 children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationJa
                             }, void 0, false, {
                                 fileName: "src/components/quiz/QuizFeedback.jsx",
-                                lineNumber: 108,
+                                lineNumber: 128,
                                 columnNumber: 13
                             }, this),
                             showEnglish && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
@@ -46111,32 +46268,118 @@ function PairHints({ currentQuestion, pairVerb, showFurigana, showEnglish }) {
                                 children: (0, _sentenceDataJs.VERB_SUFFIX_RULES).su.explanationEn
                             }, void 0, false, {
                                 fileName: "src/components/quiz/QuizFeedback.jsx",
-                                lineNumber: 109,
+                                lineNumber: 129,
                                 columnNumber: 29
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "src/components/quiz/QuizFeedback.jsx",
-                        lineNumber: 107,
+                        lineNumber: 127,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "src/components/quiz/QuizFeedback.jsx",
-                lineNumber: 99,
+                lineNumber: 119,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "src/components/quiz/QuizFeedback.jsx",
-        lineNumber: 82,
+        lineNumber: 102,
         columnNumber: 5
     }, this);
 }
 _c1 = PairHints;
-var _c, _c1;
+// Sub-component for similar pattern verb pairs
+function SimilarPatterns({ currentQuestion, selectedLevels, showFurigana }) {
+    const ending = currentQuestion.morphologicalEnding;
+    const currentPairBase = currentQuestion.id % 2 === 1 ? currentQuestion.id : currentQuestion.id - 1;
+    // Find all verb pairs with the same morphologicalEnding, filtered by active levels
+    const pairs = [];
+    const seen = new Set();
+    for (const verb of (0, _sentenceDataJs.VERB_DATA)){
+        if (verb.morphologicalEnding !== ending) continue;
+        if (!selectedLevels.includes(verb.level)) continue;
+        const pairBase = verb.id % 2 === 1 ? verb.id : verb.id - 1;
+        if (pairBase === currentPairBase) continue;
+        if (seen.has(pairBase)) continue;
+        seen.add(pairBase);
+        const intransitive = (0, _sentenceDataJs.VERB_DATA).find((v)=>v.id === pairBase);
+        const transitive = (0, _sentenceDataJs.VERB_DATA).find((v)=>v.id === pairBase + 1);
+        if (intransitive && transitive) pairs.push({
+            intransitive,
+            transitive
+        });
+    }
+    if (pairs.length === 0) return null;
+    return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+        className: "flex flex-col items-center gap-1.5 mt-3 pt-2 border-t border-gray-700",
+        children: [
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("p", {
+                className: "text-[10px] text-gray-500 uppercase tracking-wider font-bold",
+                children: "\u540C\u3058\u30D1\u30BF\u30FC\u30F3"
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizFeedback.jsx",
+                lineNumber: 167,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                className: "flex flex-col items-center gap-1",
+                children: pairs.map(({ intransitive, transitive })=>/*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
+                        className: "flex items-center justify-center gap-2",
+                        children: [
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _answerRubyTextJsx.AnswerRubyText), {
+                                data: intransitive.dictionaryRuby,
+                                colorClass: "text-purple-400",
+                                textSize: "text-sm",
+                                showFurigana: showFurigana
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizFeedback.jsx",
+                                lineNumber: 171,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("span", {
+                                className: "text-gray-600 text-xs",
+                                children: "/"
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizFeedback.jsx",
+                                lineNumber: 177,
+                                columnNumber: 13
+                            }, this),
+                            /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _answerRubyTextJsx.AnswerRubyText), {
+                                data: transitive.dictionaryRuby,
+                                colorClass: "text-yellow-400",
+                                textSize: "text-sm",
+                                showFurigana: showFurigana
+                            }, void 0, false, {
+                                fileName: "src/components/quiz/QuizFeedback.jsx",
+                                lineNumber: 178,
+                                columnNumber: 13
+                            }, this)
+                        ]
+                    }, intransitive.id, true, {
+                        fileName: "src/components/quiz/QuizFeedback.jsx",
+                        lineNumber: 170,
+                        columnNumber: 11
+                    }, this))
+            }, void 0, false, {
+                fileName: "src/components/quiz/QuizFeedback.jsx",
+                lineNumber: 168,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "src/components/quiz/QuizFeedback.jsx",
+        lineNumber: 166,
+        columnNumber: 5
+    }, this);
+}
+_c2 = SimilarPatterns;
+var _c, _c1, _c2;
 $RefreshReg$(_c, "QuizFeedback");
 $RefreshReg$(_c1, "PairHints");
+$RefreshReg$(_c2, "SimilarPatterns");
 
   $parcel$ReactRefreshHelpers$f5e1.postlude(module);
 } finally {
@@ -46689,6 +46932,6 @@ _s(useKeyboardShortcuts, "OD7bBpZva5O2jO+Puf00hKivP7c=");
   globalThis.$RefreshReg$ = prevRefreshReg;
   globalThis.$RefreshSig$ = prevRefreshSig;
 }
-},{"react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}]},["lfgdo","gYcKb"], "gYcKb", "parcelRequire06f1", {}, null, null, "http://localhost:32798")
+},{"react":"jMk1U","@parcel/transformer-js/src/esmodule-helpers.js":"jnFvT","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"7h6Pi"}]},["ipwxS","gYcKb"], "gYcKb", "parcelRequire06f1", {}, null, null, "http://localhost:51569")
 
 //# sourceMappingURL=root.ad93b51f.js.map
